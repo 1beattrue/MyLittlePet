@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">МойМаленькийПитомец</string>
+
+    <string name="enter_phone_number">Введите ваш номер телефона</string>
+    <string name="phone_number_hint">+7 (XXX) XXX-XX XX</string>
+    <string name="next">Далее</string>
+
+    <string name="enter_confirmation_code">Введите код подтверждения</string>
+</resources>

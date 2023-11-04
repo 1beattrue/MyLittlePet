@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.ui.theme
+package edu.mirea.onebeattrue.mylittlepet.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
