@@ -6,4 +6,7 @@
     <string name="next">Next</string>
 
     <string name="enter_confirmation_code">Enter confirmation code</string>
+    <string name="confirmation_code_hint">XXXXXX</string>
+    <string name="back">Back</string>
+    <string name="confirm">Confirm</string>
 </resources>
