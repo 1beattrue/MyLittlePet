@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import edu.mirea.onebeattrue.mylittlepet.presentation.ui.screens.auth.AuthMainScreen
+import edu.mirea.onebeattrue.mylittlepet.presentation.ui.screens.MainScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.ui.theme.MyLittlePetTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AuthMainScreen()
+                    MainScreen()
                 }
             }
         }

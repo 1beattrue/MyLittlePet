@@ -10,19 +10,19 @@ fun AppNavGraph(
     navHostController: NavHostController,
     enterPhoneScreenContent: @Composable () -> Unit,
     confirmPhoneScreenContent: @Composable () -> Unit,
-    mainScreenContent: @Composable () -> Unit
+    petsScreenContent: @Composable () -> Unit
 ) {
     NavHost(
         navController = navHostController,
         startDestination = Screen.AuthMain.route
     ) {
-        authMainScreenNavGraph(
+        authNavGraph(
             enterPhoneScreenContent = enterPhoneScreenContent,
             confirmPhoneScreenContent = confirmPhoneScreenContent
         )
 
-        composable(Screen.Main.route) {
-            mainScreenContent()
-        }
+        mainNavGraph(
+            petsScreenContent = petsScreenContent
+        )
     }
 }
