@@ -51,17 +51,16 @@ fun MainScreen() {
 
                     items.forEach { item ->
 
-                        val selected = navBackStackEntry?.destination?.hierarchy?.any {
-                            it.route == item.screen.route
-                        } ?: false
+                        val selected = navBackStackEntry?.destination?.route == item.screen.route
 
                         NavigationBarItem(
                             selected = selected,
                             onClick = {
                                 if (!selected) {
-                                    navigationState.navHostController.navigate(item.screen.route) {
-                                        popUpTo("pets") // TODO: изменить это убожество
-                                    }
+                                    navigationState.navigateTo(
+                                        item.screen.route,
+                                        NavigationItem.Pets.screen.route
+                                    )
                                 }
                             },
                             icon = {
