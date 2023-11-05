@@ -54,7 +54,7 @@ fun ConfirmPhoneScreen(
     ) {
         Image(
             modifier = Modifier.size(200.dp),
-            painter = painterResource(id = R.drawable.image_unicorn),
+            painter = painterResource(id = R.drawable.image_dog_face),
             contentDescription = null,
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -65,8 +65,9 @@ fun ConfirmPhoneScreen(
                 )
                 .fillMaxWidth()
                 .shadow(
-                    elevation = 8.dp,
-                    shape = RoundedCornerShape(16.dp)
+                    elevation = 16.dp,
+                    shape = RoundedCornerShape(16.dp),
+                    spotColor = MaterialTheme.colorScheme.onSurface
                 ),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.background,

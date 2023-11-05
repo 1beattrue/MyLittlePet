@@ -33,7 +33,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,7 +52,7 @@ fun EnterPhoneScreen(
     ) {
         Image(
             modifier = Modifier.size(200.dp),
-            painter = painterResource(id = R.drawable.image_cat),
+            painter = painterResource(id = R.drawable.image_cat_face),
             contentDescription = null,
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -64,8 +63,9 @@ fun EnterPhoneScreen(
                 )
                 .fillMaxWidth()
                 .shadow(
-                    elevation = 8.dp,
-                    shape = RoundedCornerShape(16.dp)
+                    elevation = 16.dp,
+                    shape = RoundedCornerShape(16.dp),
+                    spotColor = MaterialTheme.colorScheme.onSurface
                 ),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.background,
