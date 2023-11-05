@@ -139,7 +139,7 @@ private fun ConfirmPhoneTextField(
         label = {
             Text(stringResource(id = R.string.confirmation_code_hint))
         },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         shape = RoundedCornerShape(16.dp),
         singleLine = true,
     )

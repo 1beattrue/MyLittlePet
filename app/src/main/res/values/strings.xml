@@ -9,4 +9,10 @@
     <string name="confirmation_code_hint">XXXXXX</string>
     <string name="back">Back</string>
     <string name="confirm">Confirm</string>
+
+    <string name="navigation_item_feed">Feed</string>
+    <string name="navigation_item_pets">Pets</string>
+    <string name="navigation_item_profile">Profile</string>
+
+
 </resources>

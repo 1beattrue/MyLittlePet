@@ -10,4 +10,9 @@
     <string name="confirmation_code_hint">XXXXXX</string>
     <string name="back">Назад</string>
     <string name="confirm">Подтвердить</string>
+
+    <string name="navigation_item_feed">Лента</string>
+    <string name="navigation_item_pets">Питомцы</string>
+    <string name="navigation_item_profile">Профиль</string>
+
 </resources>

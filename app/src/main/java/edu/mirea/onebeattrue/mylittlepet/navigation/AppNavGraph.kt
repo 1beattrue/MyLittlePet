@@ -3,14 +3,16 @@ package edu.mirea.onebeattrue.mylittlepet.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 
 @Composable
 fun AppNavGraph(
     navHostController: NavHostController,
     enterPhoneScreenContent: @Composable () -> Unit,
     confirmPhoneScreenContent: @Composable () -> Unit,
-    petsScreenContent: @Composable () -> Unit
+
+    feedScreenContent: @Composable () -> Unit,
+    petsScreenContent: @Composable () -> Unit,
+    profileScreenContent: @Composable () -> Unit
 ) {
     NavHost(
         navController = navHostController,
@@ -22,7 +24,9 @@ fun AppNavGraph(
         )
 
         mainNavGraph(
-            petsScreenContent = petsScreenContent
+            feedScreenContent = feedScreenContent,
+            petsScreenContent = petsScreenContent,
+            profileScreenContent = profileScreenContent
         )
     }
 }
