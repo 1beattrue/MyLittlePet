@@ -56,7 +56,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.48.1")
     kapt("com.google.dagger:hilt-compiler:2.48.1")
 
-    implementation("com.google.firebase:firebase-auth:22.2.0")
+    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
+    implementation("com.google.firebase:firebase-auth")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
