@@ -36,15 +36,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.presentation.ui.theme.MyLittlePetTheme
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.EnterPhoneViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 
 
 @Composable
 fun EnterPhoneScreen(
     modifier: Modifier = Modifier,
-    onNextButtonClickListener: () -> Unit
+    onNextButtonClickListener: () -> Unit,
+    viewModelFactory: ViewModelFactory
 ) {
+
+    val viewModel: EnterPhoneViewModel = viewModel(factory = viewModelFactory)
+
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -136,7 +143,7 @@ private fun PhoneTextField(
 @Composable
 private fun EnterPhoneScreenPreviewLight() {
     MyLittlePetTheme(darkTheme = false) {
-        EnterPhoneScreen() {}
+        EnterPhoneScreen(Modifier, {}, ViewModelFactory(mapOf()))
     }
 }
 
@@ -144,6 +151,6 @@ private fun EnterPhoneScreenPreviewLight() {
 @Composable
 private fun EnterPhoneScreenPreviewDark() {
     MyLittlePetTheme(darkTheme = true) {
-        EnterPhoneScreen() {}
+        EnterPhoneScreen(Modifier, {}, ViewModelFactory(mapOf()))
     }
 }

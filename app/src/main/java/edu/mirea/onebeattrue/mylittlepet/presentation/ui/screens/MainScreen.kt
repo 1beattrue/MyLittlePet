@@ -1,7 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.ui.screens
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -16,10 +15,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import edu.mirea.onebeattrue.mylittlepet.navigation.AppNavGraph
+import edu.mirea.onebeattrue.mylittlepet.navigation.graphs.AppNavGraph
 import edu.mirea.onebeattrue.mylittlepet.navigation.NavigationItem
 import edu.mirea.onebeattrue.mylittlepet.navigation.Screen
 import edu.mirea.onebeattrue.mylittlepet.navigation.rememberNavigationState
@@ -28,10 +25,13 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.ui.screens.auth.EnterPhone
 import edu.mirea.onebeattrue.mylittlepet.presentation.ui.screens.main.FeedScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.ui.screens.main.PetsScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.ui.screens.main.ProfileScreen
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    viewModelFactory: ViewModelFactory
+) {
     val navigationState = rememberNavigationState()
     var isBottomBarVisible by rememberSaveable {
         mutableStateOf(false)
@@ -93,7 +93,8 @@ fun MainScreen() {
                 EnterPhoneScreen(
                     onNextButtonClickListener = {
                         navigationState.navigateTo(Screen.ConfirmPhone.route)
-                    }
+                    },
+                    viewModelFactory = viewModelFactory
                 )
             },
             confirmPhoneScreenContent = {
@@ -105,7 +106,8 @@ fun MainScreen() {
                     onConfirmButtonClickListener = {
                         navigationState.navHostController.navigate(Screen.Main.route)
                         isAuthFinished = true
-                    }
+                    },
+                    viewModelFactory = viewModelFactory
                 )
             },
             feedScreenContent = {

@@ -37,16 +37,23 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.presentation.ui.theme.MyLittlePetTheme
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ConfirmPhoneViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 
 
 @Composable
 fun ConfirmPhoneScreen(
     modifier: Modifier = Modifier,
     onBackButtonClickListener: () -> Unit,
-    onConfirmButtonClickListener: () -> Unit
+    onConfirmButtonClickListener: () -> Unit,
+    viewModelFactory: ViewModelFactory
 ) {
+
+    val viewModel: ConfirmPhoneViewModel = viewModel(factory = viewModelFactory)
+
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -153,7 +160,8 @@ private fun ConfirmPhoneScreenPreviewLight() {
     MyLittlePetTheme(darkTheme = false) {
         ConfirmPhoneScreen(
             onBackButtonClickListener = {},
-            onConfirmButtonClickListener = {}
+            onConfirmButtonClickListener = {},
+            viewModelFactory = ViewModelFactory(mapOf())
         )
     }
 }
@@ -164,7 +172,8 @@ private fun ConfirmPhoneScreenPreviewDark() {
     MyLittlePetTheme(darkTheme = true) {
         ConfirmPhoneScreen(
             onBackButtonClickListener = {},
-            onConfirmButtonClickListener = {}
+            onConfirmButtonClickListener = {},
+            viewModelFactory = ViewModelFactory(mapOf())
         )
     }
 }

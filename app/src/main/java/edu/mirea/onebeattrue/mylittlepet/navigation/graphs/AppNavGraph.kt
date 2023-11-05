@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.navigation
+package edu.mirea.onebeattrue.mylittlepet.navigation.graphs
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
