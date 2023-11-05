@@ -36,6 +36,9 @@ fun MainScreen() {
     var isBottomBarVisible by rememberSaveable {
         mutableStateOf(false)
     }
+    var isAuthFinished by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     Scaffold(
         bottomBar = {
@@ -57,10 +60,7 @@ fun MainScreen() {
                             selected = selected,
                             onClick = {
                                 if (!selected) {
-                                    navigationState.navigateTo(
-                                        item.screen.route,
-                                        NavigationItem.Pets.screen.route
-                                    )
+                                    navigationState.navigateTo(item.screen.route)
                                 }
                             },
                             icon = {
@@ -87,6 +87,7 @@ fun MainScreen() {
     ) {
         AppNavGraph(
             navHostController = navigationState.navHostController,
+            startDestination = if (isAuthFinished) Screen.Main.route else Screen.AuthMain.route,
             enterPhoneScreenContent = {
                 isBottomBarVisible = false
                 EnterPhoneScreen(
@@ -102,7 +103,8 @@ fun MainScreen() {
                         navigationState.navigateTo(Screen.EnterPhone.route)
                     },
                     onConfirmButtonClickListener = {
-                        navigationState.navigateToNestedGraph(Screen.Main.route)
+                        navigationState.navHostController.navigate(Screen.Main.route)
+                        isAuthFinished = true
                     }
                 )
             },

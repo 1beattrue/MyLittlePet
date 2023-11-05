@@ -19,24 +19,6 @@ class NavigationState(
             restoreState = true
         }
     }
-
-    fun navigateToNestedGraph(route: String) {
-        navHostController.navigate(route) {
-            popUpTo(navHostController.graph.findStartDestination().id) {
-                inclusive = true
-            }
-        }
-    }
-
-    fun navigateTo(route: String, popUpTo: String) {
-        navHostController.navigate(route) {
-            popUpTo(popUpTo) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
-    }
 }
 
 @Composable

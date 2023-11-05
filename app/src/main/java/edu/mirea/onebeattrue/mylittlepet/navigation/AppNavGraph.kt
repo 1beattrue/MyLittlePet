@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 @Composable
 fun AppNavGraph(
     navHostController: NavHostController,
+    startDestination: String,
+
     enterPhoneScreenContent: @Composable () -> Unit,
     confirmPhoneScreenContent: @Composable () -> Unit,
 
@@ -16,7 +18,7 @@ fun AppNavGraph(
 ) {
     NavHost(
         navController = navHostController,
-        startDestination = Screen.AuthMain.route
+        startDestination = startDestination
     ) {
         authNavGraph(
             enterPhoneScreenContent = enterPhoneScreenContent,
