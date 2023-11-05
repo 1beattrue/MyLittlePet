@@ -20,6 +20,7 @@ import edu.mirea.onebeattrue.mylittlepet.navigation.graphs.AppNavGraph
 import edu.mirea.onebeattrue.mylittlepet.navigation.NavigationItem
 import edu.mirea.onebeattrue.mylittlepet.navigation.Screen
 import edu.mirea.onebeattrue.mylittlepet.navigation.rememberNavigationState
+import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.ui.screens.auth.ConfirmPhoneScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.ui.screens.auth.EnterPhoneScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.ui.screens.main.FeedScreen
@@ -30,7 +31,8 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactor
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen(
-    viewModelFactory: ViewModelFactory
+    viewModelFactory: ViewModelFactory,
+    activity: MainActivity
 ) {
     val navigationState = rememberNavigationState()
     var isBottomBarVisible by rememberSaveable {
@@ -94,7 +96,8 @@ fun MainScreen(
                     onNextButtonClickListener = {
                         navigationState.navigateTo(Screen.ConfirmPhone.route)
                     },
-                    viewModelFactory = viewModelFactory
+                    viewModelFactory = viewModelFactory,
+                    activity = activity
                 )
             },
             confirmPhoneScreenContent = {

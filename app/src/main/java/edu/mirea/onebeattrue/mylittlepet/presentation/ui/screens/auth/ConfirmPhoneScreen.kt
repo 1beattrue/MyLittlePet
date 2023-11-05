@@ -24,8 +24,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,9 +41,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.utils.AuthState
+import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.ui.theme.MyLittlePetTheme
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ConfirmPhoneViewModel
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -51,7 +57,10 @@ fun ConfirmPhoneScreen(
     onConfirmButtonClickListener: () -> Unit,
     viewModelFactory: ViewModelFactory
 ) {
-
+    val code = rememberSaveable {
+        mutableStateOf("")
+    }
+    val scope = rememberCoroutineScope()
     val viewModel: ConfirmPhoneViewModel = viewModel(factory = viewModelFactory)
 
     Column(
@@ -96,7 +105,7 @@ fun ConfirmPhoneScreen(
                     text = stringResource(id = R.string.enter_confirmation_code),
                     fontSize = 24.sp
                 )
-                ConfirmPhoneTextField(modifier = Modifier.fillMaxWidth())
+                ConfirmPhoneTextField(modifier = Modifier.fillMaxWidth(), code = code)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -115,7 +124,17 @@ fun ConfirmPhoneScreen(
                         )
                     }
                     Button(
-                        onClick = { onConfirmButtonClickListener() },
+                        onClick = {
+                            scope.launch(Dispatchers.Main) {
+                                viewModel.signUpWithCredential(code.value).collect {
+                                    when (it) {
+                                        is AuthState.Failure -> TODO()
+                                        is AuthState.Success -> onConfirmButtonClickListener()
+                                        AuthState.Loading -> TODO()
+                                    }
+                                }
+                            }
+                        },
                         shape = RoundedCornerShape(16.dp)
                     ) {
                         Text(
@@ -133,17 +152,16 @@ fun ConfirmPhoneScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 private fun ConfirmPhoneTextField(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    code: MutableState<String>
 ) {
-    var phoneNumber by rememberSaveable { mutableStateOf("") }
-
     OutlinedTextField(
         modifier = modifier,
-        value = phoneNumber,
-        onValueChange = { phoneNumber = it },
+        value = code.value,
+        onValueChange = { code.value = it },
         label = {
             Text(stringResource(id = R.string.confirmation_code_hint))
         },
