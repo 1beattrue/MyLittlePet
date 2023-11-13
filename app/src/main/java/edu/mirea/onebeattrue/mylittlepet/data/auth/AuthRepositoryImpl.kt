@@ -1,6 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.data.auth
 
 import android.app.Activity
+import android.util.Log
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
@@ -23,7 +24,7 @@ class AuthRepositoryImpl @Inject constructor(
     override fun createUserWithPhone(
         phoneNumber: String,
         activity: Activity
-    ): Flow<AuthState<String>> = callbackFlow {
+    ): Flow<AuthState> = callbackFlow {
         trySend(AuthState.Loading)
 
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -33,11 +34,12 @@ class AuthRepositoryImpl @Inject constructor(
 
             override fun onVerificationFailed(e: FirebaseException) {
                 trySend(AuthState.Failure(e))
+                Log.d("AuthRepositoryImpl", e.toString())
             }
 
             override fun onCodeSent(code: String, token: PhoneAuthProvider.ForceResendingToken) {
                 super.onCodeSent(verificationCode, token)
-                trySend(AuthState.Success("Verification code has been sent"))
+                trySend(AuthState.Success)
                 verificationCode = code
             }
         }
@@ -58,14 +60,14 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun signInWithCredential(
         code: String
-    ): Flow<AuthState<String>> = callbackFlow {
+    ): Flow<AuthState> = callbackFlow {
         trySend(AuthState.Loading)
 
         val credential = PhoneAuthProvider.getCredential(verificationCode, code)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    trySend(AuthState.Success("confirmed"))
+                    trySend(AuthState.Success)
                 }
             }
             .addOnFailureListener {

@@ -93,7 +93,7 @@ fun MainScreen(
             enterPhoneScreenContent = {
                 isBottomBarVisible = false
                 EnterPhoneScreen(
-                    onNextButtonClickListener = {
+                    nextScreen = {
                         navigationState.navigateTo(Screen.ConfirmPhone.route)
                     },
                     viewModelFactory = viewModelFactory,
@@ -103,10 +103,10 @@ fun MainScreen(
             confirmPhoneScreenContent = {
                 isBottomBarVisible = false
                 ConfirmPhoneScreen(
-                    onBackButtonClickListener = {
+                    previousScreen = {
                         navigationState.navigateTo(Screen.EnterPhone.route)
                     },
-                    onConfirmButtonClickListener = {
+                    nextScreen = {
                         navigationState.navHostController.navigate(Screen.Main.route)
                         isAuthFinished = true
                     },

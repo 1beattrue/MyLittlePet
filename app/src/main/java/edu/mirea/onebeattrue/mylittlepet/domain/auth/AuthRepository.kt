@@ -8,9 +8,9 @@ interface AuthRepository {
     fun createUserWithPhone(
         phoneNumber: String,
         activity: Activity
-    ): Flow<AuthState<String>>
+    ): Flow<AuthState>
 
     fun signInWithCredential(
         code: String
-    ): Flow<AuthState<String>>
+    ): Flow<AuthState>
 }
