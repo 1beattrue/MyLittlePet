@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.domain.auth.utils
+package edu.mirea.onebeattrue.mylittlepet.domain.auth.state
 
 sealed class AuthState<out R> {
     data class Success<out R>(val result: R) : AuthState<R>()

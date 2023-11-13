@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.ui.theme
+package edu.mirea.onebeattrue.mylittlepet.ui.theme
 
 import android.app.Activity
 import android.os.Build

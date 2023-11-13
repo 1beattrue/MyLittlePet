@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import edu.mirea.onebeattrue.mylittlepet.presentation.ui.screens.MainScreen
-import edu.mirea.onebeattrue.mylittlepet.presentation.ui.theme.MyLittlePetTheme
+import edu.mirea.onebeattrue.mylittlepet.presentation.screens.MainScreen
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
 

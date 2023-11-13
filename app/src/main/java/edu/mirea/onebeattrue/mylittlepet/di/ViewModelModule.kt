@@ -5,8 +5,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.migration.DisableInstallInCheck
 import dagger.multibindings.IntoMap
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ConfirmPhoneViewModel
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.EnterPhoneViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.ConfirmPhoneViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.EnterPhoneViewModel
 
 @DisableInstallInCheck
 @Module
