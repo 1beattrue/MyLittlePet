@@ -194,9 +194,12 @@ private fun PhoneTextField(
         label = {
             Text(stringResource(id = R.string.phone_number_hint))
         },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         shape = RoundedCornerShape(16.dp),
         singleLine = true,
+        prefix = {
+            Text(stringResource(id = R.string.phone_number_prefix))
+        }
     )
 }
 

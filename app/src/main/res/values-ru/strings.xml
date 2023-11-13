@@ -4,6 +4,7 @@
 
     <string name="enter_phone_number">Введите ваш номер телефона</string>
     <string name="phone_number_hint">+7 (XXX) XXX-XX XX</string>
+    <string name="phone_number_prefix">+7</string>
     <string name="next">Далее</string>
 
     <string name="enter_confirmation_code">Введите код подтверждения</string>

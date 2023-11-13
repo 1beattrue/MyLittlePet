@@ -1,6 +1,8 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth
 
 import android.app.Activity
+import android.util.Log
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthRepository
@@ -22,6 +24,7 @@ class EnterPhoneViewModel @Inject constructor(
         phoneNumber: String,
         activity: Activity
     ) {
+        Log.d("tag", phoneNumber)
         viewModelScope.launch {
             repository.createUserWithPhone(phoneNumber, activity).collect {
                 _authState.emit(it)

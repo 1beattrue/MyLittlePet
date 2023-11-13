@@ -3,6 +3,7 @@
 
     <string name="enter_phone_number">Enter your phone number</string>
     <string name="phone_number_hint">+1 (XXX) XXX-XX XX</string>
+    <string name="phone_number_prefix">+1</string>
     <string name="next">Next</string>
 
     <string name="enter_confirmation_code">Enter confirmation code</string>

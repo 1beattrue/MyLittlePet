@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthState
 import kotlinx.coroutines.channels.awaitClose
@@ -45,8 +46,10 @@ class AuthRepositoryImpl @Inject constructor(
         }
 
         firebaseAuth.useAppLanguage()
+        val prefix = activity.getString(R.string.phone_number_prefix)
+
         val options = PhoneAuthOptions.newBuilder(firebaseAuth)
-            .setPhoneNumber(phoneNumber)
+            .setPhoneNumber(prefix + phoneNumber)
             .setTimeout(60L, TimeUnit.SECONDS)
             .setActivity(activity)
             .setCallbacks(callbacks)
