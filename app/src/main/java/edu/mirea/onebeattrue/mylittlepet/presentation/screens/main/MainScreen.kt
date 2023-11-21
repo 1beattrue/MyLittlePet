@@ -9,7 +9,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +46,7 @@ fun MainScreen(
         mutableStateOf(false)
     }
 
-    val screenState by viewModel.screenState.collectAsState(MainScreenState.Initial)
+    val screenState by viewModel.mainScreenState.collectAsState(MainScreenState.Initial)
     when (val state = screenState) {
         MainScreenState.AuthFlow -> {
             startDestination = Screen.AuthMain.route

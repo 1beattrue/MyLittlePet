@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthScreenState
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.ConfirmPhoneViewModel
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
@@ -76,27 +76,27 @@ fun ConfirmPhoneScreen(
     val scope = rememberCoroutineScope()
     val viewModel: ConfirmPhoneViewModel = viewModel(factory = viewModelFactory)
 
-    val authState by viewModel.authState.collectAsState(AuthState.Initial)
-    when (val state = authState) {
-        is AuthState.Failure -> {
+    val authScreenState by viewModel.authScreenState.collectAsState(AuthScreenState.Initial)
+    when (val screenState = authScreenState) {
+        is AuthScreenState.Failure -> {
             progress = false
             scope.launch {
                 snackbarHostState.showSnackbar(
-                    message = state.exception.message.toString()
+                    message = screenState.exception.message.toString()
                 )
             }
         }
 
-        AuthState.Loading -> {
+        AuthScreenState.Loading -> {
             progress = true
         }
 
-        AuthState.Success -> {
+        AuthScreenState.Success -> {
             progress = false
             nextScreen()
         }
 
-        AuthState.Initial -> {
+        AuthScreenState.Initial -> {
             progress = false
         }
     }
