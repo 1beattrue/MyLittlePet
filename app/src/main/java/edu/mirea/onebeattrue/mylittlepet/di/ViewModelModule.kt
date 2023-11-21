@@ -7,6 +7,7 @@ import dagger.hilt.migration.DisableInstallInCheck
 import dagger.multibindings.IntoMap
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.ConfirmPhoneViewModel
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.EnterPhoneViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.main.MainViewModel
 
 @DisableInstallInCheck
 @Module
@@ -20,6 +21,11 @@ interface ViewModelModule {
     @ViewModelKey(ConfirmPhoneViewModel::class)
     @Binds
     fun bindConfirmPhoneViewModel(impl: ConfirmPhoneViewModel): ViewModel
+
+    @IntoMap
+    @ViewModelKey(MainViewModel::class)
+    @Binds
+    fun bindMainViewModel(impl: MainViewModel): ViewModel
 
     // ... добавлять аналогичные методы для других ViewModel'ей
 }

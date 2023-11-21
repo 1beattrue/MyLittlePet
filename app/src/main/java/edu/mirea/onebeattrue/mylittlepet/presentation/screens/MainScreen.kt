@@ -9,12 +9,14 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import edu.mirea.onebeattrue.mylittlepet.navigation.graphs.AppNavGraph
 import edu.mirea.onebeattrue.mylittlepet.navigation.NavigationItem
@@ -27,6 +29,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.screens.main.FeedScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.screens.main.PetsScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.screens.main.ProfileScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.main.MainViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -34,13 +37,11 @@ fun MainScreen(
     viewModelFactory: ViewModelFactory,
     activity: MainActivity
 ) {
+    val viewModel: MainViewModel = viewModel(factory = viewModelFactory)
     val navigationState = rememberNavigationState()
-    var isBottomBarVisible by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isAuthFinished by rememberSaveable {
-        mutableStateOf(false)
-    }
+
+    val isBottomBarVisible by viewModel.isBottomBarVisible.collectAsState()
+    val isAuthFinished by viewModel.isAuthFinished.collectAsState()
 
     Scaffold(
         bottomBar = {
@@ -91,7 +92,6 @@ fun MainScreen(
             navHostController = navigationState.navHostController,
             startDestination = if (isAuthFinished) Screen.Main.route else Screen.AuthMain.route,
             enterPhoneScreenContent = {
-                isBottomBarVisible = false
                 EnterPhoneScreen(
                     nextScreen = {
                         navigationState.navigateTo(Screen.ConfirmPhone.route)
@@ -101,28 +101,27 @@ fun MainScreen(
                 )
             },
             confirmPhoneScreenContent = {
-                isBottomBarVisible = false
                 ConfirmPhoneScreen(
                     previousScreen = {
                         navigationState.navigateTo(Screen.EnterPhone.route)
                     },
                     nextScreen = {
                         navigationState.navHostController.navigate(Screen.Main.route)
-                        isAuthFinished = true
+                        viewModel.finishAuth()
                     },
                     viewModelFactory = viewModelFactory
                 )
             },
             feedScreenContent = {
-                isBottomBarVisible = true
+                viewModel.makeBottomBarVisible()
                 FeedScreen()
             },
             petsScreenContent = {
-                isBottomBarVisible = true
+                viewModel.makeBottomBarVisible()
                 PetsScreen()
             },
             profileScreenContent = {
-                isBottomBarVisible = true
+                viewModel.makeBottomBarVisible()
                 ProfileScreen()
             }
         )

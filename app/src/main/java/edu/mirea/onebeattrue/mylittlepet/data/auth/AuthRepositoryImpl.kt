@@ -4,10 +4,12 @@ import android.app.Activity
 import android.util.Log
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import edu.mirea.onebeattrue.mylittlepet.R
+import edu.mirea.onebeattrue.mylittlepet.di.ApplicationScope
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthState
 import kotlinx.coroutines.channels.awaitClose
@@ -17,10 +19,12 @@ import kotlinx.coroutines.flow.callbackFlow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+@ApplicationScope
 class AuthRepositoryImpl @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
 ) : AuthRepository {
 
+    override val currentUser: FirebaseUser? = firebaseAuth.currentUser
     private lateinit var verificationCode: String
 
     override suspend fun createUserWithPhone(
