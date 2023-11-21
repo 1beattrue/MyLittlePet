@@ -183,7 +183,8 @@ fun EnterPhoneScreen(
                             onClick = {
                                 viewModel.createUserWithPhone(phoneNumber.value, activity)
                             },
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            enabled = !progress
                         ) {
                             Text(
                                 text = stringResource(id = R.string.next),
