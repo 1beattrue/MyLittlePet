@@ -11,6 +11,7 @@ import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthState
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.concurrent.TimeUnit
@@ -22,15 +23,15 @@ class AuthRepositoryImpl @Inject constructor(
 
     private lateinit var verificationCode: String
 
-    override fun createUserWithPhone(
+    override suspend fun createUserWithPhone(
         phoneNumber: String,
         activity: Activity
     ): Flow<AuthState> = callbackFlow {
         trySend(AuthState.Loading)
 
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            override fun onVerificationCompleted(p0: PhoneAuthCredential) {
-                TODO("Not yet implemented")
+            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                trySend(AuthState.Success)
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
@@ -39,7 +40,7 @@ class AuthRepositoryImpl @Inject constructor(
             }
 
             override fun onCodeSent(code: String, token: PhoneAuthProvider.ForceResendingToken) {
-                super.onCodeSent(verificationCode, token)
+                super.onCodeSent(code, token)
                 trySend(AuthState.Success)
                 verificationCode = code
             }
@@ -61,7 +62,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun signInWithCredential(
+    override suspend fun signInWithCredential(
         code: String
     ): Flow<AuthState> = callbackFlow {
         trySend(AuthState.Loading)

@@ -5,12 +5,12 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthState
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
-    fun createUserWithPhone(
+    suspend fun createUserWithPhone(
         phoneNumber: String,
         activity: Activity
     ): Flow<AuthState>
 
-    fun signInWithCredential(
+    suspend fun signInWithCredential(
         code: String
     ): Flow<AuthState>
 }
