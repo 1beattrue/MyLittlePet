@@ -18,9 +18,7 @@ class MainViewModel @Inject constructor(
 
     init {
         if (currentUser == null) {
-            _mainScreenState.value = MainScreenState.AuthFlow(
-
-            )
+            _mainScreenState.value = MainScreenState.AuthFlow()
         } else {
             _mainScreenState.value = MainScreenState.MainFlow(
                 isBottomBarVisible = true
@@ -36,7 +34,6 @@ class MainViewModel @Inject constructor(
 
     fun signOut() {
         authRepository.signOut()
-        _mainScreenState.value = MainScreenState.AuthFlow(
-        )
+        _mainScreenState.value = MainScreenState.AuthFlow()
     }
 }

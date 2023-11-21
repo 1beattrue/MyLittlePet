@@ -194,7 +194,7 @@ private fun PhoneTextField(
     OutlinedTextField(
         modifier = modifier,
         value = phoneNumber.value,
-        onValueChange = { phoneNumber.value = it },
+        onValueChange = { phoneNumber.value = it.filter { symbol -> symbol.isDigit() } },
         label = {
             Text(stringResource(id = R.string.phone_number_hint))
         },

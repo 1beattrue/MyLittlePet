@@ -138,9 +138,12 @@ fun MainScreen(
                 PetsScreen()
             },
             profileScreenContent = {
-                ProfileScreen(viewModelFactory = viewModelFactory, onSignOutButtonClickListener = {
-                    viewModel.signOut()
-                })
+                ProfileScreen(
+                    viewModelFactory = viewModelFactory,
+                    signOut = {
+                        viewModel.signOut()
+                    }
+                )
             }
         )
     }
