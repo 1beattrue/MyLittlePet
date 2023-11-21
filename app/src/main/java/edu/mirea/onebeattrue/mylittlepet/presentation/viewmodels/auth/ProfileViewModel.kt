@@ -8,8 +8,4 @@ class ProfileViewModel @Inject constructor(
     private val repository: AuthRepository
 ) : ViewModel() {
 
-
-    fun signOut() {
-        repository.signOut()
-    }
 }

@@ -48,8 +48,9 @@ fun MainScreen(
 
     val screenState by viewModel.mainScreenState.collectAsState(MainScreenState.Initial)
     when (val state = screenState) {
-        MainScreenState.AuthFlow -> {
+        is MainScreenState.AuthFlow -> {
             startDestination = Screen.AuthMain.route
+            bottomBarVisibility = state.isBottomBarVisible
         }
 
         is MainScreenState.MainFlow -> {
@@ -137,7 +138,9 @@ fun MainScreen(
                 PetsScreen()
             },
             profileScreenContent = {
-                ProfileScreen(viewModelFactory = viewModelFactory)
+                ProfileScreen(viewModelFactory = viewModelFactory, onSignOutButtonClickListener = {
+                    viewModel.signOut()
+                })
             }
         )
     }

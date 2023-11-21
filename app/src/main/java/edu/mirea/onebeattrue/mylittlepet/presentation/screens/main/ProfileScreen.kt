@@ -10,13 +10,14 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.ProfileVie
 
 @Composable
 fun ProfileScreen(
-    viewModelFactory: ViewModelFactory
+    viewModelFactory: ViewModelFactory,
+    onSignOutButtonClickListener : () -> Unit
 ) {
     val viewModel: ProfileViewModel = viewModel(factory = viewModelFactory)
     Column {
         Text(text = "Profile Screen")
         Button(onClick = {
-            viewModel.signOut()
+            onSignOutButtonClickListener()
         }) {
             Text(text = "Выход")
         }
