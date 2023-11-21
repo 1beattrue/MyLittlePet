@@ -18,4 +18,6 @@ interface AuthRepository {
     suspend fun signInWithCredential(
         code: String
     ): Flow<ConfirmPhoneScreenState>
+
+    fun signOut()
 }

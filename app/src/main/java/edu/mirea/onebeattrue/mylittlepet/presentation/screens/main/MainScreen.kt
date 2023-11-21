@@ -137,7 +137,7 @@ fun MainScreen(
                 PetsScreen()
             },
             profileScreenContent = {
-                ProfileScreen()
+                ProfileScreen(viewModelFactory = viewModelFactory)
             }
         )
     }
