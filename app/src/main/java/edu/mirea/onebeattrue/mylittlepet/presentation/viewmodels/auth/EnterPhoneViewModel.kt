@@ -1,11 +1,11 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth
 
 import android.app.Activity
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.EnterPhoneScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidPhoneNumberException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -24,13 +24,20 @@ class EnterPhoneViewModel @Inject constructor(
         phoneNumber: String,
         activity: Activity
     ) {
-        Log.d("tag", phoneNumber)
         viewModelScope.launch {
-            repository.createUserWithPhone(phoneNumber, activity)
-                .onEach {
-                    _enterPhoneScreenState.value = it
-                }
-                .launchIn(viewModelScope)
+            if (!isValidPhoneNumber(phoneNumber)) {
+                _enterPhoneScreenState.value = EnterPhoneScreenState.Failure(InvalidPhoneNumberException())
+            } else {
+                repository.createUserWithPhone(phoneNumber, activity)
+                    .onEach {
+                        _enterPhoneScreenState.value = it
+                    }
+                    .launchIn(viewModelScope)
+            }
         }
+    }
+
+    private fun isValidPhoneNumber(phoneNumber: String): Boolean {
+        return phoneNumber.trim().length == 10
     }
 }

@@ -3,6 +3,7 @@
     <string name="app_name">Мой Маленький Питомец</string>
 
     <string name="enter_phone_number">Введите ваш номер телефона</string>
+    <string name="error_phone_number">Некорректный номер телефона</string>
     <string name="phone_number_hint">+7 (XXX) XXX-XX XX</string>
     <string name="phone_number_prefix">+7</string>
     <string name="next">Далее</string>

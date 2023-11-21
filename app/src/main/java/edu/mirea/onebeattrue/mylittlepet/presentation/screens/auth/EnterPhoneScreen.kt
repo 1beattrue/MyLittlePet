@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -47,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.EnterPhoneScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidPhoneNumberException
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.EnterPhoneViewModel
@@ -66,6 +68,10 @@ fun EnterPhoneScreen(
         mutableStateOf("")
     }
 
+    val isPhoneTextFieldError = rememberSaveable {
+        mutableStateOf(false)
+    }
+
     var progress by rememberSaveable {
         mutableStateOf(false)
     }
@@ -76,16 +82,23 @@ fun EnterPhoneScreen(
     val scope = rememberCoroutineScope()
     val viewModel: EnterPhoneViewModel = viewModel(factory = viewModelFactory)
 
-    val enterPhoneScreenState by viewModel.enterPhoneScreenState.collectAsState(EnterPhoneScreenState.Initial)
+    val enterPhoneScreenState by viewModel.enterPhoneScreenState.collectAsState(
+        EnterPhoneScreenState.Initial
+    )
     Log.d("EnterPhoneScreen", enterPhoneScreenState.toString())
     when (val screenState = enterPhoneScreenState) {
         is EnterPhoneScreenState.Failure -> {
-            progress = false
             scope.launch {
-                snackbarHostState.showSnackbar(
-                    message = screenState.exception.message.toString(),
-                    duration = SnackbarDuration.Long
-                )
+                progress = false
+
+                if (screenState.exception is InvalidPhoneNumberException) {
+                    isPhoneTextFieldError.value = true
+                } else {
+                    snackbarHostState.showSnackbar(
+                        message = screenState.exception.message.toString(),
+                        duration = SnackbarDuration.Long
+                    )
+                }
             }
         }
 
@@ -157,7 +170,11 @@ fun EnterPhoneScreen(
                         text = stringResource(id = R.string.enter_phone_number),
                         fontSize = 24.sp
                     )
-                    PhoneTextField(modifier = Modifier.fillMaxWidth(), phoneNumber = phoneNumber)
+                    PhoneTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        phoneNumber = phoneNumber,
+                        isError = isPhoneTextFieldError
+                    )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
@@ -189,12 +206,16 @@ fun EnterPhoneScreen(
 @Composable
 private fun PhoneTextField(
     modifier: Modifier = Modifier,
-    phoneNumber: MutableState<String>
+    phoneNumber: MutableState<String>,
+    isError: MutableState<Boolean>
 ) {
     OutlinedTextField(
         modifier = modifier,
         value = phoneNumber.value,
-        onValueChange = { phoneNumber.value = it.filter { symbol -> symbol.isDigit() } },
+        onValueChange = {
+            phoneNumber.value = it.filter { symbol -> symbol.isDigit() }
+            isError.value = false
+        },
         label = {
             Text(stringResource(id = R.string.phone_number_hint))
         },
@@ -203,6 +224,17 @@ private fun PhoneTextField(
         singleLine = true,
         prefix = {
             Text(stringResource(id = R.string.phone_number_prefix))
+        },
+        isError = isError.value,
+        supportingText = {
+            if (isError.value) {
+                Text(text = stringResource(id = R.string.error_phone_number))
+            }
+        },
+        trailingIcon = {
+            if (isError.value) {
+                Icon(imageVector = Icons.Rounded.Warning, contentDescription = null)
+            }
         }
     )
 }
