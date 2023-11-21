@@ -2,36 +2,28 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.main
 
 import androidx.lifecycle.ViewModel
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthRepository
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.MainScreenState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
     private val authRepository: AuthRepository
-): ViewModel() {
+) : ViewModel() {
 
-    private val _isBottomBarVisible = MutableStateFlow(false)
-    val isBottomBarVisible = _isBottomBarVisible.asStateFlow()
-
-    private val _isAuthFinished = MutableStateFlow(false)
-    val isAuthFinished = _isAuthFinished.asStateFlow()
+    private val _screenState = MutableStateFlow<MainScreenState>(MainScreenState.Initial)
+    val screenState = _screenState.asStateFlow()
 
 
     init {
-        if (authRepository.currentUser != null) {
-            _isAuthFinished.value = true
+        if (authRepository.currentUser == null) {
+            _screenState.value = MainScreenState.AuthFlow
+        } else {
+            _screenState.value = MainScreenState.MainFlow(isBottomBarVisible = true)
         }
     }
 
-    fun makeBottomBarVisible() {
-        _isBottomBarVisible.value = true
-    }
-
-    fun makeBottomBarInvisible() {
-        _isBottomBarVisible.value = true
-    }
-
     fun finishAuth() {
-        _isAuthFinished.value = true
+        _screenState.value = MainScreenState.MainFlow(isBottomBarVisible = true)
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">МойМаленькийПитомец</string>
+    <string name="app_name">Мой Маленький Питомец</string>
 
     <string name="enter_phone_number">Введите ваш номер телефона</string>
     <string name="phone_number_hint">+7 (XXX) XXX-XX XX</string>
