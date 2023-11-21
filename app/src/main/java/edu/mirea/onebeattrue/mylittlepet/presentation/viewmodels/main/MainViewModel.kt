@@ -14,15 +14,21 @@ class MainViewModel @Inject constructor(
     private val _mainScreenState = MutableStateFlow<MainScreenState>(MainScreenState.Initial)
     val mainScreenState = _mainScreenState.asStateFlow()
 
+    private val currentUser = authRepository.currentUser
+
     init {
-        if (authRepository.currentUser == null) {
+        if (currentUser == null) {
             _mainScreenState.value = MainScreenState.AuthFlow
         } else {
-            _mainScreenState.value = MainScreenState.MainFlow(isBottomBarVisible = true)
+            _mainScreenState.value = MainScreenState.MainFlow(
+                isBottomBarVisible = true
+            )
         }
     }
 
     fun finishAuth() {
-        _mainScreenState.value = MainScreenState.MainFlow(isBottomBarVisible = true)
+        _mainScreenState.value = MainScreenState.MainFlow(
+            isBottomBarVisible = true
+        )
     }
 }

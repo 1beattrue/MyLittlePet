@@ -1,6 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -44,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.EnterPhoneScreenState
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.EnterPhoneViewModel
@@ -74,27 +76,29 @@ fun EnterPhoneScreen(
     val scope = rememberCoroutineScope()
     val viewModel: EnterPhoneViewModel = viewModel(factory = viewModelFactory)
 
-    val authScreenState by viewModel.authScreenState.collectAsState(AuthScreenState.Initial)
-    when (val screenState = authScreenState) {
-        is AuthScreenState.Failure -> {
+    val enterPhoneScreenState by viewModel.enterPhoneScreenState.collectAsState(EnterPhoneScreenState.Initial)
+    Log.d("EnterPhoneScreen", enterPhoneScreenState.toString())
+    when (val screenState = enterPhoneScreenState) {
+        is EnterPhoneScreenState.Failure -> {
             progress = false
             scope.launch {
                 snackbarHostState.showSnackbar(
-                    message = screenState.exception.message.toString()
+                    message = screenState.exception.message.toString(),
+                    duration = SnackbarDuration.Long
                 )
             }
         }
 
-        AuthScreenState.Loading -> {
+        EnterPhoneScreenState.Loading -> {
             progress = true
         }
 
-        AuthScreenState.Success -> {
+        EnterPhoneScreenState.Success -> {
             progress = false
             nextScreen()
         }
 
-        AuthScreenState.Initial -> {
+        EnterPhoneScreenState.Initial -> {
             progress = false
         }
     }

@@ -112,7 +112,7 @@ fun MainScreen(
             enterPhoneScreenContent = {
                 EnterPhoneScreen(
                     nextScreen = {
-                        navigationState.navigateTo(Screen.ConfirmPhone.route)
+                        navigationState.navHostController.navigate(Screen.ConfirmPhone.route)
                     },
                     viewModelFactory = viewModelFactory,
                     activity = activity
@@ -121,7 +121,7 @@ fun MainScreen(
             confirmPhoneScreenContent = {
                 ConfirmPhoneScreen(
                     previousScreen = {
-                        navigationState.navigateTo(Screen.EnterPhone.route)
+                        navigationState.navHostController.navigate(Screen.EnterPhone.route)
                     },
                     nextScreen = {
                         navigationState.navHostController.navigate(Screen.Main.route)

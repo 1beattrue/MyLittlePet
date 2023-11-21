@@ -8,8 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import edu.mirea.onebeattrue.mylittlepet.presentation.screens.main.MainScreen
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
@@ -24,13 +24,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
         super.onCreate(savedInstanceState)
+
         setContent {
             MyLittlePetTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(viewModelFactory, this)
+                    MainScreen(
+                        viewModelFactory = viewModelFactory,
+                        activity = this
+                    )
                 }
             }
         }
