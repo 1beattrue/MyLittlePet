@@ -46,19 +46,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.EnterPhoneScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthScreenState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidPhoneNumberException
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidVerificationCodeException
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.EnterPhoneViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel
 import kotlinx.coroutines.launch
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun EnterPhoneScreen(
+fun AuthScreen(
     modifier: Modifier = Modifier,
-    nextScreen: () -> Unit,
+    finishAuth: () -> Unit,
     viewModelFactory: ViewModelFactory,
     activity: MainActivity
 ) {
@@ -71,7 +72,19 @@ fun EnterPhoneScreen(
         mutableStateOf(false)
     }
 
+    val code = rememberSaveable {
+        mutableStateOf("")
+    }
+
+    val isConfirmPhoneTextFieldError = rememberSaveable {
+        mutableStateOf(false)
+    }
+
     var progress by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var isCodeSent by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -79,38 +92,51 @@ fun EnterPhoneScreen(
     // ---------------------------------------------------------------------------------------------
 
     val scope = rememberCoroutineScope()
-    val viewModel: EnterPhoneViewModel = viewModel(factory = viewModelFactory)
+    val viewModel: AuthViewModel = viewModel(factory = viewModelFactory)
 
-    val enterPhoneScreenState by viewModel.enterPhoneScreenState.collectAsState(
-        EnterPhoneScreenState.Initial
+    val authScreenState by viewModel.screenState.collectAsState(
+        AuthScreenState.Initial
     )
 
-    when (val screenState = enterPhoneScreenState) {
-        is EnterPhoneScreenState.Failure -> {
+    when (val screenState = authScreenState) {
+        is AuthScreenState.Failure -> {
             scope.launch {
                 progress = false
 
-                if (screenState.exception is InvalidPhoneNumberException) {
-                    isPhoneTextFieldError.value = true
-                } else {
-                    snackbarHostState.showSnackbar(
-                        message = screenState.exception.message.toString(),
-                        duration = SnackbarDuration.Long
-                    )
+                when (screenState.exception) {
+                    is InvalidPhoneNumberException -> {
+                        isPhoneTextFieldError.value = true
+                    }
+
+                    is InvalidVerificationCodeException -> {
+                        isConfirmPhoneTextFieldError.value = true
+                    }
+
+                    else -> {
+                        snackbarHostState.showSnackbar(
+                            message = screenState.exception.message.toString(),
+                            duration = SnackbarDuration.Long
+                        )
+                    }
                 }
             }
         }
 
-        EnterPhoneScreenState.Loading -> {
+        AuthScreenState.Loading -> {
             progress = true
         }
 
-        EnterPhoneScreenState.Success -> {
+        AuthScreenState.Success -> {
             progress = false
-            nextScreen()
+            finishAuth()
         }
 
-        EnterPhoneScreenState.Initial -> {
+        AuthScreenState.CodeSent -> {
+            progress = false
+            isCodeSent = true
+        }
+
+        AuthScreenState.Initial -> {
             progress = false
         }
     }
@@ -165,28 +191,54 @@ fun EnterPhoneScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.enter_phone_number),
-                        fontSize = 24.sp
-                    )
+                    if (!isCodeSent) {
+                        Text(
+                            text = stringResource(id = R.string.enter_phone_number),
+                            fontSize = 24.sp
+                        )
+                    }
                     PhoneTextField(
                         modifier = Modifier.fillMaxWidth(),
                         phoneNumber = phoneNumber,
-                        isError = isPhoneTextFieldError
+                        isError = isPhoneTextFieldError,
+                        isEnabled = !isCodeSent
                     )
+                    if (isCodeSent) {
+                        Text(
+                            text = stringResource(id = R.string.enter_confirmation_code),
+                            fontSize = 24.sp
+                        )
+                        ConfirmPhoneTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            code = code,
+                            isError = isConfirmPhoneTextFieldError
+                        )
+                    }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
                         Button(
                             onClick = {
-                                viewModel.createUserWithPhone(phoneNumber.value, activity)
+                                if (!isCodeSent) {
+                                    viewModel.createUserWithPhone(
+                                        phoneNumber = phoneNumber.value,
+                                        activity = activity
+                                    )
+                                } else {
+                                    viewModel.signUpWithCredential(
+                                        code = code.value
+                                    )
+                                }
+
                             },
                             shape = RoundedCornerShape(16.dp),
                             enabled = !progress
                         ) {
                             Text(
-                                text = stringResource(id = R.string.next),
+                                text = stringResource(
+                                    id = if (!isCodeSent) R.string.next else R.string.confirm
+                                ),
                                 fontSize = 16.sp
                             )
                             Icon(
@@ -209,7 +261,8 @@ fun EnterPhoneScreen(
 private fun PhoneTextField(
     modifier: Modifier = Modifier,
     phoneNumber: MutableState<String>,
-    isError: MutableState<Boolean>
+    isError: MutableState<Boolean>,
+    isEnabled: Boolean
 ) {
     OutlinedTextField(
         modifier = modifier,
@@ -237,22 +290,40 @@ private fun PhoneTextField(
             if (isError.value) {
                 Icon(imageVector = Icons.Rounded.Warning, contentDescription = null)
             }
-        }
+        },
+        enabled = isEnabled
     )
 }
 
-//@Preview
-//@Composable
-//private fun EnterPhoneScreenPreviewLight() {
-//    MyLittlePetTheme(darkTheme = false) {
-//        EnterPhoneScreen()
-//    }
-//}
-//
-//@Preview
-//@Composable
-//private fun EnterPhoneScreenPreviewDark() {
-//    MyLittlePetTheme(darkTheme = true) {
-//        EnterPhoneScreen()
-//    }
-//}
+@Composable
+private fun ConfirmPhoneTextField(
+    modifier: Modifier = Modifier,
+    code: MutableState<String>,
+    isError: MutableState<Boolean>
+) {
+    OutlinedTextField(
+        modifier = modifier,
+        value = code.value,
+        onValueChange = {
+            code.value = it.filter { symbol -> symbol.isDigit() }
+            isError.value = false
+        },
+        label = {
+            Text(stringResource(id = R.string.confirmation_code_hint))
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        shape = RoundedCornerShape(16.dp),
+        singleLine = true,
+        isError = isError.value,
+        supportingText = {
+            if (isError.value) {
+                Text(text = stringResource(id = R.string.error_confirmation_code))
+            }
+        },
+        trailingIcon = {
+            if (isError.value) {
+                Icon(imageVector = Icons.Rounded.Warning, contentDescription = null)
+            }
+        }
+    )
+}

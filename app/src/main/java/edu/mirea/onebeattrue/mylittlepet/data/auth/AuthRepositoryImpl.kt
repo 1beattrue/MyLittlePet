@@ -11,8 +11,7 @@ import com.google.firebase.auth.PhoneAuthProvider
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.di.ApplicationScope
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthRepository
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.ConfirmPhoneScreenState
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.EnterPhoneScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthScreenState
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -30,22 +29,22 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun createUserWithPhone(
         phoneNumber: String,
         activity: Activity
-    ): Flow<EnterPhoneScreenState> = callbackFlow {
-        trySend(EnterPhoneScreenState.Loading)
+    ): Flow<AuthScreenState> = callbackFlow {
+        trySend(AuthScreenState.Loading)
 
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                trySend(EnterPhoneScreenState.Success)
+                trySend(AuthScreenState.Success)
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
-                trySend(EnterPhoneScreenState.Failure(e))
+                trySend(AuthScreenState.Failure(e))
                 Log.d("AuthRepositoryImpl", e.toString())
             }
 
             override fun onCodeSent(code: String, token: PhoneAuthProvider.ForceResendingToken) {
                 super.onCodeSent(code, token)
-                trySend(EnterPhoneScreenState.Success)
+                trySend(AuthScreenState.CodeSent)
                 verificationCode = code
             }
         }
@@ -68,18 +67,18 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun signInWithCredential(
         code: String
-    ): Flow<ConfirmPhoneScreenState> = callbackFlow {
-        trySend(ConfirmPhoneScreenState.Loading)
+    ): Flow<AuthScreenState> = callbackFlow {
+        trySend(AuthScreenState.Loading)
 
         val credential = PhoneAuthProvider.getCredential(verificationCode, code)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    trySend(ConfirmPhoneScreenState.Success)
+                    trySend(AuthScreenState.Success)
                 }
             }
             .addOnFailureListener {
-                trySend(ConfirmPhoneScreenState.Failure(it))
+                trySend(AuthScreenState.Failure(it))
             }
 
         awaitClose {

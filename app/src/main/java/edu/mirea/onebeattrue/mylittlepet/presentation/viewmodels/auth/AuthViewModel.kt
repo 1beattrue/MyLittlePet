@@ -1,0 +1,62 @@
+package edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth
+
+import android.app.Activity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthRepository
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidPhoneNumberException
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidVerificationCodeException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+class AuthViewModel @Inject constructor(
+    private val repository: AuthRepository
+) : ViewModel() {
+    private val _screenState =
+        MutableStateFlow<AuthScreenState>(AuthScreenState.Initial)
+    val screenState = _screenState.asStateFlow()
+
+    fun createUserWithPhone(
+        phoneNumber: String,
+        activity: Activity
+    ) {
+        viewModelScope.launch {
+            if (!isValidPhoneNumber(phoneNumber)) {
+                _screenState.value =
+                    AuthScreenState.Failure(InvalidPhoneNumberException())
+            } else {
+                repository.createUserWithPhone(phoneNumber, activity)
+                    .collect {
+                        _screenState.value = it
+                    }
+            }
+        }
+    }
+
+    fun signUpWithCredential(
+        code: String
+    ) {
+        viewModelScope.launch {
+            if (!isValidConfirmationCode(code)) {
+                _screenState.value =
+                    AuthScreenState.Failure(InvalidVerificationCodeException())
+            } else {
+                repository.signInWithCredential(code)
+                    .collect {
+                        _screenState.value = it
+                    }
+            }
+        }
+    }
+
+    private fun isValidConfirmationCode(code: String): Boolean {
+        return code.trim().length == 6
+    }
+
+    private fun isValidPhoneNumber(phoneNumber: String): Boolean {
+        return phoneNumber.trim().length == 10
+    }
+}

@@ -5,8 +5,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.migration.DisableInstallInCheck
 import dagger.multibindings.IntoMap
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.ConfirmPhoneViewModel
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.EnterPhoneViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.ProfileViewModel
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.main.MainViewModel
 
@@ -14,24 +13,20 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.main.MainViewMo
 @Module
 interface ViewModelModule {
     @IntoMap
-    @ViewModelKey(EnterPhoneViewModel::class)
+    @ViewModelKey(AuthViewModel::class)
     @Binds
-    fun bindEnterPhoneViewModel(impl: EnterPhoneViewModel): ViewModel
-
-    @IntoMap
-    @ViewModelKey(ConfirmPhoneViewModel::class)
-    @Binds
-    fun bindConfirmPhoneViewModel(impl: ConfirmPhoneViewModel): ViewModel
+    fun bindAuthViewModel(impl: AuthViewModel): ViewModel
 
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     @Binds
     fun bindMainViewModel(impl: MainViewModel): ViewModel
 
-
     @IntoMap
     @ViewModelKey(ProfileViewModel::class)
     @Binds
     fun bindProfileViewModel(impl: ProfileViewModel): ViewModel
+
+
     // ... добавлять аналогичные методы для других ViewModel'ей
 }

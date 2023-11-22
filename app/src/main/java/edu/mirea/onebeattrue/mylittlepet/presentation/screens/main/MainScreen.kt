@@ -24,8 +24,7 @@ import edu.mirea.onebeattrue.mylittlepet.navigation.Screen
 import edu.mirea.onebeattrue.mylittlepet.navigation.graphs.AppNavGraph
 import edu.mirea.onebeattrue.mylittlepet.navigation.rememberNavigationState
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
-import edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth.ConfirmPhoneScreen
-import edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth.EnterPhoneScreen
+import edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth.AuthScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.main.MainViewModel
 
@@ -39,7 +38,7 @@ fun MainScreen(
     val navigationState = rememberNavigationState()
 
     var startDestination by rememberSaveable {
-        mutableStateOf(Screen.AuthMain.route)
+        mutableStateOf(Screen.Auth.route)
     }
 
     var bottomBarVisibility by rememberSaveable {
@@ -49,7 +48,7 @@ fun MainScreen(
     val screenState by viewModel.mainScreenState.collectAsState(MainScreenState.Initial)
     when (val state = screenState) {
         is MainScreenState.AuthFlow -> {
-            startDestination = Screen.AuthMain.route
+            startDestination = Screen.Auth.route
             bottomBarVisibility = state.isBottomBarVisible
         }
 
@@ -110,25 +109,14 @@ fun MainScreen(
         AppNavGraph(
             navHostController = navigationState.navHostController,
             startDestination = startDestination,
-            enterPhoneScreenContent = {
-                EnterPhoneScreen(
-                    nextScreen = {
-                        navigationState.navigateTo(Screen.ConfirmPhone.route)
-                    },
-                    viewModelFactory = viewModelFactory,
-                    activity = activity
-                )
-            },
-            confirmPhoneScreenContent = {
-                ConfirmPhoneScreen(
-                    previousScreen = {
-                        navigationState.navigateTo(Screen.EnterPhone.route)
-                    },
-                    nextScreen = {
+            authScreenContent = {
+                AuthScreen(
+                    finishAuth = {
                         navigationState.navHostController.navigate(Screen.Main.route)
                         viewModel.finishAuth()
                     },
-                    viewModelFactory = viewModelFactory
+                    viewModelFactory = viewModelFactory,
+                    activity = activity
                 )
             },
             feedScreenContent = {

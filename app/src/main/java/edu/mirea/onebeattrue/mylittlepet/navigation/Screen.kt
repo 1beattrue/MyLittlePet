@@ -3,9 +3,7 @@ package edu.mirea.onebeattrue.mylittlepet.navigation
 sealed class Screen(
     val route: String
 ) {
-    object AuthMain : Screen(ROUTE_AUTH_MAIN)
-    object EnterPhone : Screen(ROUTE_ENTER_PHONE)
-    object ConfirmPhone : Screen(ROUTE_CONFIRM_PHONE)
+    object Auth : Screen(ROUTE_AUTH)
 
     object Main : Screen(ROUTE_MAIN)
     object Feed : Screen(ROUTE_FEED)
@@ -13,9 +11,7 @@ sealed class Screen(
     object Profile : Screen(ROUTE_PROFILE)
 
     private companion object {
-        const val ROUTE_AUTH_MAIN = "auth_main"
-        const val ROUTE_ENTER_PHONE = "enter_phone"
-        const val ROUTE_CONFIRM_PHONE = "confirm_phone"
+        const val ROUTE_AUTH = "auth"
         const val ROUTE_MAIN = "main"
         const val ROUTE_FEED = "feed"
         const val ROUTE_PETS = "pets"
