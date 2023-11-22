@@ -55,7 +55,7 @@ class AuthRepositoryImpl @Inject constructor(
 
         val options = PhoneAuthOptions.newBuilder(firebaseAuth)
             .setPhoneNumber(prefix + phoneNumber)
-            .setTimeout(60L, TimeUnit.SECONDS)
+            .setTimeout(TIMEOUT, TimeUnit.SECONDS)
             .setActivity(activity)
             .setCallbacks(callbacks)
             .build()
@@ -91,4 +91,7 @@ class AuthRepositoryImpl @Inject constructor(
         firebaseAuth.signOut()
     }
 
+    companion object {
+        private const val TIMEOUT = 60L
+    }
 }

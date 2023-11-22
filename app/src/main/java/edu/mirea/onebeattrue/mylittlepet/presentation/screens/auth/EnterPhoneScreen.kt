@@ -1,7 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -85,7 +84,7 @@ fun EnterPhoneScreen(
     val enterPhoneScreenState by viewModel.enterPhoneScreenState.collectAsState(
         EnterPhoneScreenState.Initial
     )
-    Log.d("EnterPhoneScreen", enterPhoneScreenState.toString())
+
     when (val screenState = enterPhoneScreenState) {
         is EnterPhoneScreenState.Failure -> {
             scope.launch {
@@ -199,7 +198,9 @@ fun EnterPhoneScreen(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            if (progress) LinearProgressIndicator()
+            if (progress) {
+                LinearProgressIndicator()
+            }
         }
     }
 }
