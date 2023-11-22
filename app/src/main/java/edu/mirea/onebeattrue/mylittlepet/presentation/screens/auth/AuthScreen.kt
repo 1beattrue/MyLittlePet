@@ -1,6 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -52,6 +53,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidVerificationCo
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -173,12 +175,12 @@ fun AuthScreen(
                     )
                     .fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.onBackground
                 ),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = 32.dp
+                    defaultElevation = (8).dp
                 )
             ) {
                 Column(
@@ -191,7 +193,7 @@ fun AuthScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (!isCodeSent) {
+                    AnimatedVisibility(visible = !isCodeSent) {
                         Text(
                             text = stringResource(id = R.string.enter_phone_number),
                             fontSize = 24.sp
@@ -203,16 +205,22 @@ fun AuthScreen(
                         isError = isPhoneTextFieldError,
                         isEnabled = !isCodeSent
                     )
-                    if (isCodeSent) {
-                        Text(
-                            text = stringResource(id = R.string.enter_confirmation_code),
-                            fontSize = 24.sp
-                        )
-                        ConfirmPhoneTextField(
+                    AnimatedVisibility(visible = isCodeSent) {
+                        Column(
                             modifier = Modifier.fillMaxWidth(),
-                            code = code,
-                            isError = isConfirmPhoneTextFieldError
-                        )
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.enter_confirmation_code),
+                                fontSize = 24.sp
+                            )
+                            ConfirmPhoneTextField(
+                                modifier = Modifier.fillMaxWidth(),
+                                code = code,
+                                isError = isConfirmPhoneTextFieldError
+                            )
+                        }
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -250,7 +258,7 @@ fun AuthScreen(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            if (progress) {
+            AnimatedVisibility(visible = progress) {
                 LinearProgressIndicator()
             }
         }
