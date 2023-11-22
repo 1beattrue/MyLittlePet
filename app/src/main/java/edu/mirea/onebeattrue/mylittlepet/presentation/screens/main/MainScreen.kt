@@ -1,6 +1,9 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.screens.main
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -63,7 +66,11 @@ fun MainScreen(
 
     Scaffold(
         bottomBar = {
-            if (bottomBarVisibility) {
+            AnimatedVisibility(
+                visible = bottomBarVisibility,
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
                 NavigationBar {
                     val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
 

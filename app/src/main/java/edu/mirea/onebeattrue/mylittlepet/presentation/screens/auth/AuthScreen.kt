@@ -2,6 +2,8 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,7 +55,6 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidVerificationCo
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -193,7 +194,11 @@ fun AuthScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    AnimatedVisibility(visible = !isCodeSent) {
+                    AnimatedVisibility(
+                        visible = !isCodeSent,
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
+                    ) {
                         Text(
                             text = stringResource(id = R.string.enter_phone_number),
                             fontSize = 24.sp
@@ -205,7 +210,11 @@ fun AuthScreen(
                         isError = isPhoneTextFieldError,
                         isEnabled = !isCodeSent
                     )
-                    AnimatedVisibility(visible = isCodeSent) {
+                    AnimatedVisibility(
+                        visible = isCodeSent,
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
+                    ) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -258,7 +267,11 @@ fun AuthScreen(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            AnimatedVisibility(visible = progress) {
+            AnimatedVisibility(
+                visible = progress,
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
                 LinearProgressIndicator()
             }
         }
