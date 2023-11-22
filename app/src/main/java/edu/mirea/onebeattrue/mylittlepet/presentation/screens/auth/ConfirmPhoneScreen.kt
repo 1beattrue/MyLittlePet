@@ -16,6 +16,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -48,9 +49,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.ConfirmPhoneScreenState
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.ConfirmPhoneViewModel
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidVerificationCodeException
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.ConfirmPhoneViewModel
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 import kotlinx.coroutines.launch
 
 
@@ -67,6 +69,10 @@ fun ConfirmPhoneScreen(
         mutableStateOf("")
     }
 
+    val isConfirmPhoneTextFieldError = rememberSaveable {
+        mutableStateOf(false)
+    }
+
     var progress by rememberSaveable {
         mutableStateOf(false)
     }
@@ -77,15 +83,22 @@ fun ConfirmPhoneScreen(
     val scope = rememberCoroutineScope()
     val viewModel: ConfirmPhoneViewModel = viewModel(factory = viewModelFactory)
 
-    val confirmPhoneScreenState by viewModel.confirmPhoneScreenState.collectAsState(ConfirmPhoneScreenState.Initial)
+    val confirmPhoneScreenState by viewModel.confirmPhoneScreenState.collectAsState(
+        ConfirmPhoneScreenState.Initial
+    )
     when (val screenState = confirmPhoneScreenState) {
         is ConfirmPhoneScreenState.Failure -> {
-            progress = false
             scope.launch {
-                snackbarHostState.showSnackbar(
-                    message = screenState.exception.message.toString(),
-                    duration = SnackbarDuration.Long
-                )
+                progress = false
+
+                if (screenState.exception is InvalidVerificationCodeException) {
+                    isConfirmPhoneTextFieldError.value = true
+                } else {
+                    snackbarHostState.showSnackbar(
+                        message = screenState.exception.message.toString(),
+                        duration = SnackbarDuration.Long
+                    )
+                }
             }
         }
 
@@ -157,7 +170,11 @@ fun ConfirmPhoneScreen(
                         text = stringResource(id = R.string.enter_confirmation_code),
                         fontSize = 24.sp
                     )
-                    ConfirmPhoneTextField(modifier = Modifier.fillMaxWidth(), code = code)
+                    ConfirmPhoneTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        code = code,
+                        isError = isConfirmPhoneTextFieldError
+                    )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -179,7 +196,8 @@ fun ConfirmPhoneScreen(
                             onClick = {
                                 viewModel.signUpWithCredential(code.value)
                             },
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            enabled = !progress
                         ) {
                             Text(
                                 text = stringResource(id = R.string.confirm),
@@ -203,18 +221,33 @@ fun ConfirmPhoneScreen(
 @Composable
 private fun ConfirmPhoneTextField(
     modifier: Modifier = Modifier,
-    code: MutableState<String>
+    code: MutableState<String>,
+    isError: MutableState<Boolean>
 ) {
     OutlinedTextField(
         modifier = modifier,
         value = code.value,
-        onValueChange = { code.value = it },
+        onValueChange = {
+            code.value = it.filter { symbol -> symbol.isDigit() }
+            isError.value = false
+        },
         label = {
             Text(stringResource(id = R.string.confirmation_code_hint))
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         shape = RoundedCornerShape(16.dp),
         singleLine = true,
+        isError = isError.value,
+        supportingText = {
+            if (isError.value) {
+                Text(text = stringResource(id = R.string.error_confirmation_code))
+            }
+        },
+        trailingIcon = {
+            if (isError.value) {
+                Icon(imageVector = Icons.Rounded.Warning, contentDescription = null)
+            }
+        }
     )
 }
 

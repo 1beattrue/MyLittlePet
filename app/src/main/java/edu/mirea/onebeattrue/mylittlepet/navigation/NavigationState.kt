@@ -19,6 +19,17 @@ class NavigationState(
             restoreState = true
         }
     }
+
+    fun navigatePopUpInclusive(route: String) {
+        navHostController.navigate(route) {
+            popUpTo(
+                navHostController.currentDestination?.id
+                    ?: throw RuntimeException("current destination = null")
+            ) {
+                inclusive = true
+            }
+        }
+    }
 }
 
 @Composable

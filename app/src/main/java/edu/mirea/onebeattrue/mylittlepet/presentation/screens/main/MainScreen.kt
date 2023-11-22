@@ -19,9 +19,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.MainScreenState
-import edu.mirea.onebeattrue.mylittlepet.navigation.graphs.AppNavGraph
 import edu.mirea.onebeattrue.mylittlepet.navigation.NavigationItem
 import edu.mirea.onebeattrue.mylittlepet.navigation.Screen
+import edu.mirea.onebeattrue.mylittlepet.navigation.graphs.AppNavGraph
 import edu.mirea.onebeattrue.mylittlepet.navigation.rememberNavigationState
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth.ConfirmPhoneScreen
@@ -122,7 +122,7 @@ fun MainScreen(
             confirmPhoneScreenContent = {
                 ConfirmPhoneScreen(
                     previousScreen = {
-                        navigationState.navHostController.navigate(Screen.EnterPhone.route)
+                        navigationState.navigatePopUpInclusive(Screen.EnterPhone.route)
                     },
                     nextScreen = {
                         navigationState.navHostController.navigate(Screen.Main.route)

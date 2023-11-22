@@ -8,8 +8,6 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.EnterPhoneScreenState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidPhoneNumberException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,13 +24,13 @@ class EnterPhoneViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (!isValidPhoneNumber(phoneNumber)) {
-                _enterPhoneScreenState.value = EnterPhoneScreenState.Failure(InvalidPhoneNumberException())
+                _enterPhoneScreenState.value =
+                    EnterPhoneScreenState.Failure(InvalidPhoneNumberException())
             } else {
                 repository.createUserWithPhone(phoneNumber, activity)
-                    .onEach {
+                    .collect {
                         _enterPhoneScreenState.value = it
                     }
-                    .launchIn(viewModelScope)
             }
         }
     }
