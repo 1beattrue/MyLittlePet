@@ -13,6 +13,8 @@
     <string name="confirmation_code_hint">XXXXXX</string>
     <string name="back">Назад</string>
     <string name="confirm">Подтвердить</string>
+    <string name="resend_code">Отправить код вновь</string>
+    <string name="resend_code_exception">Повторная отправка кода будет доступна через %s секунд</string>
 
     <string name="navigation_item_feed">Лента</string>
     <string name="navigation_item_pets">Питомцы</string>

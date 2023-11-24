@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -228,6 +229,16 @@ fun AuthScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 code = code,
                                 isError = isConfirmPhoneTextFieldError
+                            )
+                            Text(
+                                modifier = Modifier.clickable {
+                                    viewModel.resendVerificationCode(
+                                        phoneNumber = phoneNumber.value,
+                                        activity = activity
+                                    )
+                                },
+                                text = stringResource(id = R.string.resend_code),
+                                fontSize = 14.sp
                             )
                         }
                     }

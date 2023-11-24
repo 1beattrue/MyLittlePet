@@ -19,3 +19,9 @@ class InvalidVerificationCodeException(message: String = TEXT_MESSAGE) : Excepti
         private const val TEXT_MESSAGE = "Invalid verification code"
     }
 }
+
+class TimeoutVerificationCodeException(message: String = TEXT_MESSAGE) : Exception(message) {
+    companion object {
+        private const val TEXT_MESSAGE = "Timeout has not expired"
+    }
+}

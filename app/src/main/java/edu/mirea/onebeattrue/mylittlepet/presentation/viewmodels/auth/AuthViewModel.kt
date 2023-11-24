@@ -52,6 +52,20 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun resendVerificationCode(
+        phoneNumber: String,
+        activity: Activity
+    ) {
+        viewModelScope.launch {
+            repository.resendVerificationCode(
+                phoneNumber = phoneNumber,
+                activity = activity
+            ).collect {
+                _screenState.value = it
+            }
+        }
+    }
+
     private fun isValidConfirmationCode(code: String): Boolean {
         return code.trim().length == 6
     }

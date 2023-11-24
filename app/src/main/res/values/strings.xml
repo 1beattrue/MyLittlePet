@@ -12,6 +12,8 @@
     <string name="confirmation_code_hint">XXXXXX</string>
     <string name="back">Back</string>
     <string name="confirm">Confirm</string>
+    <string name="resend_code">Resend code</string>
+    <string name="resend_code_exception">Resending the code will be available in %s seconds</string>
 
     <string name="navigation_item_feed">Feed</string>
     <string name="navigation_item_pets">Pets</string>
