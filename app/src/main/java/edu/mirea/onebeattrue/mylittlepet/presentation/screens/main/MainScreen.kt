@@ -48,7 +48,7 @@ fun MainScreen(
         mutableStateOf(false)
     }
 
-    val screenState by viewModel.mainScreenState.collectAsState(MainScreenState.Initial)
+    val screenState by viewModel.mainScreenState.collectAsState(MainScreenState.AuthFlow())
     when (val state = screenState) {
         is MainScreenState.AuthFlow -> {
             startDestination = Screen.Auth.route
@@ -58,9 +58,6 @@ fun MainScreen(
         is MainScreenState.MainFlow -> {
             startDestination = Screen.Main.route
             bottomBarVisibility = state.isBottomBarVisible
-        }
-
-        MainScreenState.Initial -> {
         }
     }
 
@@ -119,7 +116,7 @@ fun MainScreen(
             authScreenContent = {
                 AuthScreen(
                     finishAuth = {
-                        navigationState.navHostController.navigate(Screen.Main.route)
+                        navigationState.navigateTo(Screen.Main.route)
                         viewModel.finishAuth()
                     },
                     viewModelFactory = viewModelFactory,
