@@ -2,7 +2,10 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -19,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -180,17 +184,17 @@ fun AuthScreen(
                     containerColor = MaterialTheme.colorScheme.background,
                     contentColor = MaterialTheme.colorScheme.onBackground
                 ),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(32.dp),
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = (8).dp
+                    defaultElevation = 8.dp
                 )
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            horizontal = 16.dp,
-                            vertical = 24.dp
+                            horizontal = 32.dp,
+                            vertical = 32.dp
                         ),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -230,16 +234,6 @@ fun AuthScreen(
                                 code = code,
                                 isError = isConfirmPhoneTextFieldError
                             )
-                            Text(
-                                modifier = Modifier.clickable {
-                                    viewModel.resendVerificationCode(
-                                        phoneNumber = phoneNumber.value,
-                                        activity = activity
-                                    )
-                                },
-                                text = stringResource(id = R.string.resend_code),
-                                fontSize = 14.sp
-                            )
                         }
                     }
                     Row(
@@ -276,6 +270,34 @@ fun AuthScreen(
                         }
                     }
                 }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            AnimatedVisibility(
+                visible = isCodeSent && !progress,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .clickable {
+                            viewModel.resendVerificationCode(
+                                phoneNumber = phoneNumber.value,
+                                activity = activity
+                            )
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.resend_code),
+                        fontSize = 16.sp
+                    )
+                    Icon(
+                        imageVector = Icons.Rounded.Refresh,
+                        contentDescription = null
+                    )
+                }
+
             }
             Spacer(modifier = Modifier.height(16.dp))
             AnimatedVisibility(
