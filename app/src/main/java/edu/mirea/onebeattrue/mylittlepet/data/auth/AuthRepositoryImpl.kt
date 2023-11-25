@@ -1,7 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.data.auth
 
 import android.app.Activity
-import android.util.Log
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -26,7 +25,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override val currentUser: FirebaseUser? = firebaseAuth.currentUser
     private lateinit var verificationCode: String
-    private var lastRequestTime: Long? = null
+    private var lastRequestTime = LAST_REQUEST_TIME_INITIAL
 
     override suspend fun createUserWithPhone(
         phoneNumber: String,
@@ -51,27 +50,24 @@ class AuthRepositoryImpl @Inject constructor(
             }
         }
 
-        firebaseAuth.useAppLanguage()
-        val prefix = activity.getString(R.string.phone_number_prefix)
-        val options = PhoneAuthOptions.newBuilder(firebaseAuth)
-            .setPhoneNumber(prefix + phoneNumber)
-            .setTimeout(TIMEOUT, TimeUnit.SECONDS)
-            .setActivity(activity)
-            .setCallbacks(callbacks)
-            .build()
-
-        // TODO(): работает, но можно сделать покрасивше
-        val currentRequestTime = System.currentTimeMillis()
-        if (lastRequestTime == null || currentRequestTime - lastRequestTime!! > TIMEOUT_MILLIS) {
+        if (codeCanBeSent()) {
+            firebaseAuth.useAppLanguage()
+            val prefix = activity.getString(R.string.phone_number_prefix)
+            val options = PhoneAuthOptions.newBuilder(firebaseAuth)
+                .setPhoneNumber(prefix + phoneNumber)
+                .setTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .setActivity(activity)
+                .setCallbacks(callbacks)
+                .build()
             PhoneAuthProvider.verifyPhoneNumber(options)
         } else {
-            Log.d("AuthRepositoryImpl", "$currentRequestTime, $lastRequestTime, $TIMEOUT")
+            val currentRequestTime = System.currentTimeMillis()
             trySend(
                 AuthScreenState.Failure(
                     TimeoutVerificationCodeException(
                         String.format(
                             activity.getString(R.string.resend_code_exception),
-                            (TIMEOUT_MILLIS - (currentRequestTime - lastRequestTime!!)).toSeconds()
+                            (TIMEOUT_MILLIS - (currentRequestTime - lastRequestTime)).toSeconds()
                         )
                     )
                 )
@@ -118,11 +114,17 @@ class AuthRepositoryImpl @Inject constructor(
         firebaseAuth.signOut()
     }
 
-    private fun Long.toSeconds() = this / MILLIS_IN_SECOND
+    private fun Long.toSeconds() = this / MILLIS_IN_SECOND + 1
+
+    private fun codeCanBeSent(): Boolean {
+        return lastRequestTime == LAST_REQUEST_TIME_INITIAL ||
+                System.currentTimeMillis() - lastRequestTime > TIMEOUT_MILLIS
+    }
 
     companion object {
         private const val TIMEOUT = 15L
-        private const val TIMEOUT_MILLIS = 15_000L
         private const val MILLIS_IN_SECOND = 1000
+        private const val TIMEOUT_MILLIS = TIMEOUT * MILLIS_IN_SECOND
+        private const val LAST_REQUEST_TIME_INITIAL = -228L
     }
 }

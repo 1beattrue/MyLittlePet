@@ -2,7 +2,6 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -123,7 +122,8 @@ fun AuthScreen(
                     else -> {
                         snackbarHostState.showSnackbar(
                             message = screenState.exception.message.toString(),
-                            duration = SnackbarDuration.Long
+                            duration = SnackbarDuration.Long,
+                            withDismissAction = true
                         )
                     }
                 }
