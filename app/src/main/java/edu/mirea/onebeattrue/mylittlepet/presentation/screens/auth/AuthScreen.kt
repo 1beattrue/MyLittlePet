@@ -1,9 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth
 
 import android.annotation.SuppressLint
-import androidx.activity.BackEventCompat
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -40,9 +38,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,7 +60,6 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidVerificationCo
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 
@@ -102,6 +97,10 @@ fun AuthScreen(
     }
 
     val snackbarHostState = SnackbarHostState()
+
+    var backHandlingEnabled by rememberSaveable {
+        mutableStateOf(false)
+    }
     // ---------------------------------------------------------------------------------------------
 
     val scope = rememberCoroutineScope()
@@ -148,15 +147,20 @@ fun AuthScreen(
         AuthScreenState.CodeSent -> {
             progress = false
             isCodeSent = true
+            backHandlingEnabled = true
         }
 
         AuthScreenState.Initial -> {
             progress = false
+            isCodeSent = false
+            backHandlingEnabled = false
         }
     }
 
-    BackHandler {
-        isCodeSent = false
+
+
+    BackHandler(backHandlingEnabled) {
+        viewModel.changePhoneNumber()
     }
 
     Scaffold(

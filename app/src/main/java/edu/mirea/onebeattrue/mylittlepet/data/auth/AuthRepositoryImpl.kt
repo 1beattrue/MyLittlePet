@@ -22,8 +22,8 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
 ) : AuthRepository {
-
-    override val currentUser: FirebaseUser? = firebaseAuth.currentUser
+    override val currentUser: FirebaseUser?
+        get() = firebaseAuth.currentUser
     private lateinit var verificationCode: String
     private var lastRequestTime = LAST_REQUEST_TIME_INITIAL
 
@@ -123,8 +123,10 @@ class AuthRepositoryImpl @Inject constructor(
 
     companion object {
         private const val TIMEOUT = 15L
+        private const val RESERVE_TIMEOUT = 5L
+
         private const val MILLIS_IN_SECOND = 1000
-        private const val TIMEOUT_MILLIS = TIMEOUT * MILLIS_IN_SECOND
+        private const val TIMEOUT_MILLIS = (TIMEOUT + RESERVE_TIMEOUT) * MILLIS_IN_SECOND
         private const val LAST_REQUEST_TIME_INITIAL = -228L
     }
 }

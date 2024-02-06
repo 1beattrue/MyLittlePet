@@ -66,6 +66,12 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun changePhoneNumber() {
+        viewModelScope.launch {
+            _screenState.value = AuthScreenState.Initial
+        }
+    }
+
     private fun isValidConfirmationCode(code: String): Boolean {
         return code.trim().length == 6
     }
