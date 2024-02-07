@@ -3,29 +3,34 @@ package edu.mirea.onebeattrue.mylittlepet.presentation
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.google.android.gms.auth.api.phone.SmsRetriever
-import com.google.android.gms.common.api.CommonStatusCodes
-import com.google.android.gms.common.api.Status
+import android.content.IntentFilter
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.platform.LocalContext
 
-class SmsReceiver : BroadcastReceiver() {
+@Composable
+fun SmsReceiver(
+    systemAction: String,
+    onSystemEvent: (intent: Intent?) -> Unit
+) {
+    val context = LocalContext.current
 
-    var smsReceiverListener: SmsReceiverListener? = null
+    val currentOnSystemEvent by rememberUpdatedState(onSystemEvent)
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent?.action == SmsRetriever.SMS_RETRIEVED_ACTION) {
-            val extras = intent.extras
-            val smsRetrieverStatus = extras?.get(SmsRetriever.EXTRA_STATUS) as Status
-
-            when (smsRetrieverStatus.statusCode) {
-                CommonStatusCodes.SUCCESS -> {
-                    val messageIntent = extras.getParcelable<Intent>(SmsRetriever.EXTRA_CONSENT_INTENT)
-                    smsReceiverListener?.onSuccess(messageIntent)
-                }
+    DisposableEffect(context, systemAction) {
+        val intentFilter = IntentFilter(systemAction)
+        val broadcast = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                currentOnSystemEvent(intent)
             }
         }
-    }
 
-    interface SmsReceiverListener {
-        fun onSuccess(intent: Intent?)
+        context.registerReceiver(broadcast, intentFilter)
+
+        onDispose {
+            context.unregisterReceiver(broadcast)
+        }
     }
 }

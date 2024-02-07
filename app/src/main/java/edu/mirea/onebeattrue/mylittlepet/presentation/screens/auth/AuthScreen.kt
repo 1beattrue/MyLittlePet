@@ -1,6 +1,8 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth
 
 import android.annotation.SuppressLint
+import android.provider.Telephony
+import android.telephony.SmsMessage
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -58,6 +60,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthScreenState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidPhoneNumberException
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidVerificationCodeException
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
+import edu.mirea.onebeattrue.mylittlepet.presentation.SmsReceiver
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel
 import kotlinx.coroutines.launch
@@ -109,6 +112,17 @@ fun AuthScreen(
     val authScreenState by viewModel.screenState.collectAsState(
         AuthScreenState.Initial
     )
+
+    SmsReceiver(systemAction = Telephony.Sms.Intents.SMS_RECEIVED_ACTION) { intent ->
+        intent?.let { smsIntent ->
+            val smsMessages: Array<SmsMessage>? =
+                Telephony.Sms.Intents.getMessagesFromIntent(smsIntent)
+            smsMessages?.forEach { smsMessage ->
+                val messageBody: String = smsMessage.messageBody
+                code.value = messageBody
+            }
+        }
+    }
 
     when (val screenState = authScreenState) {
         is AuthScreenState.Failure -> {
