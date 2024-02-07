@@ -119,7 +119,9 @@ fun AuthScreen(
                 Telephony.Sms.Intents.getMessagesFromIntent(smsIntent)
             smsMessages?.forEach { smsMessage ->
                 val messageBody: String = smsMessage.messageBody
-                code.value = messageBody
+                viewModel.parseConfirmationCode(messageBody)?.let {
+                    code.value = it
+                }
             }
         }
     }

@@ -72,6 +72,12 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun parseConfirmationCode(messageBody: String): String? {
+        val regex = "\\b\\d{6}\\b".toRegex()
+        val matchResult = regex.find(messageBody)
+        return matchResult?.value
+    }
+
     private fun isValidConfirmationCode(code: String): Boolean {
         return code.trim().length == 6
     }
