@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
             MyLittlePetTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.surface
                 ) {
                     MainScreen(
                         viewModelFactory = viewModelFactory,
