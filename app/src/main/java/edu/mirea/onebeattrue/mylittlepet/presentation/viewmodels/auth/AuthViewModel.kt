@@ -4,9 +4,9 @@ import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthRepository
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthScreenState
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidPhoneNumberException
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidVerificationCodeException
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.InvalidPhoneNumberException
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.InvalidVerificationCodeException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

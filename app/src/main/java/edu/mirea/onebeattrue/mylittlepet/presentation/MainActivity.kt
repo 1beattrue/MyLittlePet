@@ -10,7 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.MainScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.main.MainScreenState
 import edu.mirea.onebeattrue.mylittlepet.presentation.screens.main.MainScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel

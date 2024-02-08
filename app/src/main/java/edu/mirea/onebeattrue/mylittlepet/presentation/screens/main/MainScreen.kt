@@ -21,7 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.MainScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.main.MainScreenState
 import edu.mirea.onebeattrue.mylittlepet.navigation.NavigationItem
 import edu.mirea.onebeattrue.mylittlepet.navigation.Screen
 import edu.mirea.onebeattrue.mylittlepet.navigation.graphs.AppNavGraph

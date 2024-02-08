@@ -56,9 +56,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthScreenState
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidPhoneNumberException
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.InvalidVerificationCodeException
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.InvalidPhoneNumberException
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.InvalidVerificationCodeException
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.SmsReceiver
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory

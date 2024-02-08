@@ -2,7 +2,6 @@ package edu.mirea.onebeattrue.mylittlepet.domain.auth
 
 import android.app.Activity
 import com.google.firebase.auth.FirebaseUser
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.AuthScreenState
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
