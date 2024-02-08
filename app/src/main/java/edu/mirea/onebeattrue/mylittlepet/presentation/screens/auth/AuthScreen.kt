@@ -63,6 +63,9 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.SmsReceiver
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.SMALL_ELEVATION
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_CONTAINER
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_SURFACE
 import kotlinx.coroutines.launch
 
 
@@ -184,7 +187,7 @@ fun AuthScreen(
             SnackbarHost(hostState = snackbarHostState) {
                 Snackbar(
                     snackbarData = it,
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER),
                     containerColor = MaterialTheme.colorScheme.errorContainer,
                     contentColor = MaterialTheme.colorScheme.onErrorContainer,
                 )
@@ -214,9 +217,9 @@ fun AuthScreen(
                     containerColor = MaterialTheme.colorScheme.surface,
                     contentColor = MaterialTheme.colorScheme.onSurface
                 ),
-                shape = RoundedCornerShape(32.dp),
+                shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_SURFACE),
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = 1.dp
+                    defaultElevation = SMALL_ELEVATION
                 )
             ) {
                 Column(
@@ -243,7 +246,7 @@ fun AuthScreen(
                         modifier = Modifier.fillMaxWidth(),
                         phoneNumber = phoneNumber,
                         isError = isPhoneTextFieldError,
-                        isEnabled = !isCodeSent
+                        isEnabled = !isCodeSent && !progress
                     )
                     AnimatedVisibility(
                         visible = isCodeSent,
@@ -262,7 +265,8 @@ fun AuthScreen(
                             ConfirmPhoneTextField(
                                 modifier = Modifier.fillMaxWidth(),
                                 code = code,
-                                isError = isConfirmPhoneTextFieldError
+                                isError = isConfirmPhoneTextFieldError,
+                                isEnabled = !progress
                             )
                         }
                     }
@@ -284,7 +288,7 @@ fun AuthScreen(
                                 }
 
                             },
-                            shape = RoundedCornerShape(16.dp),
+                            shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER),
                             enabled = !progress
                         ) {
                             Text(
@@ -359,7 +363,7 @@ private fun PhoneTextField(
             Text(stringResource(id = R.string.phone_number_hint))
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER),
         singleLine = true,
         prefix = {
             Text(stringResource(id = R.string.phone_number_prefix))
@@ -383,7 +387,8 @@ private fun PhoneTextField(
 private fun ConfirmPhoneTextField(
     modifier: Modifier = Modifier,
     code: MutableState<String>,
-    isError: MutableState<Boolean>
+    isError: MutableState<Boolean>,
+    isEnabled: Boolean
 ) {
     OutlinedTextField(
         modifier = modifier,
@@ -408,6 +413,7 @@ private fun ConfirmPhoneTextField(
             if (isError.value) {
                 Icon(imageVector = Icons.Rounded.Warning, contentDescription = null)
             }
-        }
+        },
+        enabled = isEnabled
     )
 }
