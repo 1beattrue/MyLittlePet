@@ -19,6 +19,9 @@ class AuthViewModel @Inject constructor(
         MutableStateFlow<AuthScreenState>(AuthScreenState.Initial)
     val screenState = _screenState.asStateFlow()
 
+    val isLoggedIn
+        get() = repository.currentUser != null
+
     fun createUserWithPhone(
         phoneNumber: String,
         activity: Activity

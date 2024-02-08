@@ -9,8 +9,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProvider
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.state.MainScreenState
 import edu.mirea.onebeattrue.mylittlepet.presentation.screens.main.MainScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 import javax.inject.Inject
 
@@ -18,6 +21,10 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel: AuthViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[AuthViewModel::class.java]
+    }
 
     private val component by lazy {
         (application as MyLittlePetApplication).component
@@ -37,11 +44,17 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MainScreen(
                         viewModelFactory = viewModelFactory,
-                        activity = this
+                        activity = this,
+                        initialScreenState = getInitialScreenState()
                     )
                 }
             }
         }
+    }
+
+    private fun getInitialScreenState(): MainScreenState {
+        if (viewModel.isLoggedIn) return MainScreenState.MainFlow()
+        return MainScreenState.AuthFlow()
     }
 
     private fun checkPermissions() {

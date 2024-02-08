@@ -35,7 +35,8 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.main.MainViewMo
 @Composable
 fun MainScreen(
     viewModelFactory: ViewModelFactory,
-    activity: MainActivity
+    activity: MainActivity,
+    initialScreenState: MainScreenState = MainScreenState.AuthFlow()
 ) {
     val viewModel: MainViewModel = viewModel(factory = viewModelFactory)
     val navigationState = rememberNavigationState()
@@ -48,7 +49,7 @@ fun MainScreen(
         mutableStateOf(false)
     }
 
-    val screenState by viewModel.mainScreenState.collectAsState(MainScreenState.AuthFlow())
+    val screenState by viewModel.mainScreenState.collectAsState(initialScreenState)
     when (val state = screenState) {
         is MainScreenState.AuthFlow -> {
             startDestination = Screen.Auth.route
