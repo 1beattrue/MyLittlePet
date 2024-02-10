@@ -124,6 +124,11 @@ fun AuthScreen(
                 val messageBody: String = smsMessage.messageBody
                 viewModel.parseConfirmationCode(messageBody)?.let {
                     code.value = it
+                    if (isCodeSent) {
+                        viewModel.signUpWithCredential(
+                            code = code.value
+                        )
+                    }
                 }
             }
         }
