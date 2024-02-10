@@ -9,9 +9,9 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.di.ApplicationScope
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthRepository
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthScreenState
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.TimeoutVerificationCodeException
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.TimeoutVerificationCodeException
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

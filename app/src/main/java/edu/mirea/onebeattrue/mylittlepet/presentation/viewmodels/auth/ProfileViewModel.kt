@@ -1,7 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth
 
 import androidx.lifecycle.ViewModel
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthRepository
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(

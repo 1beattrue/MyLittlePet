@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.domain.auth
+package edu.mirea.onebeattrue.mylittlepet.domain.auth.entity
 
 sealed class AuthScreenState {
     object Initial : AuthScreenState()

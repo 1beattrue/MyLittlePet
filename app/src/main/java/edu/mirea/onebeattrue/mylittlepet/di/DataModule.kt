@@ -6,7 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.migration.DisableInstallInCheck
 import edu.mirea.onebeattrue.mylittlepet.data.auth.AuthRepositoryImpl
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.AuthRepository
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 
 @DisableInstallInCheck
 @Module
