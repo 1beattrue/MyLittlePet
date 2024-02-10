@@ -4,11 +4,9 @@ import com.google.firebase.auth.FirebaseAuth
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.migration.DisableInstallInCheck
 import edu.mirea.onebeattrue.mylittlepet.data.auth.AuthRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 
-@DisableInstallInCheck
 @Module
 interface DataModule {
 

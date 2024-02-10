@@ -3,17 +3,23 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth
 import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthScreenState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.InvalidPhoneNumberException
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.InvalidVerificationCodeException
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.CreateUserWithPhoneUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.ResendVerificationCodeUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.SignInWithCredentialUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AuthViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val createUserWithPhoneUseCase: CreateUserWithPhoneUseCase,
+    private val signInWithCredentialUseCase: SignInWithCredentialUseCase,
+    private val resendVerificationCodeUseCase: ResendVerificationCodeUseCase,
 ) : ViewModel() {
     private val _screenState =
         MutableStateFlow<AuthScreenState>(AuthScreenState.Initial)
@@ -31,7 +37,10 @@ class AuthViewModel @Inject constructor(
                 _screenState.value =
                     AuthScreenState.Failure(InvalidPhoneNumberException())
             } else {
-                repository.createUserWithPhone(phoneNumber, activity)
+                createUserWithPhoneUseCase(
+                    phoneNumber = phoneNumber,
+                    activity = activity
+                )
                     .collect {
                         _screenState.value = it
                     }
@@ -47,7 +56,9 @@ class AuthViewModel @Inject constructor(
                 _screenState.value =
                     AuthScreenState.Failure(InvalidVerificationCodeException())
             } else {
-                repository.signInWithCredential(code)
+                signInWithCredentialUseCase(
+                    code = code
+                )
                     .collect {
                         _screenState.value = it
                     }
@@ -60,7 +71,7 @@ class AuthViewModel @Inject constructor(
         activity: Activity
     ) {
         viewModelScope.launch {
-            repository.resendVerificationCode(
+            resendVerificationCodeUseCase(
                 phoneNumber = phoneNumber,
                 activity = activity
             ).collect {

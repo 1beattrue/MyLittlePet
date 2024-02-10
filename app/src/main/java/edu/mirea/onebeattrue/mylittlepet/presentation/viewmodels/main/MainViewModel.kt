@@ -2,19 +2,22 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.main
 
 import androidx.lifecycle.ViewModel
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.SignOutUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.main.MainScreenState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val signOutUseCase: SignOutUseCase,
 ) : ViewModel() {
 
     private val _mainScreenState = MutableStateFlow<MainScreenState>(MainScreenState.AuthFlow())
     val mainScreenState = _mainScreenState.asStateFlow()
 
-    private val currentUser = authRepository.currentUser
+    private val currentUser
+        get() = authRepository.currentUser
 
     init {
         if (currentUser != null) finishAuth()
@@ -25,7 +28,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun signOut() {
-        authRepository.signOut()
+        signOutUseCase()
         _mainScreenState.value = MainScreenState.AuthFlow()
     }
 }
