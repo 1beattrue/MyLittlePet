@@ -63,9 +63,9 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.SmsReceiver
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.SMALL_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_SURFACE
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.SMALL_ELEVATION
 import kotlinx.coroutines.launch
 
 

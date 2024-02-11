@@ -15,6 +15,10 @@
     <string name="confirm">Подтвердить</string>
     <string name="resend_code">Отправить повторно</string>
     <string name="resend_code_exception">Повторная отправка кода будет доступна через %s секунд</string>
+    <string name="unknown_auth_exception">Неизвестная ошибка</string>
+    <string name="network_auth_exception">Сетевая ошибка</string>
+    <string name="invalid_code_auth_exception">Неверный код подтверждения</string>
+    <string name="too_many_requests_auth_exception">Слишком много запросов</string>
 
     <string name="navigation_item_feed">Лента</string>
     <string name="navigation_item_pets">Питомцы</string>

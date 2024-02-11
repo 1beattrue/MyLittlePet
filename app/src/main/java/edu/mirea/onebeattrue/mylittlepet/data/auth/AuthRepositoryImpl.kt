@@ -9,9 +9,9 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.di.ApplicationScope
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthScreenState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.TimeoutVerificationCodeException
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -21,6 +21,7 @@ import javax.inject.Inject
 @ApplicationScope
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
+    private val authExceptionMapper: AuthExceptionMapper
 ) : AuthRepository {
     override val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
@@ -39,7 +40,9 @@ class AuthRepositoryImpl @Inject constructor(
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
-                trySend(AuthScreenState.Failure(e))
+                trySend(AuthScreenState.Failure(
+                    authExceptionMapper.mapFirebaseExceptionToAuthException(e)
+                ))
             }
 
             override fun onCodeSent(code: String, token: PhoneAuthProvider.ForceResendingToken) {
@@ -92,7 +95,9 @@ class AuthRepositoryImpl @Inject constructor(
                 }
             }
             .addOnFailureListener {
-                trySend(AuthScreenState.Failure(it))
+                trySend(AuthScreenState.Failure(
+                    authExceptionMapper.mapFirebaseExceptionToAuthException(it)
+                ))
             }
 
         awaitClose {
