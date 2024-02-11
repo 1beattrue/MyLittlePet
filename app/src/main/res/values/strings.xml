@@ -1,3 +1,27 @@
 <resources>
-    <string name="app_name">MyLittlePet</string>
+    <string name="app_name">My Little Pet</string>
+
+    <string name="enter_phone_number">Enter your phone number</string>
+    <string name="error_phone_number">Invalid phone number</string>
+    <string name="phone_number_hint">+1 (XXX) XXX-XX XX</string>
+    <string name="phone_number_prefix">+1</string>
+    <string name="next">Next</string>
+
+    <string name="enter_confirmation_code">Enter confirmation code</string>
+    <string name="error_confirmation_code">Invalid verification code</string>
+    <string name="confirmation_code_hint">XXXXXX</string>
+    <string name="back">Back</string>
+    <string name="confirm">Confirm</string>
+    <string name="resend_code">Resend code</string>
+    <string name="resend_code_exception">Resending the code will be available in %s seconds</string>
+    <string name="unknown_auth_exception">Authorization error</string>
+    <string name="network_auth_exception">Network error</string>
+    <string name="invalid_credentials_auth_exception">Invalid credentials</string>
+    <string name="too_many_requests_auth_exception">Too many requests</string>
+
+    <string name="navigation_item_feed">Feed</string>
+    <string name="navigation_item_pets">Pets</string>
+    <string name="navigation_item_profile">Profile</string>
+
+
 </resources>

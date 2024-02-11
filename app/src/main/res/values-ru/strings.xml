@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Мой Маленький Питомец</string>
+
+    <string name="enter_phone_number">Введите ваш номер телефона</string>
+    <string name="error_phone_number">Некорректный номер телефона</string>
+    <string name="phone_number_hint">+7 (XXX) XXX-XX XX</string>
+    <string name="phone_number_prefix">+7</string>
+    <string name="next">Далее</string>
+
+    <string name="enter_confirmation_code">Введите код подтверждения</string>
+    <string name="error_confirmation_code">Некорректный код подтверждения</string>
+    <string name="confirmation_code_hint">XXXXXX</string>
+    <string name="back">Назад</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="resend_code">Отправить повторно</string>
+    <string name="resend_code_exception">Повторная отправка кода будет доступна через %s секунд</string>
+    <string name="unknown_auth_exception">Ошибка авторизации</string>
+    <string name="network_auth_exception">Сетевая ошибка</string>
+    <string name="invalid_credentials_auth_exception">Неверные данные для авторизации</string>
+    <string name="too_many_requests_auth_exception">Слишком много запросов</string>
+
+    <string name="navigation_item_feed">Лента</string>
+    <string name="navigation_item_pets">Питомцы</string>
+    <string name="navigation_item_profile">Профиль</string>
+
+</resources>
