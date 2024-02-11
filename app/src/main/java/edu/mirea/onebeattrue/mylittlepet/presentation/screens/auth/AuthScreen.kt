@@ -66,6 +66,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewMo
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.SMALL_ELEVATION
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.TITLE_FONT_SIZE
 import kotlinx.coroutines.launch
 
 
@@ -244,7 +245,7 @@ fun AuthScreen(
                     ) {
                         Text(
                             text = stringResource(id = R.string.enter_phone_number),
-                            fontSize = 24.sp
+                            fontSize = TITLE_FONT_SIZE
                         )
                     }
                     PhoneTextField(
@@ -265,7 +266,7 @@ fun AuthScreen(
                         ) {
                             Text(
                                 text = stringResource(id = R.string.enter_confirmation_code),
-                                fontSize = 24.sp
+                                fontSize = TITLE_FONT_SIZE
                             )
                             ConfirmPhoneTextField(
                                 modifier = Modifier.fillMaxWidth(),
