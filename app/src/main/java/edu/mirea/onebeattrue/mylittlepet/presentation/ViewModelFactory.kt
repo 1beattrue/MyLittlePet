@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels
+package edu.mirea.onebeattrue.mylittlepet.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

@@ -25,7 +25,7 @@ class AuthExceptionMapper @Inject constructor(
             }
             is FirebaseAuthInvalidCredentialsException -> {
                 InvalidCredentialsAuthException(
-                    message = application.getString(R.string.invalid_code_auth_exception)
+                    message = application.getString(R.string.invalid_credentials_auth_exception)
                 )
             }
             is FirebaseNetworkException -> {

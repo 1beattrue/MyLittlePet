@@ -28,7 +28,7 @@ data class UnknownAuthException(
     override val message: String = TEXT_MESSAGE
 ) : Exception(message) {
     companion object {
-        private const val TEXT_MESSAGE = "Unknown exception"
+        private const val TEXT_MESSAGE = "Authorization error"
     }
 }
 
@@ -36,7 +36,7 @@ data class NetworkAuthException(
     override val message: String = TEXT_MESSAGE
 ) : Exception(message) {
     companion object {
-        private const val TEXT_MESSAGE = "Network exception"
+        private const val TEXT_MESSAGE = "Network error"
     }
 }
 
@@ -44,7 +44,7 @@ data class InvalidCredentialsAuthException(
     override val message: String = TEXT_MESSAGE
 ) : Exception(message) {
     companion object {
-        private const val TEXT_MESSAGE = "Invalid confirmation code"
+        private const val TEXT_MESSAGE = "Invalid credentials"
     }
 }
 

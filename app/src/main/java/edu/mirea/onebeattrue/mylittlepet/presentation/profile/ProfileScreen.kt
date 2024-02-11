@@ -1,12 +1,11 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.screens.main
+package edu.mirea.onebeattrue.mylittlepet.presentation.profile
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.ProfileViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
 
 @Composable
 fun ProfileScreen(

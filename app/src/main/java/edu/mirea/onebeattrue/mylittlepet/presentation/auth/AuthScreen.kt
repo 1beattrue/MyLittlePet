@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth
+package edu.mirea.onebeattrue.mylittlepet.presentation.auth
 
 import android.annotation.SuppressLint
 import android.provider.Telephony
@@ -61,8 +61,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.InvalidPhoneNumberEx
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.InvalidVerificationCodeException
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.SmsReceiver
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.SMALL_ELEVATION

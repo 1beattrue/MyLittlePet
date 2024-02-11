@@ -10,10 +10,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
-import edu.mirea.onebeattrue.mylittlepet.domain.main.MainScreenState
-import edu.mirea.onebeattrue.mylittlepet.presentation.screens.main.MainScreen
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel
+import edu.mirea.onebeattrue.mylittlepet.domain.main.entity.MainScreenState
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.MainScreen
+import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthViewModel
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 import javax.inject.Inject
 

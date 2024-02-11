@@ -14,9 +14,9 @@
     <string name="confirm">Confirm</string>
     <string name="resend_code">Resend code</string>
     <string name="resend_code_exception">Resending the code will be available in %s seconds</string>
-    <string name="unknown_auth_exception">Unknown exception</string>
-    <string name="network_auth_exception">Network exception</string>
-    <string name="invalid_code_auth_exception">Invalid confirmation code</string>
+    <string name="unknown_auth_exception">Authorization error</string>
+    <string name="network_auth_exception">Network error</string>
+    <string name="invalid_credentials_auth_exception">Invalid credentials</string>
     <string name="too_many_requests_auth_exception">Too many requests</string>
 
     <string name="navigation_item_feed">Feed</string>

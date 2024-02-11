@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.AuthViewModel
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth.ProfileViewModel
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.main.MainViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.profile.ProfileViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.MainViewModel
 
 @Module
 interface ViewModelModule {

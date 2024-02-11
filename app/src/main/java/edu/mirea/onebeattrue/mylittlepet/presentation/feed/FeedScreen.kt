@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.screens.main
+package edu.mirea.onebeattrue.mylittlepet.presentation.feed
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

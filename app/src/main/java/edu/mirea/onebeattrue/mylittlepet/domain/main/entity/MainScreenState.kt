@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.domain.main
+package edu.mirea.onebeattrue.mylittlepet.domain.main.entity
 
 sealed class MainScreenState {
     data class AuthFlow(

@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.screens.main
+package edu.mirea.onebeattrue.mylittlepet.presentation.main
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
@@ -21,15 +21,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
-import edu.mirea.onebeattrue.mylittlepet.domain.main.MainScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.main.entity.MainScreenState
 import edu.mirea.onebeattrue.mylittlepet.navigation.NavigationItem
 import edu.mirea.onebeattrue.mylittlepet.navigation.Screen
 import edu.mirea.onebeattrue.mylittlepet.navigation.graphs.AppNavGraph
 import edu.mirea.onebeattrue.mylittlepet.navigation.rememberNavigationState
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
-import edu.mirea.onebeattrue.mylittlepet.presentation.screens.auth.AuthScreen
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.ViewModelFactory
-import edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.main.MainViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthScreen
+import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.presentation.feed.FeedScreen
+import edu.mirea.onebeattrue.mylittlepet.presentation.pets.PetsScreen
+import edu.mirea.onebeattrue.mylittlepet.presentation.profile.ProfileScreen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable

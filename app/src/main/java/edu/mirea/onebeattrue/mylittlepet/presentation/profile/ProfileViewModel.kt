@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.viewmodels.auth
+package edu.mirea.onebeattrue.mylittlepet.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository

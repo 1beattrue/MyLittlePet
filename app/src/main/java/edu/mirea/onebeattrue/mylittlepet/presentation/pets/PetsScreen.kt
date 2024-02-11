@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.screens.main
+package edu.mirea.onebeattrue.mylittlepet.presentation.pets
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
