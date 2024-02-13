@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("kotlin-kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -52,6 +53,12 @@ android {
 }
 
 dependencies {
+    val roomVersion = "2.5.0"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    //annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+
     val daggerVersion = "2.50"
     implementation("com.google.dagger:dagger:$daggerVersion")
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
@@ -64,11 +71,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
 
-    implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    implementation("androidx.compose.material3:material3:1.1.2")
+    implementation("androidx.compose.material3:material3:1.2.0")
 
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.1")
 
     implementation("androidx.core:core-ktx:1.12.0")
 
