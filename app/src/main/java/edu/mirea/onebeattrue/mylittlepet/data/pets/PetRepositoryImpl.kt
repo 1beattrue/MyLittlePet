@@ -24,7 +24,7 @@ class PetRepositoryImpl @Inject constructor(
         addPet(pet)
     }
 
-    override fun getList(): Flow<List<Pet>> = petListDao.getPetList().map {
+    override fun getPetList(): Flow<List<Pet>> = petListDao.getPetList().map {
         mapper.mapListDbModelToListEntity(it)
     }
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -112,12 +114,13 @@ fun MainScreen(
                 }
             }
         }
-    ) {
+    ) { paddingValues ->
         AppNavGraph(
             navHostController = navigationState.navHostController,
             startDestination = startDestination,
             authScreenContent = {
                 AuthScreen(
+                    modifier = Modifier.padding(paddingValues),
                     finishAuth = {
                         navigationState.navigateTo(Screen.Main.route)
                         viewModel.finishAuth()
@@ -127,13 +130,19 @@ fun MainScreen(
                 )
             },
             feedScreenContent = {
-                FeedScreen()
+                FeedScreen(
+                    modifier = Modifier.padding(paddingValues),
+                )
             },
             petsScreenContent = {
-                PetsScreen()
+                PetsScreen(
+                    modifier = Modifier.padding(paddingValues),
+                    viewModelFactory = viewModelFactory
+                )
             },
             profileScreenContent = {
                 ProfileScreen(
+                    modifier = Modifier.padding(paddingValues),
                     viewModelFactory = viewModelFactory,
                     signOut = {
                         viewModel.signOut()

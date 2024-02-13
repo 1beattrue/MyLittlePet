@@ -1,14 +1,98 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.pets
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
-import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
+import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_SURFACE
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.SMALL_ELEVATION
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun PetsScreen() {
-    Column {
-        Text(text = "Pets Screen")
-        Text(text = FirebaseAuth.getInstance().currentUser.toString())
+fun PetsScreen(
+    modifier: Modifier = Modifier,
+    viewModelFactory: ViewModelFactory
+) {
+    val viewModel: PetsViewModel = viewModel(factory = viewModelFactory)
+    val pets by viewModel.pets.collectAsState(initial = listOf())
+
+    Scaffold(
+        modifier = modifier,
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                viewModel.addPet(Pet("кошка", "муся", "^_^"))
+            }) { Icon(imageVector = Icons.Rounded.Add, contentDescription = null) }
+        }
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = modifier.padding(paddingValues),
+            contentPadding = PaddingValues(
+                top = 16.dp,
+                start = 8.dp,
+                end = 8.dp,
+                bottom = 16.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(items = pets, key = { it.id }) { pet ->
+                val dismissState = rememberDismissState()
+                if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+                    viewModel.deletePet(pet)
+                }
+
+                SwipeToDismiss(
+                    modifier = Modifier.animateItemPlacement(),
+                    state = dismissState,
+                    background = {},
+                    directions = setOf(DismissDirection.EndToStart),
+                    dismissContent = {
+                        Card(
+                            modifier = Modifier
+                                .padding(
+                                    horizontal = 16.dp
+                                )
+                                .fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            ),
+                            shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_SURFACE),
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = SMALL_ELEVATION
+                            )
+                        ) {
+                            Text(
+                                text = "${pet.name} ${pet.type} ${pet.id}"
+                            )
+                        }
+                    },
+                )
+            }
+        }
     }
 }
