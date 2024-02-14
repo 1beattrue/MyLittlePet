@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import edu.mirea.onebeattrue.mylittlepet.domain.main.entity.MainScreenState
 import edu.mirea.onebeattrue.mylittlepet.navigation.NavigationItem
@@ -32,6 +33,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.presentation.feed.FeedScreen
+import edu.mirea.onebeattrue.mylittlepet.presentation.pets.AddPetScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.pets.PetsScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.profile.ProfileScreen
 
@@ -84,7 +86,9 @@ fun MainScreen(
 
                     items.forEach { item ->
 
-                        val selected = navBackStackEntry?.destination?.route == item.screen.route
+                        val selected = navBackStackEntry?.destination?.hierarchy?.any {
+                            it.route == item.screen.route
+                        } ?: false
 
                         NavigationBarItem(
                             selected = selected,
@@ -119,6 +123,7 @@ fun MainScreen(
             navHostController = navigationState.navHostController,
             startDestination = startDestination,
             authScreenContent = {
+                bottomBarVisibility = false // TODO: Придумать что с этим сделать
                 AuthScreen(
                     modifier = Modifier.padding(paddingValues),
                     finishAuth = {
@@ -130,23 +135,36 @@ fun MainScreen(
                 )
             },
             feedScreenContent = {
+                bottomBarVisibility = true
                 FeedScreen(
                     modifier = Modifier.padding(paddingValues),
                 )
             },
             petsScreenContent = {
+                bottomBarVisibility = true
                 PetsScreen(
                     modifier = Modifier.padding(paddingValues),
-                    viewModelFactory = viewModelFactory
+                    viewModelFactory = viewModelFactory,
+                    addPet = {
+                        navigationState.navHostController.navigate(Screen.AddPet.route)
+                    }
                 )
             },
             profileScreenContent = {
+                bottomBarVisibility = true
                 ProfileScreen(
                     modifier = Modifier.padding(paddingValues),
                     viewModelFactory = viewModelFactory,
                     signOut = {
                         viewModel.signOut()
                     }
+                )
+            },
+            addPetScreenContent = {
+                bottomBarVisibility = false
+                AddPetScreen(
+                    modifier = Modifier.padding(),
+                    viewModelFactory = viewModelFactory
                 )
             }
         )

@@ -35,6 +35,8 @@ class MainActivity : ComponentActivity() {
 
         checkPermissions()
 
+
+
         setContent {
             MyLittlePetTheme {
                 Surface(

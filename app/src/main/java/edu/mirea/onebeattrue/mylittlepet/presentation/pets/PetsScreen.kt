@@ -24,15 +24,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PetsScreen(
     modifier: Modifier = Modifier,
-    viewModelFactory: ViewModelFactory
+    viewModelFactory: ViewModelFactory,
+    addPet: () -> Unit
 ) {
     val viewModel: PetsViewModel = viewModel(factory = viewModelFactory)
     val pets by viewModel.pets.collectAsState(initial = listOf())
@@ -53,7 +52,8 @@ fun PetsScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        viewModel.addPet(Pet(PetType.DOG, "Dog", ""))
+                        addPet()
+                        //viewModel.addPet(Pet(PetType.DOG, "Dog", ""))
                     }) {
                         Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
                     }

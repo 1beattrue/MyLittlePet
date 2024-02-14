@@ -9,7 +9,9 @@ import edu.mirea.onebeattrue.mylittlepet.navigation.Screen
 fun NavGraphBuilder.mainNavGraph(
     feedScreenContent: @Composable () -> Unit,
     petsScreenContent: @Composable () -> Unit,
-    profileScreenContent: @Composable () -> Unit
+    profileScreenContent: @Composable () -> Unit,
+
+    addPetScreenContent: @Composable () -> Unit,
 ) {
     navigation(
         startDestination = Screen.Pets.route,
@@ -18,9 +20,10 @@ fun NavGraphBuilder.mainNavGraph(
         composable(Screen.Feed.route) {
             feedScreenContent()
         }
-        composable(Screen.Pets.route) {
-            petsScreenContent()
-        }
+        petsNavGraph(
+            addPetScreenContent = addPetScreenContent,
+            petsScreenContent = petsScreenContent
+        )
         composable(Screen.Profile.route) {
             profileScreenContent()
         }
