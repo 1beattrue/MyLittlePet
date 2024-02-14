@@ -24,4 +24,6 @@
     <string name="navigation_item_pets">Питомцы</string>
     <string name="navigation_item_profile">Профиль</string>
 
+    <string name="pets_app_bar_title">Питомцы</string>
+
 </resources>

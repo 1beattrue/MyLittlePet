@@ -8,19 +8,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SwipeToDismiss
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
@@ -36,17 +39,25 @@ fun PetsScreen(
 
     Scaffold(
         modifier = modifier,
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                viewModel.addPet(Pet(PetType.DOG, "Dog", ""))
-            }) {
-                Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
-            }
-        }
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                title = {
+                    Text(text = stringResource(R.string.pets_app_bar_title))
+                },
+                actions = {
+                    IconButton(onClick = { viewModel.addPet(Pet(PetType.DOG, "Dog", "")) }) {
+                        Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
+                    }
+                }
+            )
+        },
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues),
+            modifier = Modifier.padding(paddingValues),
             contentPadding = PaddingValues(
                 top = 16.dp,
                 start = 8.dp,
@@ -55,20 +66,11 @@ fun PetsScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(items = pets, key = { it.id }) { pet ->
-                val dismissState = rememberDismissState()
-                if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-                    viewModel.deletePet(pet)
-                }
-
-                SwipeToDismiss(
+            items(items = pets.reversed(), key = { it.id }) { pet ->
+                PetCard(
                     modifier = Modifier.animateItemPlacement(),
-                    state = dismissState,
-                    background = {},
-                    directions = setOf(DismissDirection.EndToStart),
-                    dismissContent = {
-                        PetCard(pet = pet)
-                    },
+                    pet = pet,
+                    deletePet = { viewModel.deletePet(pet) }
                 )
             }
         }

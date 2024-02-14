@@ -23,7 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
@@ -65,7 +65,6 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.SMALL_ELEVATION
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.TITLE_FONT_SIZE
 import kotlinx.coroutines.launch
 
 
@@ -244,7 +243,7 @@ fun AuthScreen(
                     ) {
                         Text(
                             text = stringResource(id = R.string.enter_phone_number),
-                            fontSize = TITLE_FONT_SIZE
+                            style = MaterialTheme.typography.titleLarge
                         )
                     }
                     PhoneTextField(
@@ -265,7 +264,7 @@ fun AuthScreen(
                         ) {
                             Text(
                                 text = stringResource(id = R.string.enter_confirmation_code),
-                                fontSize = TITLE_FONT_SIZE
+                                style = MaterialTheme.typography.titleLarge
                             )
                             ConfirmPhoneTextField(
                                 modifier = Modifier.fillMaxWidth(),
@@ -303,7 +302,7 @@ fun AuthScreen(
                                 fontSize = 16.sp
                             )
                             Icon(
-                                imageVector = Icons.Rounded.KeyboardArrowRight,
+                                imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                                 contentDescription = null
                             )
                         }

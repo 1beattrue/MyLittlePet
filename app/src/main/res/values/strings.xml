@@ -23,5 +23,6 @@
     <string name="navigation_item_pets">Pets</string>
     <string name="navigation_item_profile">Profile</string>
 
+    <string name="pets_app_bar_title">Pets</string>
 
 </resources>
