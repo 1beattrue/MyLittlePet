@@ -1,7 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.domain.pets.entity
 
 data class Pet(
-    val type: String,
+    val type: PetType,
     val name: String,
     val picture: String,
     val id: Int = UNDEFINED_ID
