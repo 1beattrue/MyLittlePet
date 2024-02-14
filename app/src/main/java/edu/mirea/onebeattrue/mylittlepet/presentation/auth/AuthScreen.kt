@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.auth
 
-import android.annotation.SuppressLint
 import android.provider.Telephony
 import android.telephony.SmsMessage
 import androidx.activity.compose.BackHandler
@@ -68,7 +67,6 @@ import edu.mirea.onebeattrue.mylittlepet.ui.theme.SMALL_ELEVATION
 import kotlinx.coroutines.launch
 
 
-@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun AuthScreen(
     modifier: Modifier = Modifier,

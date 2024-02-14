@@ -46,10 +46,15 @@ fun PetsScreen(
                     titleContentColor = MaterialTheme.colorScheme.onSurface
                 ),
                 title = {
-                    Text(text = stringResource(R.string.pets_app_bar_title))
+                    Text(
+                        style = MaterialTheme.typography.titleLarge,
+                        text = stringResource(R.string.pets_app_bar_title)
+                    )
                 },
                 actions = {
-                    IconButton(onClick = { viewModel.addPet(Pet(PetType.DOG, "Dog", "")) }) {
+                    IconButton(onClick = {
+                        viewModel.addPet(Pet(PetType.DOG, "Dog", ""))
+                    }) {
                         Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
                     }
                 }
@@ -66,7 +71,7 @@ fun PetsScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(items = pets.reversed(), key = { it.id }) { pet ->
+            items(items = pets, key = { it.id }) { pet ->
                 PetCard(
                     modifier = Modifier.animateItemPlacement(),
                     pet = pet,
