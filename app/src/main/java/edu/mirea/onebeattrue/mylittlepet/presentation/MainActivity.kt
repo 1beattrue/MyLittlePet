@@ -9,35 +9,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.domain.main.entity.MainScreenState
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.MainScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.MainScreen
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
-import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    private val viewModel: AuthViewModel by lazy {
-        ViewModelProvider(this, viewModelFactory)[AuthViewModel::class.java]
-    }
-
-    private val component by lazy {
-        (application as MyLittlePetApplication).component
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        component.inject(this)
         super.onCreate(savedInstanceState)
 
         checkPermissions()
 
-
-
         setContent {
+            val component = getApplicationComponent()
+            val viewModelFactory = component.getViewModelFactory()
+            val viewModel: AuthViewModel = viewModel(factory = viewModelFactory)
+
             MyLittlePetTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -46,14 +34,16 @@ class MainActivity : ComponentActivity() {
                     MainScreen(
                         viewModelFactory = viewModelFactory,
                         activity = this,
-                        initialScreenState = getInitialScreenState()
+                        initialScreenState = getInitialScreenState(viewModel)
                     )
                 }
             }
         }
     }
 
-    private fun getInitialScreenState(): MainScreenState {
+    private fun getInitialScreenState(
+        viewModel: AuthViewModel
+    ): MainScreenState {
         if (viewModel.isLoggedIn) return MainScreenState.MainFlow()
         return MainScreenState.AuthFlow()
     }
