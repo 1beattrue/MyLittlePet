@@ -80,6 +80,12 @@ fun PetCard(
                             PetType.CAT -> R.drawable.image_cat_black
                             PetType.DOG -> R.drawable.image_dog_brown
                             PetType.RABBIT -> R.drawable.image_rabbit
+                            PetType.BIRD -> R.drawable.image_bird
+                            PetType.FISH -> R.drawable.image_fish_blue
+                            PetType.SNAKE -> R.drawable.image_snake
+                            PetType.TIGER -> R.drawable.image_tiger
+                            PetType.MOUSE -> R.drawable.image_mouse
+                            PetType.TURTLE -> R.drawable.image_turtle
                         }
                     ),
                     contentDescription = null,

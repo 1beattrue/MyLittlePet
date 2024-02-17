@@ -26,4 +26,15 @@
 
     <string name="pets_app_bar_title">Питомцы</string>
 
+    <string name="pet_type_choose">Выберите тип животного</string>
+    <string name="pet_type_dog">Собака</string>
+    <string name="pet_type_cat">Кошка</string>
+    <string name="pet_type_rabbit">Крол</string>
+    <string name="pet_type_bird">Птица</string>
+    <string name="pet_type_fish">Рыба</string>
+    <string name="pet_type_snake">Змея</string>
+    <string name="pet_type_tiger">Тигр</string>
+    <string name="pet_type_mouse">Мышь</string>
+    <string name="pet_type_turtle">Черепаха</string>
+
 </resources>
