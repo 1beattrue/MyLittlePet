@@ -33,6 +33,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
+import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_CONTAINER
@@ -129,8 +132,24 @@ fun AddPetScreen(
                                         .clip(
                                             RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER)
                                         ),
-                                    contentPadding = PaddingValues(16.dp),
-                                    text = { Text(text = petTypeName) },
+                                    contentPadding = PaddingValues(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        top = 8.dp,
+                                        bottom = 8.dp
+                                    ),
+                                    text = {
+                                        Text(
+                                            text = petTypeName,
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(id = petType.getImageId()),
+                                            contentDescription = null
+                                        )
+                                    },
                                     onClick = {
                                         selectedType = petType
                                         selectedTypeName = petTypeName
