@@ -257,22 +257,22 @@ fun AuthScreen(
                         enter = expandVertically(),
                         exit = shrinkVertically()
                     ) {
-                        Column(
+                        Text(
+                            text = stringResource(id = R.string.enter_confirmation_code),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                    AnimatedVisibility(
+                        visible = isCodeSent,
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
+                    ) {
+                        ConfirmPhoneTextField(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.enter_confirmation_code),
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            ConfirmPhoneTextField(
-                                modifier = Modifier.fillMaxWidth(),
-                                code = code,
-                                isError = isConfirmPhoneTextFieldError,
-                                isEnabled = !progress
-                            )
-                        }
+                            code = code,
+                            isError = isConfirmPhoneTextFieldError,
+                            isEnabled = !progress
+                        )
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
