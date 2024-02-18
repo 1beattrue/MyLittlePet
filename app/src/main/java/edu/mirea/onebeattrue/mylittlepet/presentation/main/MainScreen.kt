@@ -146,9 +146,10 @@ fun MainScreen(
                     modifier = Modifier.padding(paddingValues),
                     viewModelFactory = viewModelFactory,
                     addPet = {
-                        navigationState.navHostController.navigate(Screen.AddPet.route) {
-                            launchSingleTop = true
-                        }
+//                        navigationState.navHostController.navigate(Screen.AddPet.route) {
+//                            launchSingleTop = true
+//                        }
+                        navigationState.navigateWithoutRestoreStateTo(Screen.AddPet.route)
                     }
                 )
             },
@@ -168,7 +169,7 @@ fun MainScreen(
                     modifier = Modifier.padding(),
                     viewModelFactory = viewModelFactory,
                     closeScreen = {
-                        navigationState.navHostController.popBackStack()
+                        navigationState.navigateTo(Screen.Main.route)
                     }
                 )
             }
