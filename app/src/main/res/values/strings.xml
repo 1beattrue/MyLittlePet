@@ -25,8 +25,8 @@
 
     <string name="pets_app_bar_title">Pets</string>
 
-
-    <string name="pet_type_choose">Select pet type</string>
+    <string name="select_pet_type">Select pet type</string>
+    <string name="initial_pet_type">Pet type</string>
     <string name="pet_type_dog">Dog</string>
     <string name="pet_type_cat">Cat</string>
     <string name="pet_type_rabbit">Rabbit</string>

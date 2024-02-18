@@ -7,6 +7,7 @@ import dagger.multibindings.IntoMap
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthViewModel
 import edu.mirea.onebeattrue.mylittlepet.presentation.profile.ProfileViewModel
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.MainViewModel
+import edu.mirea.onebeattrue.mylittlepet.presentation.pets.AddPetViewModel
 import edu.mirea.onebeattrue.mylittlepet.presentation.pets.PetsViewModel
 
 @Module
@@ -30,6 +31,11 @@ interface ViewModelModule {
     @ViewModelKey(PetsViewModel::class)
     @Binds
     fun bindPetsViewModel(impl: PetsViewModel): ViewModel
+
+    @IntoMap
+    @ViewModelKey(AddPetViewModel::class)
+    @Binds
+    fun bindAddPetViewModel(impl: AddPetViewModel): ViewModel
 
     // ... добавлять аналогичные методы для других ViewModel'ей
 }

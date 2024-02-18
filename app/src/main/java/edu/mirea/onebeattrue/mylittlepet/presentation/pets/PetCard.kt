@@ -24,9 +24,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
+import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.SMALL_ELEVATION
@@ -76,17 +76,7 @@ fun PetCard(
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Crop,
                     painter = painterResource(
-                        id = when (pet.type) {
-                            PetType.CAT -> R.drawable.image_cat_black
-                            PetType.DOG -> R.drawable.image_dog_brown
-                            PetType.RABBIT -> R.drawable.image_rabbit
-                            PetType.BIRD -> R.drawable.image_bird
-                            PetType.FISH -> R.drawable.image_fish_blue
-                            PetType.SNAKE -> R.drawable.image_snake
-                            PetType.TIGER -> R.drawable.image_tiger
-                            PetType.MOUSE -> R.drawable.image_mouse
-                            PetType.TURTLE -> R.drawable.image_turtle
-                        }
+                        id = pet.type.getImageId()
                     ),
                     contentDescription = null,
                 )

@@ -405,7 +405,7 @@ private fun ConfirmPhoneTextField(
             Text(stringResource(id = R.string.confirmation_code_hint))
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER),
         singleLine = true,
         isError = isError.value,
         supportingText = {
