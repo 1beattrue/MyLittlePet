@@ -21,8 +21,8 @@ import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 @Composable
 fun CustomCard(
     modifier: Modifier = Modifier,
+    elevation: Dp,
     content: @Composable () -> Unit,
-    elevation: Dp
 ) {
     Card(
         modifier = modifier
@@ -52,7 +52,11 @@ fun CustomCardDefaultElevation(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    CustomCard(content = { content() }, elevation = DEFAULT_ELEVATION)
+    CustomCard(
+        modifier = modifier,
+        content = { content() },
+        elevation = DEFAULT_ELEVATION
+    )
 }
 
 @Composable
@@ -60,7 +64,11 @@ fun CustomCardStrongElevation(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    CustomCard(content = { content() }, elevation = STRONG_ELEVATION)
+    CustomCard(
+        modifier = modifier,
+        content = { content() },
+        elevation = STRONG_ELEVATION
+    )
 }
 
 @Composable
@@ -68,5 +76,9 @@ fun CustomCardExtremeElevation(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    CustomCard(content = { content() }, elevation = EXTREME_ELEVATION)
+    CustomCard(
+        modifier = modifier,
+        content = { content() },
+        elevation = EXTREME_ELEVATION
+    )
 }

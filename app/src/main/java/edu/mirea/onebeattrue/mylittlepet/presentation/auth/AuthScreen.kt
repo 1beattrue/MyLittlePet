@@ -259,12 +259,18 @@ fun AuthScreen(
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
-                PhoneTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    phoneNumber = phoneNumber,
-                    isError = isPhoneTextFieldError,
-                    isEnabled = !isCodeSent && !progress
-                )
+                AnimatedVisibility(
+                    visible = !isCodeSent,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    PhoneTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        phoneNumber = phoneNumber,
+                        isError = isPhoneTextFieldError,
+                        isEnabled = !isCodeSent && !progress
+                    )
+                }
                 AnimatedVisibility(
                     visible = isCodeSent,
                     enter = expandVertically(),
