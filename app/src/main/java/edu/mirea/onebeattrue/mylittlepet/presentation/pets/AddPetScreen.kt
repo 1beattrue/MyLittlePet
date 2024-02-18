@@ -36,6 +36,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomBackButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardDefaultElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomNextButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
@@ -130,18 +131,21 @@ fun AddPetScreen(
                     }
                 }
             }
-            CustomNextButton(
-                onClick = {
-                    viewModel.addPet(
-                        Pet(
-                            type = selectedType!!,
-                            name = "Pet Name",
-                            picture = ""
+            Box {
+                CustomNextButton(
+                    onClick = {
+                        viewModel.addPet(
+                            Pet(
+                                type = selectedType!!,
+                                name = "Pet Name",
+                                picture = ""
+                            )
                         )
-                    )
-                    closeScreen()
-                }
-            )
+                        closeScreen()
+                    }
+                )
+                CustomBackButton(onClick = { closeScreen() })
+            }
         }
     }
 }

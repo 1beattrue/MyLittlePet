@@ -59,6 +59,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.InvalidVerificationC
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.SmsReceiver
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomBackButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardDefaultElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
@@ -174,6 +175,9 @@ fun AuthScreen(
             progress = false
             isCodeSent = false
             backHandlingEnabled = false
+
+            code.value = ""
+            isConfirmPhoneTextFieldError.value = false
         }
     }
 
@@ -267,6 +271,18 @@ fun AuthScreen(
                         ),
                         enabled = !progress
                     )
+                    Column {
+                        AnimatedVisibility(
+                            visible = isCodeSent,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+                            CustomBackButton(
+                                onClick = { viewModel.changePhoneNumber() },
+                                enabled = !progress
+                            )
+                        }
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
