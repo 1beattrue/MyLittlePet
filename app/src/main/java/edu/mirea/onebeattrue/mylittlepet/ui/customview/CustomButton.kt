@@ -5,35 +5,105 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import edu.mirea.onebeattrue.mylittlepet.R
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_CONTAINER
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
+
+@Composable
+fun CustomButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String,
+    enabled: Boolean = true,
+) {
+    Button(
+        modifier = modifier,
+        onClick = { onClick() },
+        shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
+        enabled = enabled
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+}
+
+@Composable
+fun CustomOutlinedButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String,
+    enabled: Boolean = true,
+) {
+    OutlinedButton(
+        modifier = modifier,
+        onClick = { onClick() },
+        shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
+        enabled = enabled
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+}
 
 @Composable
 fun CustomNextButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    enabled: Boolean = true,
 ) {
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.CenterEnd
     ) {
-        Button(
+        CustomButton(
             onClick = { onClick() },
-            shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER)
-        ) {
-            Text(
-                text = stringResource(id = R.string.next),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
+            text = stringResource(id = R.string.next),
+            enabled = enabled
+        )
     }
-
 }
 
-// ConfirmButton
-// кнопка добавления кастомная
+@Composable
+fun CustomConfirmButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        CustomButton(
+            onClick = { onClick() },
+            text = stringResource(id = R.string.confirm),
+            enabled = enabled
+        )
+    }
+}
+
+@Composable
+fun CustomBackButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        CustomOutlinedButton(
+            onClick = { onClick() },
+            text = stringResource(id = R.string.back),
+            enabled = enabled
+        )
+    }
+}

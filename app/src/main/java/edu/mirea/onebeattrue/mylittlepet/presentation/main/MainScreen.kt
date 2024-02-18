@@ -165,7 +165,7 @@ fun MainScreen(
                 AddPetScreen(
                     modifier = Modifier.padding(),
                     viewModelFactory = viewModelFactory,
-                    close = {
+                    closeScreen = {
                         navigationState.navHostController.popBackStack()
                     }
                 )

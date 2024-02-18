@@ -12,6 +12,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,13 +21,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +51,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthScreenState
@@ -60,8 +59,9 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.InvalidVerificationC
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.SmsReceiver
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_CONTAINER
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardDefaultElevation
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import kotlinx.coroutines.launch
 
 
@@ -177,8 +177,6 @@ fun AuthScreen(
         }
     }
 
-
-
     BackHandler(backHandlingEnabled) {
         viewModel.changePhoneNumber()
     }
@@ -188,7 +186,7 @@ fun AuthScreen(
             SnackbarHost(hostState = snackbarHostState) {
                 Snackbar(
                     snackbarData = it,
-                    shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER),
+                    shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
                     containerColor = MaterialTheme.colorScheme.errorContainer,
                     contentColor = MaterialTheme.colorScheme.onErrorContainer,
                 )
@@ -208,88 +206,67 @@ fun AuthScreen(
                 contentDescription = null,
             )
             Spacer(modifier = Modifier.height(16.dp))
-            CustomCard {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = 32.dp,
-                            vertical = 32.dp
-                        ),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            CustomCardDefaultElevation {
+                AnimatedVisibility(
+                    visible = !isCodeSent,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
                 ) {
-                    AnimatedVisibility(
-                        visible = !isCodeSent,
-                        enter = expandVertically(),
-                        exit = shrinkVertically()
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.enter_phone_number),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
-                    PhoneTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        phoneNumber = phoneNumber,
-                        isError = isPhoneTextFieldError,
-                        isEnabled = !isCodeSent && !progress
+                    Text(
+                        text = stringResource(id = R.string.enter_phone_number),
+                        style = MaterialTheme.typography.titleLarge
                     )
-                    AnimatedVisibility(
-                        visible = isCodeSent,
-                        enter = expandVertically(),
-                        exit = shrinkVertically()
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.enter_confirmation_code),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
-                    AnimatedVisibility(
-                        visible = isCodeSent,
-                        enter = expandVertically(),
-                        exit = shrinkVertically()
-                    ) {
-                        ConfirmPhoneTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            code = code,
-                            isError = isConfirmPhoneTextFieldError,
-                            isEnabled = !progress
-                        )
-                    }
-                    Row(
+                }
+                PhoneTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    phoneNumber = phoneNumber,
+                    isError = isPhoneTextFieldError,
+                    isEnabled = !isCodeSent && !progress
+                )
+                AnimatedVisibility(
+                    visible = isCodeSent,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.enter_confirmation_code),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+                AnimatedVisibility(
+                    visible = isCodeSent,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    ConfirmPhoneTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Button(
-                            onClick = {
-                                if (!isCodeSent) {
-                                    viewModel.createUserWithPhone(
-                                        phoneNumber = phoneNumber.value,
-                                        activity = activity
-                                    )
-                                } else {
-                                    viewModel.signUpWithCredential(
-                                        code = code.value
-                                    )
-                                }
-
-                            },
-                            shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER),
-                            enabled = !progress
-                        ) {
-                            Text(
-                                text = stringResource(
-                                    id = if (!isCodeSent) R.string.next else R.string.confirm
-                                ),
-                                fontSize = 16.sp
-                            )
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                                contentDescription = null
-                            )
-                        }
-                    }
+                        code = code,
+                        isError = isConfirmPhoneTextFieldError,
+                        isEnabled = !progress
+                    )
+                }
+                Box(
+                    modifier = modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    CustomButton(
+                        onClick = {
+                            if (!isCodeSent) {
+                                viewModel.createUserWithPhone(
+                                    phoneNumber = phoneNumber.value,
+                                    activity = activity
+                                )
+                            } else {
+                                viewModel.signUpWithCredential(
+                                    code = code.value
+                                )
+                            }
+                        },
+                        text = stringResource(
+                            id = if (!isCodeSent) R.string.next else R.string.confirm
+                        ),
+                        enabled = !progress
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -311,14 +288,14 @@ fun AuthScreen(
                 ) {
                     Text(
                         text = stringResource(id = R.string.resend_code),
-                        fontSize = 16.sp
+                        style = MaterialTheme.typography.bodyLarge
                     )
+                    Spacer(modifier = Modifier.width(4.dp))
                     Icon(
                         imageVector = Icons.Rounded.Refresh,
                         contentDescription = null
                     )
                 }
-
             }
             Spacer(modifier = Modifier.height(16.dp))
             AnimatedVisibility(
@@ -350,7 +327,7 @@ private fun PhoneTextField(
             Text(stringResource(id = R.string.phone_number_hint))
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER),
+        shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
         singleLine = true,
         prefix = {
             Text(stringResource(id = R.string.phone_number_prefix))
@@ -388,7 +365,7 @@ private fun ConfirmPhoneTextField(
             Text(stringResource(id = R.string.confirmation_code_hint))
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER),
+        shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
         singleLine = true,
         isError = isError.value,
         supportingText = {

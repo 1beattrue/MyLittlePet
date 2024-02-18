@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,16 +36,16 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardDefaultElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomNextButton
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_CONTAINER
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPetScreen(
     modifier: Modifier = Modifier,
     viewModelFactory: ViewModelFactory,
-    close: () -> Unit
+    closeScreen: () -> Unit
 ) {
     val viewModel: AddPetViewModel = viewModel(factory = viewModelFactory)
     val petTypes = PetType.getTypes()
@@ -63,104 +61,87 @@ fun AddPetScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        CustomCard {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 32.dp,
-                        vertical = 32.dp
-                    ),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+        CustomCardDefaultElevation {
+            AnimatedVisibility(
+                visible = true,
+                enter = expandVertically(),
+                exit = shrinkVertically()
             ) {
-                AnimatedVisibility(
-                    visible = true,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
+                Text(
+                    text = stringResource(id = R.string.select_pet_type),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+            Box {
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = {
+                        expanded = !expanded
+                    }
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.select_pet_type),
-                        style = MaterialTheme.typography.titleLarge
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
+                        value = selectedTypeName,
+                        shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
+                        onValueChange = {
+                            // TODO(): выбранный элемент обработать тут
+                        },
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     )
-                }
-                Box {
-                    ExposedDropdownMenuBox(
+                    ExposedDropdownMenu(
                         expanded = expanded,
-                        onExpandedChange = {
-                            expanded = !expanded
-                        }
+                        onDismissRequest = { expanded = false }
                     ) {
-                        OutlinedTextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(),
-                            value = selectedTypeName,
-                            shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER),
-                            onValueChange = {
-                                // TODO(): выбранный элемент обработать тут
-                            },
-                            readOnly = true,
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                        )
-
-                        ExposedDropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            petTypes.forEach { petType ->
-                                val petTypeName = petType.getName()
-                                DropdownMenuItem(
-                                    modifier = Modifier
-                                        .clip(
-                                            RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER)
-                                        ),
-                                    contentPadding = PaddingValues(
-                                        start = 16.dp,
-                                        end = 16.dp,
-                                        top = 8.dp,
-                                        bottom = 8.dp
+                        petTypes.forEach { petType ->
+                            val petTypeName = petType.getName()
+                            DropdownMenuItem(
+                                modifier = Modifier
+                                    .clip(
+                                        RoundedCornerShape(CORNER_RADIUS_CONTAINER)
                                     ),
-                                    text = {
-                                        Text(
-                                            text = petTypeName,
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                    },
-                                    trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(id = petType.getImageId()),
-                                            contentDescription = null
-                                        )
-                                    },
-                                    onClick = {
-                                        selectedType = petType
-                                        selectedTypeName = petTypeName
-                                        expanded = false
-                                    }
-                                )
-                            }
+                                contentPadding = PaddingValues(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    top = 8.dp,
+                                    bottom = 8.dp
+                                ),
+                                text = {
+                                    Text(
+                                        text = petTypeName,
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(id = petType.getImageId()),
+                                        contentDescription = null
+                                    )
+                                },
+                                onClick = {
+                                    selectedType = petType
+                                    selectedTypeName = petTypeName
+                                    expanded = false
+                                }
+                            )
                         }
                     }
                 }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    CustomNextButton(
-                        onClick = {
-                            viewModel.addPet(
-                                Pet(
-                                    type = selectedType!!,
-                                    name = "Pet Name",
-                                    picture = ""
-                                )
-                            )
-                            close()
-                        }
-                    )
-                }
             }
+            CustomNextButton(
+                onClick = {
+                    viewModel.addPet(
+                        Pet(
+                            type = selectedType!!,
+                            name = "Pet Name",
+                            picture = ""
+                        )
+                    )
+                    closeScreen()
+                }
+            )
         }
     }
 }
