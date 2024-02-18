@@ -9,5 +9,7 @@ enum class PetType {
     companion object  {
         @Composable
         fun getNames(): List<String> = PetType.values().toList().map { it.getName() }
+
+        fun getTypes(): List<PetType> = PetType.values().toList()
     }
 }

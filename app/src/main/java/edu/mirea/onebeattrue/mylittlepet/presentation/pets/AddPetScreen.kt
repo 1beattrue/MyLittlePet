@@ -6,16 +6,23 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -25,12 +32,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
+import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_SURFACE
@@ -44,10 +57,12 @@ fun AddPetScreen(
     close: () -> Unit
 ) {
     val viewModel: AddPetViewModel = viewModel(factory = viewModelFactory)
-    val petTypes = PetType.getNames()
+    val petTypes = PetType.getTypes()
 
     val initialSelect = stringResource(id = R.string.initial_pet_type)
-    var selectedText by rememberSaveable { mutableStateOf(initialSelect) }
+    var selectedTypeName by rememberSaveable { mutableStateOf(initialSelect) }
+    var selectedType by rememberSaveable { mutableStateOf<PetType?>(null) }
+
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Column(
@@ -97,7 +112,7 @@ fun AddPetScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .menuAnchor(),
-                            value = selectedText,
+                            value = selectedTypeName,
                             shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER),
                             onValueChange = {
                                 // TODO(): выбранный элемент обработать тут
@@ -111,15 +126,51 @@ fun AddPetScreen(
                             onDismissRequest = { expanded = false }
                         ) {
                             petTypes.forEach { petType ->
+                                val petTypeName = petType.getName()
                                 DropdownMenuItem(
-                                    text = { Text(text = petType) },
+                                    modifier = Modifier
+                                        .clip(
+                                            RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER)
+                                        ),
+                                    contentPadding = PaddingValues(16.dp),
+                                    text = { Text(text = petTypeName) },
                                     onClick = {
-                                        selectedText = petType
+                                        selectedType = petType
+                                        selectedTypeName = petTypeName
                                         expanded = false
                                     }
                                 )
                             }
                         }
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Button(
+                        onClick = {
+                            viewModel.addPet(
+                                Pet(
+                                    type = selectedType!!,
+                                    name = "Pet Name",
+                                    picture = ""
+                                )
+                            )
+                            close()
+                        },
+                        shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_CONTAINER)
+                    ) {
+                        Text(
+                            text = stringResource(
+                                id = R.string.next
+                            ),
+                            fontSize = 16.sp
+                        )
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                            contentDescription = null
+                        )
                     }
                 }
             }
