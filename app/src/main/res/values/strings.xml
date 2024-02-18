@@ -25,6 +25,7 @@
     <string name="navigation_item_profile">Profile</string>
 
     <string name="pets_app_bar_title">Pets</string>
+    <string name="add_pet_app_bar_title">Adding a pet</string>
 
     <string name="select_pet_type">Select pet type</string>
     <string name="initial_pet_type">Pet type</string>

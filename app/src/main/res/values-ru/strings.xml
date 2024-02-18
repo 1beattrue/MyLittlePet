@@ -26,6 +26,7 @@
     <string name="navigation_item_profile">Профиль</string>
 
     <string name="pets_app_bar_title">Питомцы</string>
+    <string name="add_pet_app_bar_title">Добавление питомца</string>
 
     <string name="select_pet_type">Выберите тип животного</string>
     <string name="initial_pet_type">Тип животного</string>

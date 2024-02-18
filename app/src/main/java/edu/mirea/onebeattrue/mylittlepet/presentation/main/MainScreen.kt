@@ -30,8 +30,8 @@ import edu.mirea.onebeattrue.mylittlepet.navigation.Screen
 import edu.mirea.onebeattrue.mylittlepet.navigation.graphs.AppNavGraph
 import edu.mirea.onebeattrue.mylittlepet.navigation.rememberNavigationState
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
-import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.feed.FeedScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.pets.AddPetScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.pets.PetsScreen
@@ -127,7 +127,7 @@ fun MainScreen(
                 AuthScreen(
                     modifier = Modifier.padding(paddingValues),
                     finishAuth = {
-                        navigationState.navigateTo(Screen.Main.route)
+                        navigationState.navigateWithoutSavingStateTo(Screen.Main.route)
                         viewModel.finishAuth()
                     },
                     viewModelFactory = viewModelFactory,
@@ -146,10 +146,7 @@ fun MainScreen(
                     modifier = Modifier.padding(paddingValues),
                     viewModelFactory = viewModelFactory,
                     addPet = {
-//                        navigationState.navHostController.navigate(Screen.AddPet.route) {
-//                            launchSingleTop = true
-//                        }
-                        navigationState.navigateWithoutRestoreStateTo(Screen.AddPet.route)
+                        navigationState.navigateWithoutRestoringStateTo(Screen.AddPet.route)
                     }
                 )
             },
@@ -169,7 +166,7 @@ fun MainScreen(
                     modifier = Modifier.padding(),
                     viewModelFactory = viewModelFactory,
                     closeScreen = {
-                        navigationState.navigateTo(Screen.Main.route)
+                        navigationState.navigateWithoutSavingStateTo(Screen.Main.route)
                     }
                 )
             }

@@ -8,15 +8,22 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,89 +63,119 @@ fun AddPetScreen(
 
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CustomCardDefaultElevation {
-            AnimatedVisibility(
-                visible = true,
-                enter = expandVertically(),
-                exit = shrinkVertically()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.select_pet_type),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            Box {
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = {
-                        expanded = !expanded
-                    }
-                ) {
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor(),
-                        value = selectedTypeName,
-                        shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
-                        onValueChange = {
-                            // TODO(): выбранный элемент обработать тут
-                        },
-                        readOnly = true,
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                title = {
+                    Text(
+                        style = MaterialTheme.typography.titleLarge,
+                        text = stringResource(R.string.add_pet_app_bar_title)
                     )
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { closeScreen() },
                     ) {
-                        petTypes.forEach { petType ->
-                            val petTypeName = petType.getName()
-                            DropdownMenuItem(
-                                modifier = Modifier
-                                    .clip(
-                                        RoundedCornerShape(CORNER_RADIUS_CONTAINER)
-                                    ),
-                                contentPadding = MENU_ITEM_PADDING,
-                                text = {
-                                    Text(
-                                        text = petTypeName,
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
-                                },
-                                trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(id = petType.getImageId()),
-                                        contentDescription = null
-                                    )
-                                },
-                                onClick = {
-                                    selectedType = petType
-                                    selectedTypeName = petTypeName
-                                    expanded = false
-                                }
-                            )
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+        },
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CustomCardDefaultElevation {
+                AnimatedVisibility(
+                    visible = true,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.select_pet_type),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+                Box {
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = {
+                            expanded = !expanded
+                        }
+                    ) {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(),
+                            value = selectedTypeName,
+                            shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
+                            onValueChange = {
+                                // TODO(): выбранный элемент обработать тут
+                            },
+                            readOnly = true,
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        )
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            petTypes.forEach { petType ->
+                                val petTypeName = petType.getName()
+                                DropdownMenuItem(
+                                    modifier = Modifier
+                                        .clip(
+                                            RoundedCornerShape(CORNER_RADIUS_CONTAINER)
+                                        ),
+                                    contentPadding = MENU_ITEM_PADDING,
+                                    text = {
+                                        Text(
+                                            text = petTypeName,
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(id = petType.getImageId()),
+                                            contentDescription = null
+                                        )
+                                    },
+                                    onClick = {
+                                        selectedType = petType
+                                        selectedTypeName = petTypeName
+                                        expanded = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }
-            }
-            Box {
-                CustomNextButton(
-                    onClick = {
-                        viewModel.addPet(
-                            Pet(
-                                type = selectedType!!,
-                                name = "Pet Name",
-                                picture = ""
+                Box {
+                    CustomNextButton(
+                        onClick = {
+                            viewModel.addPet(
+                                Pet(
+                                    type = selectedType!!,
+                                    name = "Pet Name",
+                                    picture = ""
+                                )
                             )
-                        )
-                        closeScreen()
-                    }
-                )
-                CustomBackButton(onClick = { closeScreen() })
+                            closeScreen()
+                        }
+                    )
+                    CustomBackButton(onClick = { closeScreen() })
+                }
             }
         }
     }
