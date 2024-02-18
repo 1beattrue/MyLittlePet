@@ -27,8 +27,6 @@ import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -62,9 +60,8 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.InvalidVerificationC
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.SmsReceiver
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_CONTAINER
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_SURFACE
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 import kotlinx.coroutines.launch
 
 
@@ -211,21 +208,7 @@ fun AuthScreen(
                 contentDescription = null,
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Card(
-                modifier = Modifier
-                    .padding(
-                        horizontal = 16.dp
-                    )
-                    .fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_SURFACE),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = DEFAULT_ELEVATION
-                )
-            ) {
+            CustomCard {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

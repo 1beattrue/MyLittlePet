@@ -1,5 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.ui.customview
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,7 +19,7 @@ import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 @Composable
 fun CustomCard(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         modifier = modifier
@@ -30,14 +32,14 @@ fun CustomCard(
         shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_SURFACE),
         elevation = CardDefaults.cardElevation(defaultElevation = DEFAULT_ELEVATION)
     ) {
-        content()
+        Column(content = content)
     }
 }
 
 @Composable
 fun CustomCardStrongElevation(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         modifier = modifier
@@ -50,14 +52,14 @@ fun CustomCardStrongElevation(
         shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_SURFACE),
         elevation = CardDefaults.cardElevation(defaultElevation = STRONG_ELEVATION)
     ) {
-        content()
+        Column(content = content)
     }
 }
 
 @Composable
 fun CustomCardExtremeElevation(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         modifier = modifier
@@ -70,6 +72,6 @@ fun CustomCardExtremeElevation(
         shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_SURFACE),
         elevation = CardDefaults.cardElevation(defaultElevation = EXTREME_ELEVATION)
     ) {
-        content()
+        Column(content = content)
     }
 }
