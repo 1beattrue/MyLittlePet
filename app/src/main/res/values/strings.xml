@@ -24,6 +24,8 @@
     <string name="navigation_item_pets">Pets</string>
     <string name="navigation_item_profile">Profile</string>
 
+    <string name="auth_app_bar_title">Authorization</string>
+
     <string name="pets_app_bar_title">Pets</string>
     <string name="add_pet_app_bar_title">Adding a pet</string>
 

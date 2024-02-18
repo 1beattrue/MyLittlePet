@@ -5,9 +5,11 @@ import android.provider.Telephony
 import android.telephony.SmsMessage
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -25,9 +27,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -37,6 +42,8 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -59,13 +66,13 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.InvalidVerificationC
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.SmsReceiver
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomBackButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardDefaultElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun AuthScreen(
@@ -195,7 +202,38 @@ fun AuthScreen(
                     contentColor = MaterialTheme.colorScheme.onErrorContainer,
                 )
             }
-        }
+        },
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                title = {
+                    Text(
+                        style = MaterialTheme.typography.titleLarge,
+                        text = stringResource(R.string.auth_app_bar_title)
+                    )
+                },
+                navigationIcon = {
+                    AnimatedVisibility(
+                        visible = isCodeSent,
+                        enter = expandHorizontally(),
+                        exit = shrinkHorizontally()
+                    ) {
+                        IconButton(
+                            onClick = { viewModel.changePhoneNumber() },
+                            enabled = isCodeSent && !progress
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                }
+            )
+        },
     ) { paddingValues ->
         Column(
             modifier = modifier
@@ -271,18 +309,6 @@ fun AuthScreen(
                         ),
                         enabled = !progress
                     )
-                    Column {
-                        AnimatedVisibility(
-                            visible = isCodeSent,
-                            enter = fadeIn(),
-                            exit = fadeOut()
-                        ) {
-                            CustomBackButton(
-                                onClick = { viewModel.changePhoneNumber() },
-                                enabled = !progress
-                            )
-                        }
-                    }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
