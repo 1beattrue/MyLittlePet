@@ -6,7 +6,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
@@ -40,6 +38,7 @@ import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomBackButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardDefaultElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomNextButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.MENU_ITEM_PADDING
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -103,12 +102,7 @@ fun AddPetScreen(
                                     .clip(
                                         RoundedCornerShape(CORNER_RADIUS_CONTAINER)
                                     ),
-                                contentPadding = PaddingValues(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    top = 8.dp,
-                                    bottom = 8.dp
-                                ),
+                                contentPadding = MENU_ITEM_PADDING,
                                 text = {
                                     Text(
                                         text = petTypeName,

@@ -53,7 +53,6 @@ fun PetsScreen(
                 actions = {
                     IconButton(onClick = {
                         addPet()
-                        //viewModel.addPet(Pet(PetType.DOG, "Dog", ""))
                     }) {
                         Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
                     }
@@ -64,10 +63,7 @@ fun PetsScreen(
         LazyColumn(
             modifier = Modifier.padding(paddingValues),
             contentPadding = PaddingValues(
-                top = 16.dp,
-                start = 8.dp,
-                end = 8.dp,
-                bottom = 16.dp
+                vertical = 16.dp
             ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {

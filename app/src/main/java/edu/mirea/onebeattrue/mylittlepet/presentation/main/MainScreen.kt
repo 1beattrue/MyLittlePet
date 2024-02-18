@@ -146,7 +146,9 @@ fun MainScreen(
                     modifier = Modifier.padding(paddingValues),
                     viewModelFactory = viewModelFactory,
                     addPet = {
-                        navigationState.navHostController.navigate(Screen.AddPet.route)
+                        navigationState.navHostController.navigate(Screen.AddPet.route) {
+                            launchSingleTop = true
+                        }
                     }
                 )
             },

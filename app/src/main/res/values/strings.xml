@@ -38,4 +38,6 @@
     <string name="pet_type_mouse">Mouse</string>
     <string name="pet_type_turtle">Turtle</string>
 
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
 </resources>
