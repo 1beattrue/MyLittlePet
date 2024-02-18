@@ -46,7 +46,7 @@ import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_SURFACE
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.SMALL_ELEVATION
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,7 +78,7 @@ fun AddPetScreen(
                 contentColor = MaterialTheme.colorScheme.onSurface
             ),
             shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_SURFACE),
-            elevation = CardDefaults.cardElevation(defaultElevation = SMALL_ELEVATION)
+            elevation = CardDefaults.cardElevation(defaultElevation = DEFAULT_ELEVATION)
         ) {
             Column(
                 modifier = Modifier

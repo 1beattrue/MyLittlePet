@@ -29,7 +29,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.ROUNDED_CORNER_SIZE_SURFACE
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.SMALL_ELEVATION
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 
 @Composable
 fun PetCard(
@@ -44,7 +44,7 @@ fun PetCard(
             contentColor = MaterialTheme.colorScheme.onSurface
         ),
         shape = RoundedCornerShape(ROUNDED_CORNER_SIZE_SURFACE),
-        elevation = CardDefaults.cardElevation(defaultElevation = SMALL_ELEVATION)
+        elevation = CardDefaults.cardElevation(defaultElevation = DEFAULT_ELEVATION)
     ) {
         Box {
             Row(
