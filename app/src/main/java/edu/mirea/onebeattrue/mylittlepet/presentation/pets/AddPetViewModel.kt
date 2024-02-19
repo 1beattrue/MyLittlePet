@@ -1,6 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.pets
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import edu.mirea.onebeattrue.mylittlepet.R
@@ -28,14 +29,25 @@ class AddPetViewModel @Inject constructor(
     fun addPet(pet: Pet) {
         viewModelScope.launch(Dispatchers.IO) {
             addPetUseCase(pet)
+            _screenState.value = AddPetScreenState.Success
         }
     }
 
     fun moveToEnterName(petType: PetType?) {
         if (petType == null) {
-            _screenState.value = AddPetScreenState.Failure(application.getString(R.string.pet_type_error))
+            _screenState.value = AddPetScreenState.Failure(application.getString(R.string.error_pet_type))
         } else {
             _screenState.value = AddPetScreenState.SelectPetName
+        }
+    }
+
+    fun moveToSelectImage(petName: String) {
+        if (petName.isBlank()) {
+            Log.d("AddPetViewModel", "Failure")
+            _screenState.value = AddPetScreenState.Failure(application.getString(R.string.error_pet_name))
+        } else {
+            Log.d("AddPetViewModel", "SelectPetImage")
+            _screenState.value = AddPetScreenState.SelectPetImage
         }
     }
 }

@@ -107,3 +107,21 @@ fun CustomBackButton(
         )
     }
 }
+
+@Composable
+fun CustomAddButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        CustomButton(
+            onClick = { onClick() },
+            text = stringResource(id = R.string.add),
+            enabled = enabled
+        )
+    }
+}

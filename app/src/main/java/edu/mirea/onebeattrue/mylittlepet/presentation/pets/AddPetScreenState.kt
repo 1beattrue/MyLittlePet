@@ -10,5 +10,7 @@ sealed class AddPetScreenState {
 
     object SelectPetImage : AddPetScreenState()
 
+    object Success : AddPetScreenState()
+
     data class Failure(val message: String) : AddPetScreenState()
 }
