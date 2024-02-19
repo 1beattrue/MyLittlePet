@@ -42,6 +42,8 @@
     <string name="pet_type_mouse">Мышь</string>
     <string name="pet_type_turtle">Черепаха</string>
 
+    <string name="pet_type_error">Не выбран тип животного</string>
+
     <string name="delete">Удалить</string>
     <string name="edit">Редактировать</string>
 </resources>

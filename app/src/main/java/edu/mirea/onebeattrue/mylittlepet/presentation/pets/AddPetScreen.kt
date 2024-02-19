@@ -2,16 +2,20 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.pets
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -25,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,7 +41,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
@@ -54,14 +58,52 @@ fun AddPetScreen(
     viewModelFactory: ViewModelFactory,
     closeScreen: () -> Unit
 ) {
-    val viewModel: AddPetViewModel = viewModel(factory = viewModelFactory)
-    val petTypes = PetType.getTypes()
-
+    // states --------------------------------------------------------------------------------------
     val initialSelect = stringResource(id = R.string.initial_pet_type)
     var selectedTypeName by rememberSaveable { mutableStateOf(initialSelect) }
+
     var selectedType by rememberSaveable { mutableStateOf<PetType?>(null) }
 
     var expanded by rememberSaveable { mutableStateOf(false) }
+
+    var isTextFieldError by rememberSaveable { mutableStateOf(false) }
+
+    var supportingText by rememberSaveable { mutableStateOf("") }
+
+    var isBackButtonVisible by rememberSaveable { mutableStateOf(false) }
+
+
+    val viewModel: AddPetViewModel = viewModel(factory = viewModelFactory)
+
+    val petTypes = PetType.getTypes()
+
+    val addPetScreenState by viewModel.screenState.collectAsState(
+        AddPetScreenState.Initial
+    )
+
+    when (val screenState = addPetScreenState) {
+        is AddPetScreenState.Failure -> {
+            isTextFieldError = true
+            supportingText = screenState.message
+        }
+
+        AddPetScreenState.SelectPetType -> {
+            isTextFieldError = false
+            isBackButtonVisible = false
+        }
+
+        AddPetScreenState.SelectPetName -> {
+            isTextFieldError = false
+            isBackButtonVisible = true
+        }
+
+        AddPetScreenState.SelectPetImage -> {
+            isTextFieldError = false
+            isBackButtonVisible = true
+        }
+
+        AddPetScreenState.Initial -> {}
+    }
 
     Scaffold(
         modifier = modifier,
@@ -121,11 +163,20 @@ fun AddPetScreen(
                                 .menuAnchor(),
                             value = selectedTypeName,
                             shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
-                            onValueChange = {
-                                // TODO(): выбранный элемент обработать тут
-                            },
+                            onValueChange = {},
                             readOnly = true,
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                            trailingIcon = {
+                                if (isTextFieldError) {
+                                    Icon(imageVector = Icons.Rounded.Warning, contentDescription = null)
+                                }
+                                 },
+                            isError = isTextFieldError,
+                            supportingText = {
+                                if (isTextFieldError) Text(text = supportingText)
+                            },
+                            leadingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                            }
                         )
                         ExposedDropdownMenu(
                             expanded = expanded,
@@ -155,6 +206,7 @@ fun AddPetScreen(
                                         selectedType = petType
                                         selectedTypeName = petTypeName
                                         expanded = false
+                                        isTextFieldError = false
                                     }
                                 )
                             }
@@ -164,17 +216,20 @@ fun AddPetScreen(
                 Box {
                     CustomNextButton(
                         onClick = {
-                            viewModel.addPet(
-                                Pet(
-                                    type = selectedType!!,
-                                    name = "Pet Name",
-                                    picture = ""
-                                )
-                            )
-                            closeScreen()
+                            viewModel.moveToEnterName(petType = selectedType)
                         }
                     )
-                    CustomBackButton(onClick = { closeScreen() })
+                    Row {
+                        AnimatedVisibility(
+                            visible = isBackButtonVisible,
+                            enter = fadeIn(),
+                            exit = fadeOut(),
+                        ) {
+                            CustomBackButton(
+                                onClick = { closeScreen() },
+                            )
+                        }
+                    }
                 }
             }
         }
