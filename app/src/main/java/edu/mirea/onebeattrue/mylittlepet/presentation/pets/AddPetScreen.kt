@@ -1,13 +1,9 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.pets
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,7 +47,10 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.ui.animation.ANIMATION_TRANSITION_SLIDE_IN
+import edu.mirea.onebeattrue.mylittlepet.ui.animation.ANIMATION_TRANSITION_SLIDE_OUT
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomAddButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomBackButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardDefaultElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomNextButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
@@ -66,13 +65,23 @@ fun AddPetScreen(
     closeScreen: () -> Unit
 ) {
     // states --------------------------------------------------------------------------------------
-    val petType = rememberSaveable { mutableStateOf<PetType?>(null) }
-    val petName = rememberSaveable { mutableStateOf("") }
-    val petImage = rememberSaveable { mutableStateOf("") }
+    val petType = rememberSaveable {
+        mutableStateOf<PetType?>(null)
+    }
+    val petName = rememberSaveable {
+        mutableStateOf("")
+    }
+    val petImage = rememberSaveable {
+        mutableStateOf("")
+    }
 
     val initialSelect = stringResource(id = R.string.initial_pet_type)
-    val selectedTypeName = rememberSaveable { mutableStateOf(initialSelect) }
-    val expanded = rememberSaveable { mutableStateOf(false) }
+    val selectedTypeName = rememberSaveable {
+        mutableStateOf(initialSelect)
+    }
+    val expanded = rememberSaveable {
+        mutableStateOf(false)
+    }
 
     val isTypeTextFieldError = rememberSaveable {
         mutableStateOf(false)
@@ -82,9 +91,15 @@ fun AddPetScreen(
         mutableStateOf(false)
     }
 
-    var isTypeSelected by rememberSaveable { mutableStateOf(false) }
-    var isNameEntered by rememberSaveable { mutableStateOf(false) }
-    var isImagePicked by rememberSaveable { mutableStateOf(false) }
+    var isTypeSelected by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var isNameEntered by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var isImagePicked by rememberSaveable {
+        mutableStateOf(false)
+    }
 
 
     val viewModel: AddPetViewModel = viewModel(factory = viewModelFactory)
@@ -95,11 +110,7 @@ fun AddPetScreen(
         AddPetScreenState.Initial
     )
 
-    val animationSlideFromEndToStart =
-        (slideInHorizontally { it } + fadeIn()).togetherWith(slideOutHorizontally { -it } + fadeOut())
-    val animationSlideFromStartToEnd =
-        (slideInHorizontally { -it } + fadeIn()).togetherWith(slideOutHorizontally { it } + fadeOut())
-    val animationFade = fadeIn() togetherWith fadeOut()
+    val currentStepNumber by viewModel.currentStepNumber.collectAsState(0)
 
     Scaffold(
         modifier = modifier,
@@ -136,40 +147,22 @@ fun AddPetScreen(
             verticalArrangement = Arrangement.Center
         ) {
             AnimatedContent(
-                label = "",
-                targetState = addPetScreenState,
+                label = "add_pet",
+                targetState = currentStepNumber,
                 transitionSpec = {
-                    when (val state = targetState) {
-                        is AddPetScreenState.SelectPetType -> {
-                            if (state.invalidType) {
-                                animationFade
-                            } else {
-                                animationSlideFromEndToStart
-                            }
-                        }
-
-                        is AddPetScreenState.SelectPetName -> {
-                            if (state.invalidName) {
-                                animationFade
-                            } else {
-                                animationSlideFromEndToStart
-                            }
-                        }
-
-                        AddPetScreenState.SelectPetImage -> {
-                            animationSlideFromEndToStart
-                        }
-
-                        else -> {
-                            animationFade
-                        }
+                    if (targetState > initialState) {
+                        Log.d("AnimatedContent", "$targetState $initialState")
+                        ANIMATION_TRANSITION_SLIDE_IN
+                    } else {
+                        Log.d("AnimatedContent", "$targetState $initialState")
+                        ANIMATION_TRANSITION_SLIDE_OUT
                     }
                 }
             ) {
-                CustomCardDefaultElevation {
-                    when (val screenState = addPetScreenState) {
-                        is AddPetScreenState.SelectPetType -> {
-                            isTypeTextFieldError.value = screenState.invalidType
+                when (val screenState = addPetScreenState) {
+                    is AddPetScreenState.SelectPetType -> {
+                        isTypeTextFieldError.value = screenState.invalidType
+                        CustomCardDefaultElevation {
                             Text(
                                 text = stringResource(id = R.string.select_pet_type),
                                 style = MaterialTheme.typography.titleLarge
@@ -181,13 +174,16 @@ fun AddPetScreen(
                                 petTypes = petTypes,
                                 selectedType = petType
                             )
-                            CustomNextButton(onClick = { viewModel.moveToEnterName(petType.value) })
+                            CustomNextButton(onClick = { viewModel.moveNextToEnterName(petType.value) })
                         }
+                    }
 
-                        is AddPetScreenState.SelectPetName -> {
-                            isTypeSelected = true
+                    is AddPetScreenState.SelectPetName -> {
+                        isTypeSelected = true
 
-                            isNameTextFieldError.value = screenState.invalidName
+                        isNameTextFieldError.value = screenState.invalidName
+
+                        CustomCardDefaultElevation {
                             Text(
                                 text = stringResource(id = R.string.enter_pet_name),
                                 style = MaterialTheme.typography.titleLarge
@@ -196,35 +192,45 @@ fun AddPetScreen(
                                 petName = petName,
                                 isError = isNameTextFieldError
                             )
-                            CustomNextButton(onClick = { viewModel.moveToSelectImage(petName.value) })
+                            Box {
+                                CustomNextButton(onClick = { viewModel.moveNextToSelectImage(petName.value) })
+                                CustomBackButton(onClick = { viewModel.moveBackToSelectType() })
+                            }
                         }
+                    }
 
-                        AddPetScreenState.SelectPetImage -> {
-                            isNameEntered = true
+                    AddPetScreenState.SelectPetImage -> {
+                        isNameEntered = true
 
+                        CustomCardDefaultElevation {
                             Text(
                                 text = stringResource(id = R.string.add_pet_photo),
                                 style = MaterialTheme.typography.titleLarge
                             )
-                            CustomAddButton(onClick = {
-                                viewModel.addPet(
-                                    Pet(
-                                        type = petType.value!!,
-                                        name = petName.value,
-                                        picture = "",
-                                    )
+                            Box {
+                                CustomAddButton(
+                                    onClick = {
+                                        viewModel.addPet(
+                                            Pet(
+                                                type = petType.value
+                                                    ?: throw RuntimeException("petType = null"),
+                                                name = petName.value,
+                                                picture = "",
+                                            )
+                                        )
+                                    }
                                 )
+                                CustomBackButton(onClick = { viewModel.moveBackToSelectName() })
                             }
-                            )
                         }
-
-                        AddPetScreenState.Success -> {
-                            isImagePicked = true
-                            closeScreen()
-                        }
-
-                        AddPetScreenState.Initial -> {}
                     }
+
+                    AddPetScreenState.Success -> {
+                        isImagePicked = true
+                        closeScreen()
+                    }
+
+                    AddPetScreenState.Initial -> {}
                 }
             }
         }
@@ -318,7 +324,7 @@ fun EnterPetNameTextField(
     isError: MutableState<Boolean>
 ) {
     OutlinedTextField(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         value = petName.value,
         onValueChange = {
             petName.value = it.filter { symbol -> symbol.isLetterOrDigit() }

@@ -14,9 +14,13 @@ import javax.inject.Inject
 class AddPetViewModel @Inject constructor(
     private val addPetUseCase: AddPetUseCase
 ) : ViewModel() {
-    private val _screenState =
-        MutableStateFlow<AddPetScreenState>(AddPetScreenState.Initial)
+    private val _screenState = MutableStateFlow<AddPetScreenState>(
+        AddPetScreenState.Initial
+    )
     val screenState = _screenState.asStateFlow()
+
+    private val _currentStepNumber = MutableStateFlow(0)
+    val currentStepNumber = _currentStepNumber.asStateFlow()
 
     init {
         _screenState.value = AddPetScreenState.SelectPetType()
@@ -29,19 +33,31 @@ class AddPetViewModel @Inject constructor(
         }
     }
 
-    fun moveToEnterName(petType: PetType?) {
+    fun moveNextToEnterName(petType: PetType?) {
         if (petType == null) {
             _screenState.value = AddPetScreenState.SelectPetType(invalidType = true)
         } else {
+            _currentStepNumber.value++
             _screenState.value = AddPetScreenState.SelectPetName()
         }
     }
 
-    fun moveToSelectImage(petName: String) {
+    fun moveNextToSelectImage(petName: String) {
         if (petName.isBlank()) {
             _screenState.value = AddPetScreenState.SelectPetName(invalidName = true)
         } else {
+            _currentStepNumber.value++
             _screenState.value = AddPetScreenState.SelectPetImage
         }
+    }
+
+    fun moveBackToSelectName() {
+        _currentStepNumber.value--
+        _screenState.value = AddPetScreenState.SelectPetName()
+    }
+
+    fun moveBackToSelectType() {
+        _currentStepNumber.value--
+        _screenState.value = AddPetScreenState.SelectPetType()
     }
 }
