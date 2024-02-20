@@ -371,7 +371,7 @@ private fun PhoneTextField(
             phoneNumber.value = it.filter { symbol -> symbol.isDigit() }
             isError.value = false
         },
-        label = {
+        placeholder = {
             Text(stringResource(id = R.string.phone_number_hint))
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -409,7 +409,7 @@ private fun ConfirmPhoneTextField(
             code.value = it.filter { symbol -> symbol.isDigit() }
             isError.value = false
         },
-        label = {
+        placeholder = {
             Text(stringResource(id = R.string.confirmation_code_hint))
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

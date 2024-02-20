@@ -33,14 +33,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
-import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.ui.animation.ANIMATION_TRANSITION_FADE_IN_FADE_OUT
@@ -246,69 +245,69 @@ fun SelectPetType(
     Box(
         modifier = modifier
     ) {
-        ExposedDropdownMenuBox(
-            expanded = expanded.value,
-            onExpandedChange = {
-                expanded.value = !expanded.value
-            }
-        ) {
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor(),
-                value = selectedTypeName.value,
-                shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = {
-                    if (isError.value) {
-                        Icon(imageVector = Icons.Rounded.Warning, contentDescription = null)
-                    }
-                },
-                isError = isError.value,
-                supportingText = {
-                    if (isError.value) {
-                        Text(text = stringResource(id = R.string.error_pet_type))
-                    }
-                },
-                leadingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
-                }
+        MaterialTheme(
+            shapes = MaterialTheme.shapes.copy(
+                extraSmall = RoundedCornerShape(
+                    CORNER_RADIUS_CONTAINER
+                )
             )
-            ExposedDropdownMenu(
+        ) {
+            ExposedDropdownMenuBox(
                 expanded = expanded.value,
-                onDismissRequest = { expanded.value = false }
+                onExpandedChange = {
+                    expanded.value = !expanded.value
+                }
             ) {
-                petTypes.forEach { petType ->
-                    val petTypeName = petType.getName()
-                    DropdownMenuItem(
-                        modifier = Modifier
-                            .clip(
-                                RoundedCornerShape(CORNER_RADIUS_CONTAINER)
-                            ),
-                        contentPadding = MENU_ITEM_PADDING,
-                        text = {
-                            Text(
-                                text = petTypeName,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(id = petType.getImageId()),
-                                contentDescription = null
-                            )
-                        },
-                        trailingIcon = {
-
-                        },
-                        onClick = {
-                            selectedType.value = petType
-                            selectedTypeName.value = petTypeName
-                            expanded.value = false
-                            isError.value = false
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    value = selectedTypeName.value,
+                    shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        if (isError.value) {
+                            Icon(imageVector = Icons.Rounded.Warning, contentDescription = null)
                         }
-                    )
+                    },
+                    isError = isError.value,
+                    supportingText = {
+                        if (isError.value) {
+                            Text(text = stringResource(id = R.string.error_pet_type))
+                        }
+                    },
+                    leadingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
+                    }
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded.value,
+                    onDismissRequest = { expanded.value = false }
+                ) {
+                    petTypes.forEach { petType ->
+                        val petTypeName = petType.getName()
+                        DropdownMenuItem(
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                                .clip(
+                                    RoundedCornerShape(CORNER_RADIUS_CONTAINER)
+                                ),
+                            contentPadding = MENU_ITEM_PADDING,
+                            text = {
+                                Text(
+                                    text = petTypeName,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            onClick = {
+                                selectedType.value = petType
+                                selectedTypeName.value = petTypeName
+                                expanded.value = false
+                                isError.value = false
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -325,12 +324,12 @@ fun EnterPetNameTextField(
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         value = petName.value,
-        onValueChange = {
-            petName.value = it.filter { symbol -> symbol.isLetterOrDigit() }
+        onValueChange = { value ->
+            petName.value = value.filter { symbol -> symbol.isLetterOrDigit() }
             // TODO: при повторном вводе пустой строки не появляется красная обводка
             isError.value = false
         },
-        label = {
+        placeholder = {
             Text(stringResource(id = R.string.pet_name_hint))
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),

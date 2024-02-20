@@ -4,8 +4,8 @@
 
     <string name="enter_phone_number">Введите ваш номер телефона</string>
     <string name="error_phone_number">Некорректный номер телефона</string>
-    <string name="phone_number_hint">+7 (XXX) XXX-XX XX</string>
-    <string name="phone_number_prefix">+7</string>
+    <string name="phone_number_hint">(XXX) XXX-XX XX</string>
+    <string name="phone_number_prefix">+7\ </string>
     <string name="enter_confirmation_code">Введите код подтверждения</string>
     <string name="error_confirmation_code">Некорректный код подтверждения</string>
     <string name="confirmation_code_hint">XXXXXX</string>
