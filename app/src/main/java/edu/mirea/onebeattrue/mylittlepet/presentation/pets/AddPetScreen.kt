@@ -1,14 +1,8 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.pets
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -50,7 +44,6 @@ import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomAddButton
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomBackButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardDefaultElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomNextButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
@@ -64,25 +57,26 @@ fun AddPetScreen(
     closeScreen: () -> Unit
 ) {
     // states --------------------------------------------------------------------------------------
-    val selectedType = rememberSaveable { mutableStateOf<PetType?>(null) }
+    val petType = rememberSaveable { mutableStateOf<PetType?>(null) }
     val petName = rememberSaveable { mutableStateOf("") }
+    val petImage = rememberSaveable { mutableStateOf("") }
 
     val initialSelect = stringResource(id = R.string.initial_pet_type)
     val selectedTypeName = rememberSaveable { mutableStateOf(initialSelect) }
-
-
     val expanded = rememberSaveable { mutableStateOf(false) }
 
-    val isTextFieldError = rememberSaveable { mutableStateOf(false) }
+    val isTypeTextFieldError = rememberSaveable {
+        mutableStateOf(false)
+    }
 
-    val supportingText = rememberSaveable { mutableStateOf("") }
-
-    var isBackButtonVisible by rememberSaveable { mutableStateOf(false) }
+    val isNameTextFieldError = rememberSaveable {
+        mutableStateOf(false)
+    }
 
     var isTypeSelected by rememberSaveable { mutableStateOf(false) }
     var isNameEntered by rememberSaveable { mutableStateOf(false) }
     var isImagePicked by rememberSaveable { mutableStateOf(false) }
-    
+
 
     val viewModel: AddPetViewModel = viewModel(factory = viewModelFactory)
 
@@ -91,39 +85,6 @@ fun AddPetScreen(
     val addPetScreenState by viewModel.screenState.collectAsState(
         AddPetScreenState.Initial
     )
-
-    when (val screenState = addPetScreenState) {
-        is AddPetScreenState.Failure -> {
-            isTextFieldError.value = true
-            supportingText.value = screenState.message
-        }
-
-        AddPetScreenState.SelectPetType -> {
-            isTextFieldError.value = false
-            isBackButtonVisible = false
-        }
-
-        AddPetScreenState.SelectPetName -> {
-            isTextFieldError.value = false
-            isBackButtonVisible = true
-
-            isTypeSelected = true
-        }
-
-        AddPetScreenState.SelectPetImage -> {
-            isTextFieldError.value = false
-            isBackButtonVisible = true
-
-            isNameEntered = true
-        }
-
-        AddPetScreenState.Success -> {
-            isImagePicked = true
-            closeScreen()
-        }
-        
-        AddPetScreenState.Initial -> {}
-    }
 
     Scaffold(
         modifier = modifier,
@@ -160,104 +121,63 @@ fun AddPetScreen(
             verticalArrangement = Arrangement.Center
         ) {
             CustomCardDefaultElevation {
-                AnimatedVisibility(
-                    visible = !isTypeSelected,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.select_pet_type),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-                AnimatedVisibility(
-                    visible = !isTypeSelected,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
-                    SelectPetType(
-                        expanded = expanded,
-                        selectedTypeName = selectedTypeName,
-                        isTextFieldError = isTextFieldError,
-                        supportingText = supportingText,
-                        petTypes = petTypes,
-                        selectedType = selectedType
-                    )
-                }
-
-                AnimatedVisibility(
-                    visible = isTypeSelected && !isNameEntered,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.enter_pet_name),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-                AnimatedVisibility(
-                    visible = isTypeSelected && !isNameEntered,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
-                    EnterPetNameTextField(petName = petName, isError = isTextFieldError)
-                }
-
-                AnimatedVisibility(
-                    visible = isNameEntered,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.add_pet_photo),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-
-                Box {
-                    Row {
-                        AnimatedVisibility(
-                            visible = isBackButtonVisible,
-                            enter = fadeIn(),
-                            exit = fadeOut(),
-                        ) {
-                            CustomBackButton(
-                                onClick = { closeScreen() },
-                            )
-                        }
+                when (val screenState = addPetScreenState) {
+                    is AddPetScreenState.SelectPetType -> {
+                        isTypeTextFieldError.value = screenState.invalidType
+                        Text(
+                            text = stringResource(id = R.string.select_pet_type),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        SelectPetType(
+                            expanded = expanded,
+                            selectedTypeName = selectedTypeName,
+                            isError = isTypeTextFieldError,
+                            petTypes = petTypes,
+                            selectedType = petType
+                        )
+                        CustomNextButton(onClick = { viewModel.moveToEnterName(petType.value) })
                     }
-                    Row {
-                        AnimatedVisibility(
-                            visible = !isNameEntered,
-                            enter = fadeIn(),
-                            exit = fadeOut(),
-                        ) {
-                            CustomNextButton(
-                                onClick = {
-                                    if (!isTypeSelected) {
-                                        viewModel.moveToEnterName(petType = selectedType.value)
-                                    } else if (!isNameEntered) {
-                                        viewModel.moveToSelectImage(petName = petName.value)
-                                    }
-                                }
-                            )
-                        }
-                        AnimatedVisibility(
-                            visible = isNameEntered,
-                            enter = fadeIn(),
-                            exit = fadeOut(),
-                        ) {
-                            CustomAddButton(onClick = {
-                                val pet = Pet(
-                                    type = selectedType.value ?: throw RuntimeException("pet type = null"),
+
+                    is AddPetScreenState.SelectPetName -> {
+                        isTypeSelected = true
+
+                        isNameTextFieldError.value = screenState.invalidName
+                        Text(
+                            text = stringResource(id = R.string.enter_pet_name),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        EnterPetNameTextField(
+                            petName = petName,
+                            isError = isNameTextFieldError
+                        )
+                        CustomNextButton(onClick = { viewModel.moveToSelectImage(petName.value) })
+                    }
+
+                    AddPetScreenState.SelectPetImage -> {
+                        isNameEntered = true
+
+                        Text(
+                            text = stringResource(id = R.string.add_pet_photo),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        CustomAddButton(onClick = {
+                            viewModel.addPet(
+                                Pet(
+                                    type = petType.value!!,
                                     name = petName.value,
-                                    ""
-                                    )
-                                viewModel.addPet(pet)
-
-                            })
+                                    picture = "",
+                                )
+                            )
                         }
+                        )
                     }
+
+                    AddPetScreenState.Success -> {
+                        isImagePicked = true
+                        closeScreen()
+                    }
+
+                    AddPetScreenState.Initial -> {}
                 }
             }
         }
@@ -270,8 +190,7 @@ fun SelectPetType(
     modifier: Modifier = Modifier,
     expanded: MutableState<Boolean>,
     selectedTypeName: MutableState<String>,
-    isTextFieldError: MutableState<Boolean>,
-    supportingText: MutableState<String>,
+    isError: MutableState<Boolean>,
     selectedType: MutableState<PetType?>,
     petTypes: List<PetType>,
 ) {
@@ -293,13 +212,15 @@ fun SelectPetType(
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = {
-                    if (isTextFieldError.value) {
+                    if (isError.value) {
                         Icon(imageVector = Icons.Rounded.Warning, contentDescription = null)
                     }
                 },
-                isError = isTextFieldError.value,
+                isError = isError.value,
                 supportingText = {
-                    if (isTextFieldError.value) Text(text = supportingText.value)
+                    if (isError.value) {
+                        Text(text = stringResource(id = R.string.error_pet_type))
+                    }
                 },
                 leadingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
@@ -333,7 +254,7 @@ fun SelectPetType(
                             selectedType.value = petType
                             selectedTypeName.value = petTypeName
                             expanded.value = false
-                            isTextFieldError.value = false
+                            isError.value = false
                         }
                     )
                 }
@@ -342,11 +263,12 @@ fun SelectPetType(
     }
 }
 
+
 @Composable
 fun EnterPetNameTextField(
     modifier: Modifier = Modifier,
     petName: MutableState<String>,
-    isError: MutableState<Boolean>,
+    isError: MutableState<Boolean>
 ) {
     OutlinedTextField(
         modifier = modifier,

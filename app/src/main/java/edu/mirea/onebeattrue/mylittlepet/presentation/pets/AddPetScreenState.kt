@@ -1,16 +1,13 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.pets
 
-
 sealed class AddPetScreenState {
     object Initial : AddPetScreenState()
 
-    object SelectPetType : AddPetScreenState()
+    data class SelectPetType(val invalidType: Boolean = false) : AddPetScreenState()
 
-    object SelectPetName : AddPetScreenState()
+    data class SelectPetName(val invalidName: Boolean = false) : AddPetScreenState()
 
     object SelectPetImage : AddPetScreenState()
 
     object Success : AddPetScreenState()
-
-    data class Failure(val message: String) : AddPetScreenState()
 }
