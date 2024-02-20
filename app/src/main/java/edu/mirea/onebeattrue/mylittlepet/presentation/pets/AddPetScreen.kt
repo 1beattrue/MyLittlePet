@@ -1,9 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.pets
 
-import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +30,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,8 +43,9 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
-import edu.mirea.onebeattrue.mylittlepet.ui.animation.ANIMATION_TRANSITION_SLIDE_IN
-import edu.mirea.onebeattrue.mylittlepet.ui.animation.ANIMATION_TRANSITION_SLIDE_OUT
+import edu.mirea.onebeattrue.mylittlepet.ui.animation.ANIMATION_TRANSITION_FADE_IN_FADE_OUT
+import edu.mirea.onebeattrue.mylittlepet.ui.animation.ANIMATION_TRANSITION_SLIDE_FROM_END_TO_START
+import edu.mirea.onebeattrue.mylittlepet.ui.animation.ANIMATION_TRANSITION_SLIDE_FROM_START_TO_END
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomAddButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomBackButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardDefaultElevation
@@ -56,8 +53,7 @@ import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomNextButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MENU_ITEM_PADDING
 
-@SuppressLint("UnusedContentLambdaTargetStateParameter")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPetScreen(
     modifier: Modifier = Modifier,
@@ -91,17 +87,6 @@ fun AddPetScreen(
         mutableStateOf(false)
     }
 
-    var isTypeSelected by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isNameEntered by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isImagePicked by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-
     val viewModel: AddPetViewModel = viewModel(factory = viewModelFactory)
 
     val petTypes = PetType.getTypes()
@@ -109,8 +94,7 @@ fun AddPetScreen(
     val addPetScreenState by viewModel.screenState.collectAsState(
         AddPetScreenState.Initial
     )
-
-    val currentStepNumber by viewModel.currentStepNumber.collectAsState(0)
+    // ---------------------------------------------------------------------------------------------
 
     Scaffold(
         modifier = modifier,
@@ -147,21 +131,38 @@ fun AddPetScreen(
             verticalArrangement = Arrangement.Center
         ) {
             AnimatedContent(
-                label = "add_pet",
-                targetState = currentStepNumber,
+                label = "add_pet_anim",
+                targetState = addPetScreenState,
                 transitionSpec = {
-                    if (targetState > initialState) {
-                        Log.d("AnimatedContent", "$targetState $initialState")
-                        ANIMATION_TRANSITION_SLIDE_IN
-                    } else {
-                        Log.d("AnimatedContent", "$targetState $initialState")
-                        ANIMATION_TRANSITION_SLIDE_OUT
+                    when {
+                        initialState is AddPetScreenState.SelectPetType
+                                && targetState is AddPetScreenState.SelectPetName -> {
+                            ANIMATION_TRANSITION_SLIDE_FROM_END_TO_START
+                        }
+
+                        initialState is AddPetScreenState.SelectPetName
+                                && targetState is AddPetScreenState.SelectPetImage -> {
+                            ANIMATION_TRANSITION_SLIDE_FROM_END_TO_START
+                        }
+
+                        initialState is AddPetScreenState.SelectPetImage
+                                && targetState is AddPetScreenState.SelectPetName -> {
+                            ANIMATION_TRANSITION_SLIDE_FROM_START_TO_END
+                        }
+
+                        initialState is AddPetScreenState.SelectPetName
+                                && targetState is AddPetScreenState.SelectPetType -> {
+                            ANIMATION_TRANSITION_SLIDE_FROM_START_TO_END
+                        }
+
+                        else -> ANIMATION_TRANSITION_FADE_IN_FADE_OUT
                     }
                 }
-            ) {
-                when (val screenState = addPetScreenState) {
+            ) { screenState ->
+                when (screenState) {
                     is AddPetScreenState.SelectPetType -> {
-                        isTypeTextFieldError.value = screenState.invalidType
+                        isTypeTextFieldError.value = screenState.isInvalidType
+
                         CustomCardDefaultElevation {
                             Text(
                                 text = stringResource(id = R.string.select_pet_type),
@@ -179,9 +180,7 @@ fun AddPetScreen(
                     }
 
                     is AddPetScreenState.SelectPetName -> {
-                        isTypeSelected = true
-
-                        isNameTextFieldError.value = screenState.invalidName
+                        isNameTextFieldError.value = screenState.isInvalidName
 
                         CustomCardDefaultElevation {
                             Text(
@@ -200,8 +199,6 @@ fun AddPetScreen(
                     }
 
                     AddPetScreenState.SelectPetImage -> {
-                        isNameEntered = true
-
                         CustomCardDefaultElevation {
                             Text(
                                 text = stringResource(id = R.string.add_pet_photo),
@@ -226,7 +223,6 @@ fun AddPetScreen(
                     }
 
                     AddPetScreenState.Success -> {
-                        isImagePicked = true
                         closeScreen()
                     }
 
@@ -297,11 +293,14 @@ fun SelectPetType(
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         },
-                        trailingIcon = {
+                        leadingIcon = {
                             Icon(
                                 painter = painterResource(id = petType.getImageId()),
                                 contentDescription = null
                             )
+                        },
+                        trailingIcon = {
+
                         },
                         onClick = {
                             selectedType.value = petType
