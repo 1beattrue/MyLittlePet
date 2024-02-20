@@ -1,5 +1,13 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.pets
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +57,8 @@ import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomNextButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MENU_ITEM_PADDING
 
-@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedContentLambdaTargetStateParameter")
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun AddPetScreen(
     modifier: Modifier = Modifier,
@@ -86,6 +95,12 @@ fun AddPetScreen(
         AddPetScreenState.Initial
     )
 
+    val animationSlideFromEndToStart =
+        (slideInHorizontally { it } + fadeIn()).togetherWith(slideOutHorizontally { -it } + fadeOut())
+    val animationSlideFromStartToEnd =
+        (slideInHorizontally { -it } + fadeIn()).togetherWith(slideOutHorizontally { it } + fadeOut())
+    val animationFade = fadeIn() togetherWith fadeOut()
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -120,64 +135,96 @@ fun AddPetScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            CustomCardDefaultElevation {
-                when (val screenState = addPetScreenState) {
-                    is AddPetScreenState.SelectPetType -> {
-                        isTypeTextFieldError.value = screenState.invalidType
-                        Text(
-                            text = stringResource(id = R.string.select_pet_type),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        SelectPetType(
-                            expanded = expanded,
-                            selectedTypeName = selectedTypeName,
-                            isError = isTypeTextFieldError,
-                            petTypes = petTypes,
-                            selectedType = petType
-                        )
-                        CustomNextButton(onClick = { viewModel.moveToEnterName(petType.value) })
+            AnimatedContent(
+                label = "",
+                targetState = addPetScreenState,
+                transitionSpec = {
+                    when (val state = targetState) {
+                        is AddPetScreenState.SelectPetType -> {
+                            if (state.invalidType) {
+                                animationFade
+                            } else {
+                                animationSlideFromEndToStart
+                            }
+                        }
+
+                        is AddPetScreenState.SelectPetName -> {
+                            if (state.invalidName) {
+                                animationFade
+                            } else {
+                                animationSlideFromEndToStart
+                            }
+                        }
+
+                        AddPetScreenState.SelectPetImage -> {
+                            animationSlideFromEndToStart
+                        }
+
+                        else -> {
+                            animationFade
+                        }
                     }
+                }
+            ) {
+                CustomCardDefaultElevation {
+                    when (val screenState = addPetScreenState) {
+                        is AddPetScreenState.SelectPetType -> {
+                            isTypeTextFieldError.value = screenState.invalidType
+                            Text(
+                                text = stringResource(id = R.string.select_pet_type),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            SelectPetType(
+                                expanded = expanded,
+                                selectedTypeName = selectedTypeName,
+                                isError = isTypeTextFieldError,
+                                petTypes = petTypes,
+                                selectedType = petType
+                            )
+                            CustomNextButton(onClick = { viewModel.moveToEnterName(petType.value) })
+                        }
 
-                    is AddPetScreenState.SelectPetName -> {
-                        isTypeSelected = true
+                        is AddPetScreenState.SelectPetName -> {
+                            isTypeSelected = true
 
-                        isNameTextFieldError.value = screenState.invalidName
-                        Text(
-                            text = stringResource(id = R.string.enter_pet_name),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        EnterPetNameTextField(
-                            petName = petName,
-                            isError = isNameTextFieldError
-                        )
-                        CustomNextButton(onClick = { viewModel.moveToSelectImage(petName.value) })
-                    }
+                            isNameTextFieldError.value = screenState.invalidName
+                            Text(
+                                text = stringResource(id = R.string.enter_pet_name),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            EnterPetNameTextField(
+                                petName = petName,
+                                isError = isNameTextFieldError
+                            )
+                            CustomNextButton(onClick = { viewModel.moveToSelectImage(petName.value) })
+                        }
 
-                    AddPetScreenState.SelectPetImage -> {
-                        isNameEntered = true
+                        AddPetScreenState.SelectPetImage -> {
+                            isNameEntered = true
 
-                        Text(
-                            text = stringResource(id = R.string.add_pet_photo),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        CustomAddButton(onClick = {
-                            viewModel.addPet(
-                                Pet(
-                                    type = petType.value!!,
-                                    name = petName.value,
-                                    picture = "",
+                            Text(
+                                text = stringResource(id = R.string.add_pet_photo),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            CustomAddButton(onClick = {
+                                viewModel.addPet(
+                                    Pet(
+                                        type = petType.value!!,
+                                        name = petName.value,
+                                        picture = "",
+                                    )
                                 )
+                            }
                             )
                         }
-                        )
-                    }
 
-                    AddPetScreenState.Success -> {
-                        isImagePicked = true
-                        closeScreen()
-                    }
+                        AddPetScreenState.Success -> {
+                            isImagePicked = true
+                            closeScreen()
+                        }
 
-                    AddPetScreenState.Initial -> {}
+                        AddPetScreenState.Initial -> {}
+                    }
                 }
             }
         }
