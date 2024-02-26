@@ -54,15 +54,19 @@ android {
 
 dependencies {
     val roomVersion = "2.5.0"
+    //noinspection GradleDependency
     implementation("androidx.room:room-runtime:$roomVersion")
+    //noinspection GradleDependency
     implementation("androidx.room:room-ktx:$roomVersion")
+    //noinspection GradleDependency
     ksp("androidx.room:room-compiler:$roomVersion")
 
     val daggerVersion = "2.50"
     implementation("com.google.dagger:dagger:$daggerVersion")
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
 
-    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
+    val firebaseVersion = "32.5.0"
+    implementation(platform("com.google.firebase:firebase-bom:$firebaseVersion"))
     implementation("com.google.firebase:firebase-auth")
 
     val lifecycleVersion = "2.7.0"
@@ -75,7 +79,7 @@ dependencies {
     val material3Version = "1.2.0"
     implementation("androidx.compose.material3:material3:$material3Version")
 
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.1")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.2")
 
     implementation("androidx.core:core-ktx:1.12.0")
 
