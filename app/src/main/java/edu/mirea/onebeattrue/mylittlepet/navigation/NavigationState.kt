@@ -19,6 +19,23 @@ class NavigationState(
             restoreState = true
         }
     }
+
+    fun navigateWithoutRestoringStateTo(route: String) {
+        navHostController.navigate(route) {
+            popUpTo(navHostController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+        }
+    }
+
+    fun navigateWithoutSavingStateTo(route: String) {
+        navHostController.navigate(route) {
+            popUpTo(navHostController.graph.findStartDestination().id)
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
 }
 
 @Composable

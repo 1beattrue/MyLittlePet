@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -17,9 +18,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import edu.mirea.onebeattrue.mylittlepet.domain.main.entity.MainScreenState
 import edu.mirea.onebeattrue.mylittlepet.navigation.NavigationItem
@@ -27,9 +30,10 @@ import edu.mirea.onebeattrue.mylittlepet.navigation.Screen
 import edu.mirea.onebeattrue.mylittlepet.navigation.graphs.AppNavGraph
 import edu.mirea.onebeattrue.mylittlepet.navigation.rememberNavigationState
 import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
-import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.feed.FeedScreen
+import edu.mirea.onebeattrue.mylittlepet.presentation.pets.AddPetScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.pets.PetsScreen
 import edu.mirea.onebeattrue.mylittlepet.presentation.profile.ProfileScreen
 
@@ -82,7 +86,9 @@ fun MainScreen(
 
                     items.forEach { item ->
 
-                        val selected = navBackStackEntry?.destination?.route == item.screen.route
+                        val selected = navBackStackEntry?.destination?.hierarchy?.any {
+                            it.route == item.screen.route
+                        } ?: false
 
                         NavigationBarItem(
                             selected = selected,
@@ -112,14 +118,16 @@ fun MainScreen(
                 }
             }
         }
-    ) {
+    ) { paddingValues ->
         AppNavGraph(
             navHostController = navigationState.navHostController,
             startDestination = startDestination,
             authScreenContent = {
+                bottomBarVisibility = false // TODO: Придумать что с этим сделать
                 AuthScreen(
+                    modifier = Modifier.padding(paddingValues),
                     finishAuth = {
-                        navigationState.navigateTo(Screen.Main.route)
+                        navigationState.navigateWithoutSavingStateTo(Screen.Main.route)
                         viewModel.finishAuth()
                     },
                     viewModelFactory = viewModelFactory,
@@ -127,16 +135,38 @@ fun MainScreen(
                 )
             },
             feedScreenContent = {
-                FeedScreen()
+                bottomBarVisibility = true
+                FeedScreen(
+                    modifier = Modifier.padding(paddingValues),
+                )
             },
             petsScreenContent = {
-                PetsScreen()
+                bottomBarVisibility = true
+                PetsScreen(
+                    modifier = Modifier.padding(paddingValues),
+                    viewModelFactory = viewModelFactory,
+                    addPet = {
+                        navigationState.navigateWithoutRestoringStateTo(Screen.AddPet.route)
+                    }
+                )
             },
             profileScreenContent = {
+                bottomBarVisibility = true
                 ProfileScreen(
+                    modifier = Modifier.padding(paddingValues),
                     viewModelFactory = viewModelFactory,
                     signOut = {
                         viewModel.signOut()
+                    }
+                )
+            },
+            addPetScreenContent = {
+                bottomBarVisibility = false
+                AddPetScreen(
+                    modifier = Modifier.padding(),
+                    viewModelFactory = viewModelFactory,
+                    closeScreen = {
+                        navigationState.navigateWithoutSavingStateTo(Screen.Main.route)
                     }
                 )
             }

@@ -15,7 +15,9 @@ fun AppNavGraph(
 
     feedScreenContent: @Composable () -> Unit,
     petsScreenContent: @Composable () -> Unit,
-    profileScreenContent: @Composable () -> Unit
+    profileScreenContent: @Composable () -> Unit,
+
+    addPetScreenContent: @Composable () -> Unit
 ) {
     NavHost(
         navController = navHostController,
@@ -28,7 +30,9 @@ fun AppNavGraph(
         mainNavGraph(
             feedScreenContent = feedScreenContent,
             petsScreenContent = petsScreenContent,
-            profileScreenContent = profileScreenContent
+            profileScreenContent = profileScreenContent,
+
+            addPetScreenContent = addPetScreenContent,
         )
     }
 }

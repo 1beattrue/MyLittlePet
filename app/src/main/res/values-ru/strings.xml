@@ -4,15 +4,17 @@
 
     <string name="enter_phone_number">Введите ваш номер телефона</string>
     <string name="error_phone_number">Некорректный номер телефона</string>
-    <string name="phone_number_hint">+7 (XXX) XXX-XX XX</string>
-    <string name="phone_number_prefix">+7</string>
-    <string name="next">Далее</string>
-
+    <string name="phone_number_hint">(XXX) XXX-XX XX</string>
+    <string name="phone_number_prefix">+7\ </string>
     <string name="enter_confirmation_code">Введите код подтверждения</string>
     <string name="error_confirmation_code">Некорректный код подтверждения</string>
     <string name="confirmation_code_hint">XXXXXX</string>
+
+    <string name="next">Далее</string>
     <string name="back">Назад</string>
     <string name="confirm">Подтвердить</string>
+    <string name="add">Добавить</string>
+
     <string name="resend_code">Отправить повторно</string>
     <string name="resend_code_exception">Повторная отправка кода будет доступна через %s секунд</string>
     <string name="unknown_auth_exception">Ошибка авторизации</string>
@@ -24,4 +26,29 @@
     <string name="navigation_item_pets">Питомцы</string>
     <string name="navigation_item_profile">Профиль</string>
 
+    <string name="auth_app_bar_title">Авторизация</string>
+
+    <string name="pets_app_bar_title">Питомцы</string>
+    <string name="add_pet_app_bar_title">Добавление питомца</string>
+
+    <string name="select_pet_type">Выберите тип животного</string>
+    <string name="initial_pet_type">Тип животного</string>
+    <string name="pet_type_dog">Собака</string>
+    <string name="pet_type_cat">Кошка</string>
+    <string name="pet_type_rabbit">Кролик</string>
+    <string name="pet_type_bird">Птица</string>
+    <string name="pet_type_fish">Рыба</string>
+    <string name="pet_type_snake">Змея</string>
+    <string name="pet_type_tiger">Тигр</string>
+    <string name="pet_type_mouse">Мышь</string>
+    <string name="pet_type_turtle">Черепаха</string>
+
+    <string name="error_pet_type">Не выбран тип животного</string>
+    <string name="enter_pet_name">Введите имя питомца</string>
+    <string name="error_pet_name">Неверное имя питомца</string>
+    <string name="pet_name_hint">Имя питомца</string>
+    <string name="add_pet_photo">Добавьте фото питомца</string>
+
+    <string name="delete">Удалить</string>
+    <string name="edit">Редактировать</string>
 </resources>

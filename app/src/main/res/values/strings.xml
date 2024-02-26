@@ -3,15 +3,17 @@
 
     <string name="enter_phone_number">Enter your phone number</string>
     <string name="error_phone_number">Invalid phone number</string>
-    <string name="phone_number_hint">+1 (XXX) XXX-XX XX</string>
-    <string name="phone_number_prefix">+1</string>
-    <string name="next">Next</string>
-
+    <string name="phone_number_hint">(XXX) XXX-XX XX</string>
+    <string name="phone_number_prefix">+1\ </string>
     <string name="enter_confirmation_code">Enter confirmation code</string>
     <string name="error_confirmation_code">Invalid verification code</string>
     <string name="confirmation_code_hint">XXXXXX</string>
+
+    <string name="next">Next</string>
     <string name="back">Back</string>
     <string name="confirm">Confirm</string>
+    <string name="add">Add</string>
+
     <string name="resend_code">Resend code</string>
     <string name="resend_code_exception">Resending the code will be available in %s seconds</string>
     <string name="unknown_auth_exception">Authorization error</string>
@@ -23,5 +25,29 @@
     <string name="navigation_item_pets">Pets</string>
     <string name="navigation_item_profile">Profile</string>
 
+    <string name="auth_app_bar_title">Authorization</string>
 
+    <string name="pets_app_bar_title">Pets</string>
+    <string name="add_pet_app_bar_title">Adding a pet</string>
+
+    <string name="select_pet_type">Select pet type</string>
+    <string name="initial_pet_type">Pet type</string>
+    <string name="pet_type_dog">Dog</string>
+    <string name="pet_type_cat">Cat</string>
+    <string name="pet_type_rabbit">Rabbit</string>
+    <string name="pet_type_bird">Bird</string>
+    <string name="pet_type_fish">Fish</string>
+    <string name="pet_type_snake">Snake</string>
+    <string name="pet_type_tiger">Tiger</string>
+    <string name="pet_type_mouse">Mouse</string>
+    <string name="pet_type_turtle">Turtle</string>
+
+    <string name="error_pet_type">Animal type not selected</string>
+    <string name="enter_pet_name">Enter pet name</string>
+    <string name="error_pet_name">Invalid pet name</string>
+    <string name="pet_name_hint">Pet name</string>
+    <string name="add_pet_photo">Add a photo</string>
+
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
 </resources>
