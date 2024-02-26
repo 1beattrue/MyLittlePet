@@ -4,6 +4,7 @@ plugins {
     id("com.google.gms.google-services")
     id("kotlin-kapt")
     id("com.google.devtools.ksp")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -53,6 +54,16 @@ android {
 }
 
 dependencies {
+    val mviVersion = "3.2.1"
+    implementation("com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines:$mviVersion")
+    implementation("com.arkivanov.mvikotlin:mvikotlin-main:$mviVersion")
+    implementation("com.arkivanov.mvikotlin:mvikotlin-logging:$mviVersion")
+    implementation("com.arkivanov.mvikotlin:mvikotlin:$mviVersion")
+
+    val decomposeVersion = "2.1.2"
+    implementation("com.arkivanov.decompose:extensions-compose-jetpack:$decomposeVersion")
+    implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
+
     val roomVersion = "2.5.0"
     //noinspection GradleDependency
     implementation("androidx.room:room-runtime:$roomVersion")
