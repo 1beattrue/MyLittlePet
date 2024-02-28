@@ -2,7 +2,6 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
-    id("kotlin-kapt")
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
 }
@@ -34,17 +33,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "1.8"
     }
     buildFeatures {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -64,17 +63,13 @@ dependencies {
     implementation("com.arkivanov.decompose:extensions-compose-jetpack:$decomposeVersion")
     implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
 
-    val roomVersion = "2.5.0"
-    //noinspection GradleDependency
-    implementation("androidx.room:room-runtime:$roomVersion")
-    //noinspection GradleDependency
+    val roomVersion = "2.6.1"
     implementation("androidx.room:room-ktx:$roomVersion")
-    //noinspection GradleDependency
     ksp("androidx.room:room-compiler:$roomVersion")
 
     val daggerVersion = "2.50"
     implementation("com.google.dagger:dagger:$daggerVersion")
-    kapt("com.google.dagger:dagger-compiler:$daggerVersion")
+    ksp("com.google.dagger:dagger-compiler:$daggerVersion")
 
     val firebaseVersion = "32.7.2"
     implementation(platform("com.google.firebase:firebase-bom:$firebaseVersion"))
@@ -107,8 +102,4 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-}
-
-kapt {
-    correctErrorTypes = true
 }
