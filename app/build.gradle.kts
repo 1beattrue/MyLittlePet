@@ -71,7 +71,7 @@ dependencies {
     implementation("com.google.dagger:dagger:$daggerVersion")
     ksp("com.google.dagger:dagger-compiler:$daggerVersion")
 
-    val firebaseVersion = "32.7.2"
+    val firebaseVersion = "32.7.3"
     implementation(platform("com.google.firebase:firebase-bom:$firebaseVersion"))
     implementation("com.google.firebase:firebase-auth")
 
