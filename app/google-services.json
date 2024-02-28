@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "367024717721",
-    "project_id": "mylittlepet-30bdf",
-    "storage_bucket": "mylittlepet-30bdf.appspot.com"
+    "project_number": "106734098802",
+    "project_id": "pets-1d303",
+    "storage_bucket": "pets-1d303.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:367024717721:android:83370cb54a5ee133d05d08",
+        "mobilesdk_app_id": "1:106734098802:android:7dbf1ab3aa74a8ae9a65eb",
         "android_client_info": {
           "package_name": "edu.mirea.onebeattrue.mylittlepet"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCnbbHJQL2kv_AqqJ9FzXO-EYnK8Ju3D_k"
+          "current_key": "AIzaSyCXIOd-xMm5QryN7iibskvzjyTWHiRqkfQ"
         }
       ],
       "services": {
