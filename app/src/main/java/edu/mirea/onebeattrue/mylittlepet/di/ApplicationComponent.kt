@@ -7,7 +7,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 
 @ApplicationScope
 @Component(
-    modules = [DataModule::class, ViewModelModule::class, PresentationModule::class]
+    modules = [DataModule::class, PresentationModule::class]
 )
 interface ApplicationComponent {
     fun inject(activity: MainActivity)

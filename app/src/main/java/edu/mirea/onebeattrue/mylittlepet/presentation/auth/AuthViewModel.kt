@@ -3,15 +3,10 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.auth
 import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthScreenState
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.InvalidPhoneNumberException
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.InvalidVerificationCodeException
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.CreateUserWithPhoneUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.ResendVerificationCodeUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.SignInWithCredentialUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,9 +16,8 @@ class AuthViewModel @Inject constructor(
     private val signInWithCredentialUseCase: SignInWithCredentialUseCase,
     private val resendVerificationCodeUseCase: ResendVerificationCodeUseCase,
 ) : ViewModel() {
-    private val _screenState =
-        MutableStateFlow<AuthScreenState>(AuthScreenState.Initial)
-    val screenState = _screenState.asStateFlow()
+    // private val _screenState = MutableStateFlow<AuthScreenState>(AuthScreenState.Initial)
+    //val screenState = _screenState.asStateFlow()
 
     val isLoggedIn
         get() = repository.currentUser != null
@@ -34,16 +28,15 @@ class AuthViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (!isValidPhoneNumber(phoneNumber)) {
-                _screenState.value =
-                    AuthScreenState.Failure(InvalidPhoneNumberException())
+                //_screenState.value = AuthScreenState.Failure(InvalidPhoneNumberException())
             } else {
                 createUserWithPhoneUseCase(
                     phoneNumber = phoneNumber,
                     activity = activity
                 )
-                    .collect {
-                        _screenState.value = it
-                    }
+//                    .collect {
+//                        _screenState.value = it
+//                    }
             }
         }
     }
@@ -53,15 +46,15 @@ class AuthViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (!isValidConfirmationCode(code)) {
-                _screenState.value =
-                    AuthScreenState.Failure(InvalidVerificationCodeException())
+//                _screenState.value =
+//                    AuthScreenState.Failure(InvalidVerificationCodeException())
             } else {
                 signInWithCredentialUseCase(
                     code = code
                 )
-                    .collect {
-                        _screenState.value = it
-                    }
+//                    .collect {
+//                        _screenState.value = it
+//                    }
             }
         }
     }
@@ -82,7 +75,7 @@ class AuthViewModel @Inject constructor(
 
     fun changePhoneNumber() {
         viewModelScope.launch {
-            _screenState.value = AuthScreenState.Initial
+            //_screenState.value = AuthScreenState.Initial
         }
     }
 

@@ -1,6 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase
 
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -10,7 +10,7 @@ class SignInWithCredentialUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         code: String
-    ): Flow<AuthScreenState> {
+    ): Flow<AuthState> {
         return repository.signInWithCredential(code)
     }
 }

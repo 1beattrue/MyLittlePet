@@ -9,8 +9,7 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.di.ApplicationScope
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthScreenState
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.TimeoutVerificationCodeException
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -29,54 +28,69 @@ class AuthRepositoryImpl @Inject constructor(
     private lateinit var verificationCode: String
     private var lastRequestTime = LAST_REQUEST_TIME_INITIAL
 
+    private var lastPhone: String? = null
+    private var lastActivity: Activity? = null
+    private var forceResendingToken: PhoneAuthProvider.ForceResendingToken? = null
+
     override suspend fun createUserWithPhone(
         phoneNumber: String,
         activity: Activity
-    ): Flow<AuthScreenState> = callbackFlow {
-        trySend(AuthScreenState.Loading)
+    ): Flow<AuthState> = callbackFlow {
+
+        lastPhone = phoneNumber
+        lastActivity = activity
 
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                trySend(AuthScreenState.Success)
+                trySend(AuthState.Success)
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
-                trySend(AuthScreenState.Failure(
-                    authExceptionMapper.mapFirebaseExceptionToAuthException(e)
-                ))
+                trySend(AuthState.Failure(authExceptionMapper.mapFirebaseExceptionToAuthException(e)))
             }
 
             override fun onCodeSent(code: String, token: PhoneAuthProvider.ForceResendingToken) {
                 super.onCodeSent(code, token)
-                trySend(AuthScreenState.CodeSent)
                 verificationCode = code
-                lastRequestTime = System.currentTimeMillis()
+                //lastRequestTime = System.currentTimeMillis()
+                forceResendingToken = token
+                trySend(AuthState.Success)
             }
         }
 
-        if (codeCanBeSent()) {
-            firebaseAuth.useAppLanguage()
-            val prefix = activity.getString(R.string.phone_number_prefix)
-            val options = PhoneAuthOptions.newBuilder(firebaseAuth)
+        //if (codeCanBeSent()) {
+        firebaseAuth.useAppLanguage()
+        val prefix = activity.getString(R.string.phone_number_prefix)
+        val options = if (forceResendingToken == null) {
+            PhoneAuthOptions.newBuilder(firebaseAuth)
                 .setPhoneNumber(prefix + phoneNumber)
                 .setTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .setActivity(activity)
                 .setCallbacks(callbacks)
                 .build()
-            PhoneAuthProvider.verifyPhoneNumber(options)
         } else {
-            val currentRequestTime = System.currentTimeMillis()
-            trySend(
-                AuthScreenState.Failure(
-                    TimeoutVerificationCodeException(
-                        String.format(
-                            activity.getString(R.string.resend_code_exception),
-                            (TIMEOUT_MILLIS - (currentRequestTime - lastRequestTime)).toSeconds()
-                        )
-                    )
-                )
-            )
+            PhoneAuthOptions.newBuilder(firebaseAuth)
+                .setPhoneNumber(prefix + phoneNumber)
+                .setTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .setActivity(activity)
+                .setCallbacks(callbacks)
+                .setForceResendingToken(forceResendingToken!!)
+                .build()
         }
+        PhoneAuthProvider.verifyPhoneNumber(options)
+//        } else {
+//            val currentRequestTime = System.currentTimeMillis()
+//            trySend(
+//                AuthScreenState.Failure(
+//                    TimeoutVerificationCodeException(
+//                        String.format(
+//                            activity.getString(R.string.resend_code_exception),
+//                            (TIMEOUT_MILLIS - (currentRequestTime - lastRequestTime)).toSeconds()
+//                        )
+//                    )
+//                )
+//            )
+//        }
 
         awaitClose {
             close()
@@ -85,20 +99,14 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun signInWithCredential(
         code: String
-    ): Flow<AuthScreenState> = callbackFlow {
-        trySend(AuthScreenState.Loading)
-
+    ): Flow<AuthState> = callbackFlow {
         val credential = PhoneAuthProvider.getCredential(verificationCode, code)
         firebaseAuth.signInWithCredential(credential)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    trySend(AuthScreenState.Success)
-                }
+            .addOnSuccessListener {
+                trySend(AuthState.Success)
             }
             .addOnFailureListener {
-                trySend(AuthScreenState.Failure(
-                    authExceptionMapper.mapFirebaseExceptionToAuthException(it)
-                ))
+                trySend(AuthState.Failure(authExceptionMapper.mapFirebaseExceptionToAuthException(it)))
             }
 
         awaitClose {
@@ -106,13 +114,11 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun resendVerificationCode(): Flow<AuthScreenState> {
-//        return createUserWithPhone(
-//            phoneNumber = phoneNumber,
-//            activity = activity
-//        )
-        return flow {  }
-    }
+    override suspend fun resendVerificationCode(): Flow<AuthState> =
+        createUserWithPhone(
+            lastPhone!!,
+            lastActivity!!
+        )
 
     override fun signOut() {
         firebaseAuth.signOut()

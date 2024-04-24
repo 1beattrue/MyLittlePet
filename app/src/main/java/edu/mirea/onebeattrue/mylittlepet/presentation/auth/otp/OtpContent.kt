@@ -63,5 +63,8 @@ fun OtpContent(
         ) }) {
             Text(text = "Confirm")
         }
+        Button(onClick = { component.onClickResend() }) {
+            Text(text = "Resend")
+        }
     }
 }

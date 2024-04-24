@@ -5,11 +5,13 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.ResendVerificationCodeUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.SignInWithCredentialUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.otp.OtpStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.otp.OtpStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.otp.OtpStore.State
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -88,13 +90,20 @@ class OtpStoreFactory @Inject constructor(
                     if (isValidConfirmationCode(intent.otp)) {
                         dispatch(Msg.Loading)
                         scope.launch {
-                            try { // TODO: нужно поменять принцип работы в репозитории
-                                signInWithCredentialUseCase(
-                                    code = intent.otp
-                                )
-                                publish(Label.ConfirmOtp)
-                            } catch (exception: Exception) {
-                                dispatch(Msg.Error(exception.message.toString()))
+
+                            signInWithCredentialUseCase(
+                                code = intent.otp
+                            ).collect { result ->
+                                when (result) {
+                                    is AuthState.Failure -> {
+                                        dispatch(Msg.Error(result.exception.message.toString()))
+                                    }
+
+                                    AuthState.Success -> {
+                                        publish(Label.ConfirmOtp)
+                                    }
+                                }
+
                             }
                         }
                     } else {
@@ -109,10 +118,16 @@ class OtpStoreFactory @Inject constructor(
                 Intent.ResendOtp -> {
                     dispatch(Msg.Loading)
                     scope.launch {
-                        try {
-                            resendVerificationCodeUseCase()
-                        } catch (exception: Exception) {
-                            dispatch(Msg.Error(exception.message.toString()))
+                        resendVerificationCodeUseCase().collect { result ->
+                            when (result) {
+                                is AuthState.Failure -> {
+                                    dispatch(Msg.Error(result.exception.message.toString()))
+                                }
+
+                                AuthState.Success -> {
+                                    dispatch(Msg.ResendOtp)
+                                }
+                            }
                         }
                     }
                 }

@@ -6,10 +6,12 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.CreateUserWithPhoneUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone.PhoneStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone.PhoneStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone.PhoneStore.State
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -81,14 +83,19 @@ class PhoneStoreFactory @Inject constructor(
                     if (isValidPhoneNumber(intent.phone)) {
                         dispatch(Msg.Loading)
                         scope.launch {
-                            try { // TODO: нужно поменять принцип работы в репозитории
-                                createUserWithPhoneUseCase(
-                                    phoneNumber = intent.phone,
-                                    activity = intent.activity
-                                )
-                                publish(Label.ConfirmPhone)
-                            } catch (exception: Exception) {
-                                dispatch(Msg.Error(exception.message.toString()))
+                            createUserWithPhoneUseCase(
+                                phoneNumber = intent.phone,
+                                activity = intent.activity
+                            ).collect { result ->
+                                when (result) {
+                                    is AuthState.Failure -> {
+                                        dispatch(Msg.Error(result.exception.message.toString()))
+                                    }
+
+                                    AuthState.Success -> {
+                                        publish(Label.ConfirmPhone)
+                                    }
+                                }
                             }
                         }
                     } else {
