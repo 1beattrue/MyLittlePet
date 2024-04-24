@@ -49,7 +49,7 @@ class DefaultPhoneComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("confirmPhone") confirmPhone: () -> Unit,
+            @Assisted("onConfirmPhone") onConfirmPhone: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultPhoneComponent
     }

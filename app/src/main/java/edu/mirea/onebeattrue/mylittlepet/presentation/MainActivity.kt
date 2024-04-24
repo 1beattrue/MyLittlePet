@@ -9,33 +9,35 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.arkivanov.decompose.defaultComponentContext
 import edu.mirea.onebeattrue.mylittlepet.domain.main.entity.MainScreenState
+import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthViewModel
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.MainScreen
+import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
+import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var authComponentFactory: DefaultAuthComponent.Factory
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        (application as MyLittlePetApplication).component.inject(this)
         super.onCreate(savedInstanceState)
 
         checkPermissions()
 
+        val component = authComponentFactory.create(defaultComponentContext())
+
         setContent {
-            val component = getApplicationComponent()
-            val viewModelFactory = component.getViewModelFactory()
-            val viewModel: AuthViewModel = viewModel(factory = viewModelFactory)
 
             MyLittlePetTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.surface
                 ) {
-                    MainScreen(
-                        viewModelFactory = viewModelFactory,
-                        activity = this,
-                        initialScreenState = getInitialScreenState(viewModel)
-                    )
+                    AuthContent(component = component)
                 }
             }
         }

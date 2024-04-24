@@ -71,12 +71,12 @@ class AuthViewModel @Inject constructor(
         activity: Activity
     ) {
         viewModelScope.launch {
-            resendVerificationCodeUseCase(
-                phoneNumber = phoneNumber,
-                activity = activity
-            ).collect {
-                _screenState.value = it
-            }
+//            resendVerificationCodeUseCase(
+//                phoneNumber = phoneNumber,
+//                activity = activity
+//            ).collect {
+//                _screenState.value = it
+//            }
         }
     }
 
