@@ -7,7 +7,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
 
 @ApplicationScope
 @Component(
-    modules = [DataModule::class, ViewModelModule::class]
+    modules = [DataModule::class, ViewModelModule::class, PresentationModule::class]
 )
 interface ApplicationComponent {
     fun getViewModelFactory(): ViewModelFactory
