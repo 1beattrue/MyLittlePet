@@ -9,10 +9,7 @@ import javax.inject.Inject
 class ResendVerificationCodeUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(
-        phoneNumber: String,
-        activity: Activity
-    ): Flow<AuthScreenState> {
-        return repository.resendVerificationCode(phoneNumber, activity)
+    suspend operator fun invoke(): Flow<AuthScreenState> {
+        return repository.resendVerificationCode()
     }
 }

@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 class DefaultPhoneComponent @AssistedInject constructor(
     private val storeFactory: PhoneStoreFactory,
 
-    @Assisted("confirmPhone") private val confirmPhone: () -> Unit,
+    @Assisted("onConfirmPhone") private val onConfirmPhone: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : PhoneComponent, ComponentContext by componentContext {
 
@@ -27,7 +27,7 @@ class DefaultPhoneComponent @AssistedInject constructor(
             store.labels.collect {
                 when (it) {
                     PhoneStore.Label.ConfirmPhone -> {
-                        confirmPhone()
+                        onConfirmPhone()
                     }
                 }
             }

@@ -18,10 +18,7 @@ interface AuthRepository {
         code: String
     ): Flow<AuthScreenState>
 
-    suspend fun resendVerificationCode(
-        phoneNumber: String,
-        activity: Activity
-    ): Flow<AuthScreenState>
+    suspend fun resendVerificationCode(): Flow<AuthScreenState>
 
     fun signOut()
 

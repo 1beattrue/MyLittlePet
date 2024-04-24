@@ -15,6 +15,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -105,14 +106,12 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun resendVerificationCode(
-        phoneNumber: String,
-        activity: Activity
-    ): Flow<AuthScreenState> {
-        return createUserWithPhone(
-            phoneNumber = phoneNumber,
-            activity = activity
-        )
+    override suspend fun resendVerificationCode(): Flow<AuthScreenState> {
+//        return createUserWithPhone(
+//            phoneNumber = phoneNumber,
+//            activity = activity
+//        )
+        return flow {  }
     }
 
     override fun signOut() {
