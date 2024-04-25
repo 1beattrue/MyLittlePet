@@ -30,7 +30,7 @@ class DefaultOtpComponent @AssistedInject constructor(
                         onClickBack()
                     }
 
-                    OtpStore.Label.ConfirmOtp -> {
+                    OtpStore.Label.ConfirmPhone -> {
                         onConfirmOtp()
                     }
                 }
@@ -42,19 +42,19 @@ class DefaultOtpComponent @AssistedInject constructor(
     override val model: StateFlow<OtpStore.State>
         get() = store.stateFlow
 
-    override fun changeOtp(otp: String) {
+    override fun onOtpChanged(otp: String) {
         store.accept(OtpStore.Intent.ChangeOtp(otp))
     }
 
-    override fun onConfirmOtp(otp: String) {
-        store.accept(OtpStore.Intent.ConfirmOtp(otp))
+    override fun onConfirmPhone(otp: String) {
+        store.accept(OtpStore.Intent.ConfirmPhone(otp))
     }
 
-    override fun onClickResend() {
+    override fun onResendClicked() {
         store.accept(OtpStore.Intent.ResendOtp)
     }
 
-    override fun onClickBack() {
+    override fun onBackClicked() {
         store.accept(OtpStore.Intent.ClickBack)
     }
 

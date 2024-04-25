@@ -11,7 +11,6 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.SignInWithCredentia
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.otp.OtpStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.otp.OtpStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.otp.OtpStore.State
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,29 +18,23 @@ interface OtpStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
         data class ChangeOtp(val otp: String) : Intent
-        data class ConfirmOtp(val otp: String) : Intent
+        data class ConfirmPhone(val otp: String) : Intent
         data object ResendOtp : Intent
         data object ClickBack : Intent
     }
 
     data class State(
         val otp: String,
-        val isIncorrectOtp: Boolean,
-        val otpState: OtpState
-    ) {
-        sealed interface OtpState {
-            data object Initial : OtpState
-            data object Loading : OtpState
-            data class Error(
-                val message: String
-            ) : OtpState
-
-            data object Resent : OtpState
-        }
-    }
+        val isIncorrect: Boolean,
+        val isEnabled: Boolean,
+        val isLoading: Boolean,
+        val isFailure: Boolean,
+        val failureMessage: String,
+        val wasResent: Boolean
+    )
 
     sealed interface Label {
-        data object ConfirmOtp : Label
+        data object ConfirmPhone : Label
         data object ClickBack : Label
     }
 }
@@ -56,8 +49,12 @@ class OtpStoreFactory @Inject constructor(
             name = STORE_NAME,
             initialState = State(
                 otp = "",
-                isIncorrectOtp = false,
-                otpState = State.OtpState.Initial
+                isIncorrect = false,
+                isEnabled = true,
+                isLoading = false,
+                isFailure = false,
+                failureMessage = "",
+                wasResent = false
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -67,11 +64,12 @@ class OtpStoreFactory @Inject constructor(
     private sealed interface Action
 
     private sealed interface Msg {
-        data class ChangeOtp(val otp: String) : Msg
+        data class OtpChanged(val otp: String) : Msg
         data object Loading : Msg
-        data class Error(val message: String) : Msg
+        data object PhoneConfirmed : Msg
+        data class Failure(val message: String) : Msg
         data object IncorrectOtp : Msg
-        data object ResendOtp : Msg
+        data object OtpResent : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -83,24 +81,24 @@ class OtpStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 is Intent.ChangeOtp -> {
-                    dispatch(Msg.ChangeOtp(intent.otp))
+                    dispatch(Msg.OtpChanged(intent.otp))
                 }
 
-                is Intent.ConfirmOtp -> {
+                is Intent.ConfirmPhone -> {
                     if (isValidConfirmationCode(intent.otp)) {
                         dispatch(Msg.Loading)
                         scope.launch {
-
                             signInWithCredentialUseCase(
                                 code = intent.otp
                             ).collect { result ->
                                 when (result) {
                                     is AuthState.Failure -> {
-                                        dispatch(Msg.Error(result.exception.message.toString()))
+                                        dispatch(Msg.Failure(result.exception.message.toString()))
                                     }
 
                                     AuthState.Success -> {
-                                        publish(Label.ConfirmOtp)
+                                        dispatch(Msg.PhoneConfirmed)
+                                        publish(Label.ConfirmPhone)
                                     }
                                 }
 
@@ -121,11 +119,11 @@ class OtpStoreFactory @Inject constructor(
                         resendVerificationCodeUseCase().collect { result ->
                             when (result) {
                                 is AuthState.Failure -> {
-                                    dispatch(Msg.Error(result.exception.message.toString()))
+                                    dispatch(Msg.Failure(result.exception.message.toString()))
                                 }
 
                                 AuthState.Success -> {
-                                    dispatch(Msg.ResendOtp)
+                                    dispatch(Msg.OtpResent)
                                 }
                             }
                         }
@@ -138,28 +136,71 @@ class OtpStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.ChangeOtp -> {
+                is Msg.OtpChanged -> {
                     copy(
                         otp = msg.otp,
-                        isIncorrectOtp = false,
-                        otpState = State.OtpState.Initial
+                        isIncorrect = false,
+                        isEnabled = true,
+                        isLoading = false,
+                        isFailure = false,
+                        failureMessage = "",
+                        wasResent = false
                     )
                 }
 
-                is Msg.Error -> {
-                    copy(otpState = State.OtpState.Error(msg.message))
+                Msg.IncorrectOtp -> {
+                    copy(
+                        isIncorrect = true,
+                        isEnabled = true,
+                        isLoading = false,
+                        isFailure = false,
+                        failureMessage = "",
+                        wasResent = false
+                    )
                 }
 
-                Msg.IncorrectOtp -> {
-                    copy(isIncorrectOtp = true)
+                is Msg.Failure -> {
+                    copy(
+                        isIncorrect = false,
+                        isEnabled = true,
+                        isLoading = false,
+                        isFailure = true,
+                        failureMessage = msg.message,
+                        wasResent = false
+                    )
                 }
 
                 Msg.Loading -> {
-                    copy(otpState = State.OtpState.Loading)
+                    copy(
+                        isIncorrect = false,
+                        isEnabled = false,
+                        isLoading = true,
+                        isFailure = false,
+                        failureMessage = "",
+                        wasResent = false
+                    )
                 }
 
-                Msg.ResendOtp -> {
-                    copy(otpState = State.OtpState.Resent)
+                Msg.OtpResent -> {
+                    copy(
+                        isIncorrect = false,
+                        isEnabled = true,
+                        isLoading = false,
+                        isFailure = false,
+                        failureMessage = "",
+                        wasResent = true
+                    )
+                }
+
+                Msg.PhoneConfirmed -> {
+                    copy(
+                        isIncorrect = false,
+                        isEnabled = true,
+                        isLoading = false,
+                        isFailure = false,
+                        failureMessage = "",
+                        wasResent = false
+                    )
                 }
             }
     }

@@ -21,6 +21,7 @@
     <string name="network_auth_exception">Сетевая ошибка</string>
     <string name="invalid_credentials_auth_exception">Неверные данные для авторизации</string>
     <string name="too_many_requests_auth_exception">Слишком много запросов</string>
+    <string name="code_was_resent">Код был отправлен повторно</string>
 
     <string name="navigation_item_feed">Лента</string>
     <string name="navigation_item_pets">Питомцы</string>

@@ -70,6 +70,7 @@ fun PhoneContent(
                     shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
                     containerColor = MaterialTheme.colorScheme.errorContainer,
                     contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                    dismissActionContentColor = MaterialTheme.colorScheme.onErrorContainer
                 )
             }
         }
@@ -108,7 +109,7 @@ fun PhoneContent(
                     },
                     shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     prefix = {
                         Text(stringResource(id = R.string.phone_number_prefix))
                     },

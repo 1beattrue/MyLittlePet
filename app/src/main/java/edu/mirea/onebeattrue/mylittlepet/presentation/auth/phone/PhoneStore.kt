@@ -58,10 +58,10 @@ class PhoneStoreFactory @Inject constructor(
     private sealed interface Action
 
     private sealed interface Msg {
-        data class ChangePhone(val phone: String) : Msg
+        data class PhoneChanged(val phone: String) : Msg
         data object Loading : Msg
         data object CodeSent : Msg
-        data class CodeSentFailure(val message: String) : Msg
+        data class Failure(val message: String) : Msg
         data object IncorrectPhone : Msg
     }
 
@@ -74,7 +74,7 @@ class PhoneStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 is Intent.ChangePhone -> {
-                    dispatch(Msg.ChangePhone(intent.phone))
+                    dispatch(Msg.PhoneChanged(intent.phone))
                 }
 
                 is Intent.SendCode -> {
@@ -87,7 +87,7 @@ class PhoneStoreFactory @Inject constructor(
                             ).collect { result ->
                                 when (result) {
                                     is AuthState.Failure -> {
-                                        dispatch(Msg.CodeSentFailure(result.exception.message.toString()))
+                                        dispatch(Msg.Failure(result.exception.message.toString()))
                                     }
 
                                     AuthState.Success -> {
@@ -108,28 +108,42 @@ class PhoneStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.ChangePhone -> {
+                is Msg.PhoneChanged -> {
                     copy(
                         phone = msg.phone,
-                        isIncorrect = false
+                        isIncorrect = false,
+                        isEnabled = true,
+                        isLoading = false,
+                        isFailure = false,
+                        failureMessage = ""
                     )
                 }
 
                 Msg.IncorrectPhone -> {
-                    copy(isIncorrect = true)
+                    copy(
+                        isIncorrect = true,
+                        isEnabled = true,
+                        isLoading = false,
+                        isFailure = false,
+                        failureMessage = ""
+                    )
                 }
 
                 Msg.CodeSent -> {
                     copy(
+                        isIncorrect = false,
+                        isEnabled = true,
                         isLoading = false,
-                        isEnabled = true
+                        isFailure = false,
+                        failureMessage = ""
                     )
                 }
 
-                is Msg.CodeSentFailure -> {
+                is Msg.Failure -> {
                     copy(
-                        isLoading = false,
+                        isIncorrect = false,
                         isEnabled = true,
+                        isLoading = false,
                         isFailure = true,
                         failureMessage = msg.message
                     )
@@ -138,8 +152,11 @@ class PhoneStoreFactory @Inject constructor(
 
                 Msg.Loading -> {
                     copy(
+                        isIncorrect = false,
+                        isEnabled = false,
                         isLoading = true,
-                        isEnabled = false
+                        isFailure = false,
+                        failureMessage = ""
                     )
                 }
             }

@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.StateFlow
 interface OtpComponent {
     val model: StateFlow<OtpStore.State>
 
-    fun changeOtp(otp: String)
-    fun onConfirmOtp(otp: String)
-    fun onClickResend()
-    fun onClickBack()
+    fun onOtpChanged(otp: String)
+    fun onConfirmPhone(otp: String)
+    fun onResendClicked()
+    fun onBackClicked()
 }

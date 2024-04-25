@@ -14,7 +14,6 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -26,7 +25,6 @@ class AuthRepositoryImpl @Inject constructor(
     override val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
     private lateinit var verificationCode: String
-    private var lastRequestTime = LAST_REQUEST_TIME_INITIAL
 
     private var lastPhone: String? = null
     private var lastActivity: Activity? = null
@@ -52,13 +50,11 @@ class AuthRepositoryImpl @Inject constructor(
             override fun onCodeSent(code: String, token: PhoneAuthProvider.ForceResendingToken) {
                 super.onCodeSent(code, token)
                 verificationCode = code
-                //lastRequestTime = System.currentTimeMillis()
                 forceResendingToken = token
                 trySend(AuthState.Success)
             }
         }
 
-        //if (codeCanBeSent()) {
         firebaseAuth.useAppLanguage()
         val prefix = activity.getString(R.string.phone_number_prefix)
         val options = if (forceResendingToken == null) {
@@ -78,19 +74,6 @@ class AuthRepositoryImpl @Inject constructor(
                 .build()
         }
         PhoneAuthProvider.verifyPhoneNumber(options)
-//        } else {
-//            val currentRequestTime = System.currentTimeMillis()
-//            trySend(
-//                AuthScreenState.Failure(
-//                    TimeoutVerificationCodeException(
-//                        String.format(
-//                            activity.getString(R.string.resend_code_exception),
-//                            (TIMEOUT_MILLIS - (currentRequestTime - lastRequestTime)).toSeconds()
-//                        )
-//                    )
-//                )
-//            )
-//        }
 
         awaitClose {
             close()
@@ -124,19 +107,7 @@ class AuthRepositoryImpl @Inject constructor(
         firebaseAuth.signOut()
     }
 
-    private fun Long.toSeconds() = this / MILLIS_IN_SECOND + 1
-
-    private fun codeCanBeSent(): Boolean {
-        return lastRequestTime == LAST_REQUEST_TIME_INITIAL ||
-                System.currentTimeMillis() - lastRequestTime > TIMEOUT_MILLIS
-    }
-
     companion object {
-        private const val TIMEOUT = 15L
-        private const val RESERVE_TIMEOUT = 5L
-
-        private const val MILLIS_IN_SECOND = 1000
-        private const val TIMEOUT_MILLIS = (TIMEOUT + RESERVE_TIMEOUT) * MILLIS_IN_SECOND
-        private const val LAST_REQUEST_TIME_INITIAL = -228L
+        private const val TIMEOUT = 60L
     }
 }
