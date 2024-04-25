@@ -163,29 +163,29 @@
 //            }
 //        }
 //
-//        AuthScreenState.Loading -> {
-//            progress = true
-//        }
-//
-//        AuthScreenState.Success -> {
-//            progress = false
-//            finishAuth()
-//        }
-//
-//        AuthScreenState.CodeSent -> {
-//            progress = false
-//            isCodeSent = true
-//            backHandlingEnabled = true
-//        }
-//
-//        AuthScreenState.Initial -> {
-//            progress = false
-//            isCodeSent = false
-//            backHandlingEnabled = false
-//
-//            code.value = ""
-//            isConfirmPhoneTextFieldError.value = false
-//        }
+////        AuthScreenState.Loading -> {
+////            progress = true
+////        }
+////
+////        AuthScreenState.Success -> {
+////            progress = false
+////            finishAuth()
+////        }
+////
+////        AuthScreenState.CodeSent -> {
+////            progress = false
+////            isCodeSent = true
+////            backHandlingEnabled = true
+////        }
+////
+////        AuthScreenState.Initial -> {
+////            progress = false
+////            isCodeSent = false
+////            backHandlingEnabled = false
+////
+////            code.value = ""
+////            isConfirmPhoneTextFieldError.value = false
+////        }
 //    }
 //
 //    BackHandler(backHandlingEnabled) {
