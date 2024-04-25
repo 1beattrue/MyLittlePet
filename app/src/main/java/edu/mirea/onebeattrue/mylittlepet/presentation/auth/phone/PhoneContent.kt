@@ -5,8 +5,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -65,12 +67,14 @@ fun PhoneContent(
             painter = painterResource(id = R.drawable.image_cat_face),
             contentDescription = null,
         )
+        Spacer(modifier = Modifier.height(16.dp))
         CustomCardDefaultElevation {
             Text(
                 text = stringResource(id = R.string.enter_phone_number),
                 style = MaterialTheme.typography.titleLarge
             )
             OutlinedTextField(
+                modifier = modifier.fillMaxWidth(),
                 value = state.phone,
                 onValueChange = {
                     component.changePhone(it)
