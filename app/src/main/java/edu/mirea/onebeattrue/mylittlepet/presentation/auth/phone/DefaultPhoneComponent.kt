@@ -26,7 +26,7 @@ class DefaultPhoneComponent @AssistedInject constructor(
         componentScope.launch {
             store.labels.collect {
                 when (it) {
-                    PhoneStore.Label.ConfirmPhone -> {
+                    PhoneStore.Label.SendCode -> {
                         onConfirmPhone()
                     }
                 }
@@ -38,12 +38,12 @@ class DefaultPhoneComponent @AssistedInject constructor(
     override val model: StateFlow<PhoneStore.State>
         get() = store.stateFlow
 
-    override fun changePhone(phone: String) {
+    override fun onPhoneChanged(phone: String) {
         store.accept(PhoneStore.Intent.ChangePhone(phone))
     }
 
-    override fun onConfirmPhone(phone: String, activity: Activity) {
-        store.accept(PhoneStore.Intent.ConfirmPhone(phone, activity))
+    override fun onCodeSent(phone: String, activity: Activity) {
+        store.accept(PhoneStore.Intent.SendCode(phone, activity))
     }
 
     @AssistedFactory

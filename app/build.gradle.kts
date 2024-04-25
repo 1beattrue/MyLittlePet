@@ -59,7 +59,7 @@ dependencies {
     implementation("com.arkivanov.mvikotlin:mvikotlin-logging:$mviVersion")
     implementation("com.arkivanov.mvikotlin:mvikotlin:$mviVersion")
 
-    val decomposeVersion = "2.1.2"
+    val decomposeVersion = "2.2.0-alpha03"
     implementation("com.arkivanov.decompose:extensions-compose-jetpack:$decomposeVersion")
     implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
 

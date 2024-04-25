@@ -11,7 +11,6 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.CreateUserWithPhone
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone.PhoneStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone.PhoneStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone.PhoneStore.State
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,25 +18,20 @@ interface PhoneStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
         data class ChangePhone(val phone: String) : Intent
-        data class ConfirmPhone(val phone: String, val activity: Activity) : Intent
+        data class SendCode(val phone: String, val activity: Activity) : Intent
     }
 
     data class State(
         val phone: String,
-        val isIncorrectPhone: Boolean,
-        val phoneState: PhoneState
-    ) {
-        sealed interface PhoneState {
-            data object Initial : PhoneState
-            data object Loading : PhoneState
-            data class Error(
-                val message: String
-            ) : PhoneState
-        }
-    }
+        val isIncorrect: Boolean,
+        val isEnabled: Boolean,
+        val isLoading: Boolean,
+        val isFailure: Boolean,
+        val failureMessage: String
+    )
 
     sealed interface Label {
-        data object ConfirmPhone : Label
+        data object SendCode : Label
     }
 }
 
@@ -50,8 +44,11 @@ class PhoneStoreFactory @Inject constructor(
             name = STORE_NAME,
             initialState = State(
                 phone = "",
-                isIncorrectPhone = false,
-                phoneState = State.PhoneState.Initial
+                isIncorrect = false,
+                isEnabled = true,
+                isLoading = false,
+                isFailure = false,
+                failureMessage = ""
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -63,7 +60,8 @@ class PhoneStoreFactory @Inject constructor(
     private sealed interface Msg {
         data class ChangePhone(val phone: String) : Msg
         data object Loading : Msg
-        data class Error(val message: String) : Msg
+        data object CodeSent : Msg
+        data class CodeSentFailure(val message: String) : Msg
         data object IncorrectPhone : Msg
     }
 
@@ -79,7 +77,7 @@ class PhoneStoreFactory @Inject constructor(
                     dispatch(Msg.ChangePhone(intent.phone))
                 }
 
-                is Intent.ConfirmPhone -> {
+                is Intent.SendCode -> {
                     if (isValidPhoneNumber(intent.phone)) {
                         dispatch(Msg.Loading)
                         scope.launch {
@@ -89,11 +87,12 @@ class PhoneStoreFactory @Inject constructor(
                             ).collect { result ->
                                 when (result) {
                                     is AuthState.Failure -> {
-                                        dispatch(Msg.Error(result.exception.message.toString()))
+                                        dispatch(Msg.CodeSentFailure(result.exception.message.toString()))
                                     }
 
                                     AuthState.Success -> {
-                                        publish(Label.ConfirmPhone)
+                                        dispatch(Msg.CodeSent)
+                                        publish(Label.SendCode)
                                     }
                                 }
                             }
@@ -112,21 +111,36 @@ class PhoneStoreFactory @Inject constructor(
                 is Msg.ChangePhone -> {
                     copy(
                         phone = msg.phone,
-                        isIncorrectPhone = false,
-                        phoneState = State.PhoneState.Initial
+                        isIncorrect = false
                     )
                 }
 
-                is Msg.Error -> {
-                    copy(phoneState = State.PhoneState.Error(msg.message))
+                Msg.IncorrectPhone -> {
+                    copy(isIncorrect = true)
                 }
 
-                Msg.IncorrectPhone -> {
-                    copy(isIncorrectPhone = true)
+                Msg.CodeSent -> {
+                    copy(
+                        isLoading = false,
+                        isEnabled = true
+                    )
                 }
+
+                is Msg.CodeSentFailure -> {
+                    copy(
+                        isLoading = false,
+                        isEnabled = true,
+                        isFailure = true,
+                        failureMessage = msg.message
+                    )
+                }
+
 
                 Msg.Loading -> {
-                    copy(phoneState = State.PhoneState.Loading)
+                    copy(
+                        isLoading = true,
+                        isEnabled = false
+                    )
                 }
             }
     }

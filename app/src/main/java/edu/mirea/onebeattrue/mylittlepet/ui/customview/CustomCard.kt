@@ -17,11 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.room.util.copy
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 
 @Composable
@@ -34,7 +32,7 @@ fun CustomCard(
         colorScheme = if (isSystemInDarkTheme()) {
             darkColorScheme()
         } else {
-            lightColorScheme(surface = Color.White)
+            lightColorScheme(surface = Color.White, surfaceTint = Color.White)
         }
     ) {
         Card(
