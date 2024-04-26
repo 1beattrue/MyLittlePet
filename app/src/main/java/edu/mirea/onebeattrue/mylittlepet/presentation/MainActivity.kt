@@ -25,7 +25,6 @@ class MainActivity : ComponentActivity() {
         val component = rootComponentFactory.create(defaultComponentContext())
 
         setContent {
-
             MyLittlePetTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),

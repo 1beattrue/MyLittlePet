@@ -15,7 +15,8 @@ import kotlinx.coroutines.launch
 class DefaultOtpComponent @AssistedInject constructor(
     private val storeFactory: OtpStoreFactory,
 
-    @Assisted("onConfirmOtp") private val onConfirmOtp: () -> Unit,
+    @Assisted("onAuthFinished") private val onAuthFinished: () -> Unit,
+
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : OtpComponent, ComponentContext by componentContext {
@@ -30,8 +31,8 @@ class DefaultOtpComponent @AssistedInject constructor(
                         onClickBack()
                     }
 
-                    OtpStore.Label.ConfirmPhone -> {
-                        onConfirmOtp()
+                    OtpStore.Label.FinishAuth -> {
+                        onAuthFinished()
                     }
                 }
             }
@@ -61,7 +62,7 @@ class DefaultOtpComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("onConfirmOtp") onConfirmOtp: () -> Unit,
+            @Assisted("onAuthFinished") onAuthFinished: () -> Unit,
             @Assisted("onClickBack") onClickBack: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultOtpComponent

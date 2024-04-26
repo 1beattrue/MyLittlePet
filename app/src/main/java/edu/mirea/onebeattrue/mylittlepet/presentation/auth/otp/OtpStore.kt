@@ -35,7 +35,7 @@ interface OtpStore : Store<Intent, State, Label> {
     )
 
     sealed interface Label {
-        data object ConfirmPhone : Label
+        data object FinishAuth : Label
         data object ClickBack : Label
     }
 }
@@ -79,8 +79,10 @@ class OtpStoreFactory @Inject constructor(
     private inner class BootstrapperImpl : CoroutineBootstrapper<Action>() {
         override fun invoke() {
             scope.launch {
-                isLoggedInUseCase().collect {
-                    dispatch(Action.LoggedIn)
+                isLoggedInUseCase().collect { isLoggedIn ->
+                    if (isLoggedIn) {
+                        dispatch(Action.LoggedIn)
+                    }
                 }
             }
         }
@@ -107,7 +109,7 @@ class OtpStoreFactory @Inject constructor(
 
                                     AuthState.Success -> {
                                         dispatch(Msg.PhoneConfirmed)
-                                        publish(Label.ConfirmPhone)
+                                        publish(Label.FinishAuth)
                                     }
                                 }
 
@@ -144,7 +146,7 @@ class OtpStoreFactory @Inject constructor(
         override fun executeAction(action: Action, getState: () -> State) {
             when (action) {
                 Action.LoggedIn -> {
-                    dispatch(Msg.PhoneConfirmed)
+                    publish(Label.FinishAuth)
                 }
             }
         }

@@ -16,6 +16,8 @@ import kotlinx.coroutines.launch
 class DefaultPhoneComponent @AssistedInject constructor(
     private val storeFactory: PhoneStoreFactory,
 
+    @Assisted("onAuthFinished") private val onAuthFinished: () -> Unit,
+
     @Assisted("onConfirmPhone") private val onConfirmPhone: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : PhoneComponent, ComponentContext by componentContext {
@@ -28,6 +30,10 @@ class DefaultPhoneComponent @AssistedInject constructor(
                 when (it) {
                     PhoneStore.Label.SendCode -> {
                         onConfirmPhone()
+                    }
+
+                    PhoneStore.Label.FinishAuth -> {
+                        onAuthFinished()
                     }
                 }
             }
@@ -49,6 +55,7 @@ class DefaultPhoneComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
+            @Assisted("onAuthFinished") onAuthFinished: () -> Unit,
             @Assisted("onConfirmPhone") onConfirmPhone: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultPhoneComponent

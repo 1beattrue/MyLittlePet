@@ -8,6 +8,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.CreateUserWithPhoneUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.IsLoggedInUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone.PhoneStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone.PhoneStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone.PhoneStore.State
@@ -32,12 +33,14 @@ interface PhoneStore : Store<Intent, State, Label> {
 
     sealed interface Label {
         data object SendCode : Label
+        data object FinishAuth : Label
     }
 }
 
 class PhoneStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
-    private val createUserWithPhoneUseCase: CreateUserWithPhoneUseCase
+    private val createUserWithPhoneUseCase: CreateUserWithPhoneUseCase,
+    private val isLoggedInUseCase: IsLoggedInUseCase
 ) {
     fun create(): PhoneStore =
         object : PhoneStore, Store<Intent, State, Label> by storeFactory.create(
@@ -55,7 +58,9 @@ class PhoneStoreFactory @Inject constructor(
             reducer = ReducerImpl
         ) {}
 
-    private sealed interface Action
+    private sealed interface Action {
+        data object LoggedIn : Action
+    }
 
     private sealed interface Msg {
         data class PhoneChanged(val phone: String) : Msg
@@ -65,8 +70,15 @@ class PhoneStoreFactory @Inject constructor(
         data object IncorrectPhone : Msg
     }
 
-    private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
+    private inner class BootstrapperImpl : CoroutineBootstrapper<Action>() {
         override fun invoke() {
+            scope.launch {
+                isLoggedInUseCase().collect { isLoggedIn ->
+                    if (isLoggedIn) {
+                        dispatch(Action.LoggedIn)
+                    }
+                }
+            }
         }
     }
 
@@ -100,6 +112,14 @@ class PhoneStoreFactory @Inject constructor(
                     } else {
                         dispatch(Msg.IncorrectPhone)
                     }
+                }
+            }
+        }
+
+        override fun executeAction(action: Action, getState: () -> State) {
+            when (action) {
+                Action.LoggedIn -> {
+                    publish(Label.FinishAuth)
                 }
             }
         }

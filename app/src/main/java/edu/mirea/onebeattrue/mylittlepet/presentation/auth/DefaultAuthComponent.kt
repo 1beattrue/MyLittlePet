@@ -40,6 +40,7 @@ class DefaultAuthComponent @AssistedInject constructor(
     ): AuthComponent.Child = when (config) {
         Config.Phone -> {
             val component = phoneComponentFactory.create(
+                onAuthFinished = { onAuthFinished() },
                 onConfirmPhone = { navigation.push(Config.Otp) },
                 componentContext = componentContext
             )
@@ -48,7 +49,7 @@ class DefaultAuthComponent @AssistedInject constructor(
 
         Config.Otp -> {
             val component = otpComponentFactory.create(
-                onConfirmOtp = { onAuthFinished() },
+                onAuthFinished = { onAuthFinished() },
                 onClickBack = { navigation.pop() },
                 componentContext = componentContext
             )
