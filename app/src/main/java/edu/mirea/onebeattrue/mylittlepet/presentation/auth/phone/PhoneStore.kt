@@ -86,7 +86,10 @@ class PhoneStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 is Intent.ChangePhone -> {
-                    dispatch(Msg.PhoneChanged(intent.phone))
+                    val phone = intent.phone
+                    if (isCorrectInput(phone)) {
+                        dispatch(Msg.PhoneChanged(formattedPhone(phone)))
+                    }
                 }
 
                 is Intent.SendCode -> {
@@ -180,6 +183,15 @@ class PhoneStoreFactory @Inject constructor(
                     )
                 }
             }
+    }
+
+    private fun formattedPhone(phone: String): String {
+        if (phone.length > 10) return phone.substring(0..9)
+        return phone
+    }
+
+    private fun isCorrectInput(input: String): Boolean {
+        return input.all { it.isDigit() }
     }
 
     private fun isValidPhoneNumber(phoneNumber: String): Boolean {

@@ -92,7 +92,10 @@ class OtpStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 is Intent.ChangeOtp -> {
-                    dispatch(Msg.OtpChanged(intent.otp))
+                    val code = intent.otp
+                    if (isCorrectInput(code)) {
+                        dispatch(Msg.OtpChanged(formattedCode(code)))
+                    }
                 }
 
                 is Intent.ConfirmPhone -> {
@@ -222,6 +225,15 @@ class OtpStoreFactory @Inject constructor(
                     )
                 }
             }
+    }
+
+    private fun formattedCode(code: String): String {
+        if (code.length > 6) return code.substring(0..5)
+        return code
+    }
+
+    private fun isCorrectInput(input: String): Boolean {
+        return input.all { it.isDigit() }
     }
 
     private fun isValidConfirmationCode(code: String): Boolean {
