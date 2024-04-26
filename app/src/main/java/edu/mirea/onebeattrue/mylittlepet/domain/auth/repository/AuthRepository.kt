@@ -9,6 +9,8 @@ interface AuthRepository {
 
     val currentUser: FirebaseUser?
 
+    val loggedIn: Flow<Boolean>
+
     suspend fun createUserWithPhone(
         phoneNumber: String,
         activity: Activity

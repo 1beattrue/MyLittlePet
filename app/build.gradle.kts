@@ -53,9 +53,6 @@ android {
 }
 
 dependencies {
-    implementation("com.google.android.gms:play-services-auth:21.1.0")
-    implementation("com.google.android.gms:play-services-auth-api-phone:18.0.2")
-
     val mviVersion = "3.2.1"
     implementation("com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines:$mviVersion")
     implementation("com.arkivanov.mvikotlin:mvikotlin-main:$mviVersion")

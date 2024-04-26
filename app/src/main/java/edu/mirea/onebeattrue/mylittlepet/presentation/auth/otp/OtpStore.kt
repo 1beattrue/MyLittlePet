@@ -6,6 +6,7 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.IsLoggedInUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.ResendVerificationCodeUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.SignInWithCredentialUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.otp.OtpStore.Intent
@@ -42,7 +43,8 @@ interface OtpStore : Store<Intent, State, Label> {
 class OtpStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val signInWithCredentialUseCase: SignInWithCredentialUseCase,
-    private val resendVerificationCodeUseCase: ResendVerificationCodeUseCase
+    private val resendVerificationCodeUseCase: ResendVerificationCodeUseCase,
+    private val isLoggedInUseCase: IsLoggedInUseCase
 ) {
     fun create(): OtpStore =
         object : OtpStore, Store<Intent, State, Label> by storeFactory.create(
@@ -61,7 +63,9 @@ class OtpStoreFactory @Inject constructor(
             reducer = ReducerImpl
         ) {}
 
-    private sealed interface Action
+    private sealed interface Action {
+        data object LoggedIn : Action
+    }
 
     private sealed interface Msg {
         data class OtpChanged(val otp: String) : Msg
@@ -72,8 +76,13 @@ class OtpStoreFactory @Inject constructor(
         data object OtpResent : Msg
     }
 
-    private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
+    private inner class BootstrapperImpl : CoroutineBootstrapper<Action>() {
         override fun invoke() {
+            scope.launch {
+                isLoggedInUseCase().collect {
+                    dispatch(Action.LoggedIn)
+                }
+            }
         }
     }
 
@@ -128,6 +137,14 @@ class OtpStoreFactory @Inject constructor(
                             }
                         }
                     }
+                }
+            }
+        }
+
+        override fun executeAction(action: Action, getState: () -> State) {
+            when (action) {
+                Action.LoggedIn -> {
+                    dispatch(Msg.PhoneConfirmed)
                 }
             }
         }

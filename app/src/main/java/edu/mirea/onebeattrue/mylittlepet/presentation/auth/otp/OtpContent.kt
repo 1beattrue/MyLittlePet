@@ -1,12 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.auth.otp
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,26 +33,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.google.android.gms.auth.api.phone.SmsRetriever
-import com.google.android.gms.common.api.CommonStatusCodes
-import com.google.android.gms.common.api.Status
 import edu.mirea.onebeattrue.mylittlepet.R
-import edu.mirea.onebeattrue.mylittlepet.presentation.SmsReceiver
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomConfirmButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomResendButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import kotlinx.coroutines.launch
 
-// временное решение TODO: вынести логику в правильное место
-fun parseOtp(messageBody: String?): String {
-    messageBody?.let { message ->
-        val regex = "\\b\\d{6}\\b".toRegex()
-        val matchResult = regex.find(message)
-        return matchResult?.value ?: ""
-    }
-    return ""
-}
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -66,38 +47,6 @@ fun OtpContent(
     modifier: Modifier = Modifier,
     component: OtpComponent
 ) {
-    // TODO: эта хуйня работает через жопу
-    val smsReceiverLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = { result ->
-            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-                val message = result.data!!.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)
-                val otp = parseOtp(message)//Create this method
-                component.onOtpChanged(otp)
-                // onOtpSubmit()//OPTIONAL(auto submit the otp)
-            } else {
-                Log.e("SmsReceiver", "otp retrieve fail")
-            }
-        }
-    )
-
-    // TODO: или эта
-    SmsReceiver(systemAction = SmsRetriever.SMS_RETRIEVED_ACTION) { intent ->
-        val extras = intent?.extras
-        val status = extras?.get(SmsRetriever.EXTRA_STATUS) as Status
-
-        when (status.statusCode) {
-            CommonStatusCodes.SUCCESS -> {
-                val consentIntent = extras.getParcelable<Intent>(SmsRetriever.EXTRA_CONSENT_INTENT)
-                try {
-                    smsReceiverLauncher.launch(consentIntent)
-                } catch (e: ActivityNotFoundException) {
-                    Log.e("SmsReceiver", "${e.message}")
-                }
-            }
-        }
-    }
-
     val state by component.model.collectAsState()
 
     val scope = rememberCoroutineScope()

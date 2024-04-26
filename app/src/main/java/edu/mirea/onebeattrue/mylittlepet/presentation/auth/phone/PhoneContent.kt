@@ -2,7 +2,6 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +33,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.google.android.gms.auth.api.phone.SmsRetriever
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomNextButton
@@ -64,18 +61,6 @@ fun PhoneContent(
             )
         }
     }
-
-    remember {
-        val client = SmsRetriever.getClient(context)
-        val task = client.startSmsUserConsent(null)
-        task.addOnSuccessListener {
-            Log.d("PhoneContent", "SMS Retriever started successfully")
-        }
-        task.addOnFailureListener {
-            Log.d("PhoneContent", "SMS Retriever start failure")
-        }
-    }
-
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
