@@ -9,14 +9,13 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthComponent
-import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.DefaultPetsComponent
 import kotlinx.parcelize.Parcelize
 
 class DefaultMainComponent @AssistedInject constructor(
     private val petsComponentFactory: DefaultPetsComponent.Factory,
 
+    @Assisted("onLoggedOut") private val onLoggedOut: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : MainComponent, ComponentContext by componentContext {
 
@@ -35,7 +34,10 @@ class DefaultMainComponent @AssistedInject constructor(
         componentContext: ComponentContext
     ): MainComponent.Child = when (config) {
         Config.Pets -> {
-            val component = petsComponentFactory.create(componentContext)
+            val component = petsComponentFactory.create(
+                componentContext = componentContext,
+                onLoggedOut = { onLoggedOut() }
+            )
             MainComponent.Child.Pets(component)
         }
     }
@@ -48,6 +50,7 @@ class DefaultMainComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
+            @Assisted("onLoggedOut") onLoggedOut: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultMainComponent
     }

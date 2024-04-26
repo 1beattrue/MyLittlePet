@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets
 
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,4 +11,7 @@ fun PetsContent(
     component: PetsComponent
 ) {
     Text(text = "pets component")
+    Button(onClick = { component.logOut() }) {
+        Text(text = "Log out")
+    }
 }

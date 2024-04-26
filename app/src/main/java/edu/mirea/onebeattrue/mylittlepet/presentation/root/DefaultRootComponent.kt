@@ -41,13 +41,16 @@ class DefaultRootComponent @AssistedInject constructor(
         Config.Auth -> {
             val component = authComponentFactory.create(
                 componentContext = componentContext,
-                onAuthFinished = { navigation.replaceAll(Config.Main) }
+                onLoggedIn = { navigation.replaceAll(Config.Main) }
             )
             RootComponent.Child.Auth(component)
         }
 
         Config.Main -> {
-            val component = mainComponentFactory.create(componentContext)
+            val component = mainComponentFactory.create(
+                componentContext = componentContext,
+                onLoggedOut = { navigation.replaceAll(Config.Auth) }
+            )
             RootComponent.Child.Main(component)
         }
     }
