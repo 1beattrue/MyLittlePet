@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import dagger.assisted.Assisted
@@ -35,7 +36,10 @@ class DefaultRootComponent @AssistedInject constructor(
         componentContext: ComponentContext
     ): RootComponent.Child = when (config) {
         Config.Auth -> {
-            val component = authComponentFactory.create(componentContext)
+            val component = authComponentFactory.create(
+                componentContext = componentContext,
+                onAuthFinished = { navigation.replaceAll(Config.Main) }
+            )
             RootComponent.Child.Auth(component)
         }
 
@@ -57,6 +61,6 @@ class DefaultRootComponent @AssistedInject constructor(
     interface Factory {
         fun create(
             @Assisted("componentContext") componentContext: ComponentContext
-        ): DefaultAuthComponent
+        ): DefaultRootComponent
     }
 }

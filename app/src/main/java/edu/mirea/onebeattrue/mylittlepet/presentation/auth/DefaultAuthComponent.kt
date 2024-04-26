@@ -18,6 +18,9 @@ import kotlinx.parcelize.Parcelize
 class DefaultAuthComponent @AssistedInject constructor(
     private val phoneComponentFactory: DefaultPhoneComponent.Factory,
     private val otpComponentFactory: DefaultOtpComponent.Factory,
+
+    @Assisted("onAuthFinished") private val onAuthFinished: () -> Unit,
+
     @Assisted("componentContext") componentContext: ComponentContext
 ) : AuthComponent, ComponentContext by componentContext {
 
@@ -45,7 +48,7 @@ class DefaultAuthComponent @AssistedInject constructor(
 
         Config.Otp -> {
             val component = otpComponentFactory.create(
-                onConfirmOtp = {},
+                onConfirmOtp = { onAuthFinished() },
                 onClickBack = { navigation.pop() },
                 componentContext = componentContext
             )
@@ -65,6 +68,7 @@ class DefaultAuthComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
+            @Assisted("onAuthFinished") onAuthFinished: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultAuthComponent
     }

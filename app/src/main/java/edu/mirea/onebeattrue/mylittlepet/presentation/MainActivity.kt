@@ -8,21 +8,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.defaultComponentContext
-import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthContent
-import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.root.DefaultRootComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.root.RootContent
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var authComponentFactory: DefaultAuthComponent.Factory
+    lateinit var rootComponentFactory: DefaultRootComponent.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as MyLittlePetApplication).component.inject(this)
         super.onCreate(savedInstanceState)
 
-        val component = authComponentFactory.create(defaultComponentContext())
+        val component = rootComponentFactory.create(defaultComponentContext())
 
         setContent {
 
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.surface
                 ) {
-                    AuthContent(component = component)
+                    RootContent(component = component)
                 }
             }
         }
