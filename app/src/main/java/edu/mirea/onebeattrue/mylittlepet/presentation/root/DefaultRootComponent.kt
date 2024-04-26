@@ -10,6 +10,7 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.DefaultMainComponent
 import kotlinx.parcelize.Parcelize
@@ -17,6 +18,8 @@ import kotlinx.parcelize.Parcelize
 class DefaultRootComponent @AssistedInject constructor(
     private val authComponentFactory: DefaultAuthComponent.Factory,
     private val mainComponentFactory: DefaultMainComponent.Factory,
+
+    private val authRepository: AuthRepository,
 
     @Assisted("componentContext") componentContext: ComponentContext
 ) : RootComponent, ComponentContext by componentContext {
@@ -26,7 +29,7 @@ class DefaultRootComponent @AssistedInject constructor(
     override val stack: Value<ChildStack<*, RootComponent.Child>>
         get() = childStack(
             source = navigation,
-            initialConfiguration = Config.Auth,
+            initialConfiguration = if (authRepository.currentUser == null) Config.Auth else Config.Main,
             handleBackButton = true,
             childFactory = ::child
         )
