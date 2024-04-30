@@ -31,7 +31,8 @@ class DefaultAuthComponent @AssistedInject constructor(
             source = navigation,
             initialConfiguration = Config.Phone,
             handleBackButton = true,
-            childFactory = ::child
+            childFactory = ::child,
+            key = "auth"
         )
 
     private fun child(

@@ -3,7 +3,7 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.auth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.jetpack.stack.Children
-import com.arkivanov.decompose.extensions.compose.jetpack.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.jetpack.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.jetpack.stack.animation.stackAnimation
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.otp.OtpContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone.PhoneContent
@@ -16,7 +16,7 @@ fun AuthContent(
     Children(
         modifier = modifier,
         stack = component.stack,
-        animation = stackAnimation(fade())
+        animation = stackAnimation(slide())
     ) {
         when (val instance = it.instance) {
             is AuthComponent.Child.Phone -> {

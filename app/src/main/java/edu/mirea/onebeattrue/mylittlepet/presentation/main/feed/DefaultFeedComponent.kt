@@ -1,14 +1,14 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets
+package edu.mirea.onebeattrue.mylittlepet.presentation.main.feed
 
 import com.arkivanov.decompose.ComponentContext
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class DefaultPetsComponent @AssistedInject constructor(
+class DefaultFeedComponent @AssistedInject constructor(
 
     @Assisted("componentContext") componentContext: ComponentContext
-) : PetsComponent, ComponentContext by componentContext {
+) : FeedComponent, ComponentContext by componentContext {
 
 
     @AssistedFactory
@@ -16,6 +16,6 @@ class DefaultPetsComponent @AssistedInject constructor(
         fun create(
 
             @Assisted("componentContext") componentContext: ComponentContext
-        ): DefaultPetsComponent
+        ): DefaultFeedComponent
     }
 }

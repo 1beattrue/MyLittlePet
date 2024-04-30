@@ -31,7 +31,8 @@ class DefaultRootComponent @AssistedInject constructor(
             source = navigation,
             initialConfiguration = if (authRepository.currentUser == null) Config.Auth else Config.Main,
             handleBackButton = true,
-            childFactory = ::child
+            childFactory = ::child,
+            key = "root"
         )
 
     private fun child(
@@ -49,7 +50,7 @@ class DefaultRootComponent @AssistedInject constructor(
         Config.Main -> {
             val component = mainComponentFactory.create(
                 componentContext = componentContext,
-                onLoggedOut = { navigation.replaceAll(Config.Auth) }
+                onSignOutClicked = { navigation.replaceAll(Config.Auth) }
             )
             RootComponent.Child.Main(component)
         }
