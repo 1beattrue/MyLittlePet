@@ -13,9 +13,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.arkivanov.decompose.extensions.compose.jetpack.stack.Children
-import com.arkivanov.decompose.extensions.compose.jetpack.stack.animation.fade
-import com.arkivanov.decompose.extensions.compose.jetpack.stack.animation.stackAnimation
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.FeedContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.PetsContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileContent

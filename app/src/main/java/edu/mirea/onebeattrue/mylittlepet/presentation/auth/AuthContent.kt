@@ -2,9 +2,9 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.auth
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.arkivanov.decompose.extensions.compose.jetpack.stack.Children
-import com.arkivanov.decompose.extensions.compose.jetpack.stack.animation.slide
-import com.arkivanov.decompose.extensions.compose.jetpack.stack.animation.stackAnimation
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.slide
+import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.otp.OtpContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone.PhoneContent
 

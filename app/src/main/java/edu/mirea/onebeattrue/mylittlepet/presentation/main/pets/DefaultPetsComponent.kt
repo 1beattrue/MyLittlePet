@@ -5,16 +5,14 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.essenty.parcelable.Parcelable
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.DefaultAddPetComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DefaultDetailsComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.editpet.DefaultEditPetComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.DefaultPetListComponent
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 class DefaultPetsComponent @AssistedInject constructor(
     private val petListComponentFactory: DefaultPetListComponent.Factory,
@@ -30,6 +28,7 @@ class DefaultPetsComponent @AssistedInject constructor(
     override val stack: Value<ChildStack<*, PetsComponent.Child>>
         get() = childStack(
             source = navigation,
+            serializer = Config.serializer(),
             initialConfiguration = Config.PetList,
             handleBackButton = false,
             childFactory = ::child,
@@ -71,17 +70,18 @@ class DefaultPetsComponent @AssistedInject constructor(
         }
     }
 
-    sealed interface Config : Parcelable {
-        @Parcelize
+    @Serializable
+    sealed interface Config {
+        @Serializable
         data object PetList : Config
 
-        @Parcelize
+        @Serializable
         data object AddPet : Config
 
-        @Parcelize
+        @Serializable
         data object EditPet : Config
 
-        @Parcelize
+        @Serializable
         data object Details : Config
     }
 

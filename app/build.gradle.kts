@@ -4,6 +4,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
+    kotlin("plugin.serialization") version "1.9.0"
 }
 
 android {
@@ -53,14 +54,17 @@ android {
 }
 
 dependencies {
+    val serializationVersion = "1.6.3"
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+
     val mviVersion = "3.2.1"
     implementation("com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines:$mviVersion")
     implementation("com.arkivanov.mvikotlin:mvikotlin-main:$mviVersion")
     implementation("com.arkivanov.mvikotlin:mvikotlin-logging:$mviVersion")
     implementation("com.arkivanov.mvikotlin:mvikotlin:$mviVersion")
 
-    val decomposeVersion = "2.2.0-alpha03"
-    implementation("com.arkivanov.decompose:extensions-compose-jetpack:$decomposeVersion")
+    val decomposeVersion = "3.0.0"
+    implementation("com.arkivanov.decompose:extensions-compose:$decomposeVersion")
     implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
 
     val roomVersion = "2.6.1"
@@ -71,7 +75,7 @@ dependencies {
     implementation("com.google.dagger:dagger:$daggerVersion")
     ksp("com.google.dagger:dagger-compiler:$daggerVersion")
 
-    val firebaseVersion = "32.7.3"
+    val firebaseVersion = "32.8.1"
     implementation(platform("com.google.firebase:firebase-bom:$firebaseVersion"))
     implementation("com.google.firebase:firebase-auth")
 
@@ -82,15 +86,15 @@ dependencies {
 
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    val material3Version = "1.2.0"
+    val material3Version = "1.2.1"
     implementation("androidx.compose.material3:material3:$material3Version")
 
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.2")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.6")
 
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.0")
 
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation(platform("androidx.compose:compose-bom:2024.04.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -98,7 +102,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

@@ -1,14 +1,11 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import dagger.assisted.Assisted
@@ -19,7 +16,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.DefaultPetsCompo
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.DefaultProfileComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 class DefaultMainComponent @AssistedInject constructor(
     private val storeFactory: MainStoreFactory,
@@ -37,14 +34,13 @@ class DefaultMainComponent @AssistedInject constructor(
     override val model: StateFlow<MainStore.State>
         get() = store.stateFlow
 
-    private val initialConfig = Config.Pets
-
     private val navigation = StackNavigation<Config>()
 
     override val stack: Value<ChildStack<*, MainComponent.Child>>
         get() = childStack(
             source = navigation,
-            initialConfiguration = initialConfig,
+            serializer = Config.serializer(),
+            initialConfiguration = Config.Pets,
             handleBackButton = false,
             childFactory = ::child,
             key = "main"
@@ -87,14 +83,15 @@ class DefaultMainComponent @AssistedInject constructor(
 
     }
 
-    sealed interface Config : Parcelable {
-        @Parcelize
+    @Serializable
+    sealed interface Config {
+        @Serializable
         data object Feed : Config
 
-        @Parcelize
+        @Serializable
         data object Pets : Config
 
-        @Parcelize
+        @Serializable
         data object Profile : Config
     }
 

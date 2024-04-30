@@ -6,14 +6,13 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.essenty.parcelable.Parcelable
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.DefaultMainComponent
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 class DefaultRootComponent @AssistedInject constructor(
     private val authComponentFactory: DefaultAuthComponent.Factory,
@@ -29,6 +28,7 @@ class DefaultRootComponent @AssistedInject constructor(
     override val stack: Value<ChildStack<*, RootComponent.Child>>
         get() = childStack(
             source = navigation,
+            serializer = Config.serializer(),
             initialConfiguration = if (authRepository.currentUser == null) Config.Auth else Config.Main,
             handleBackButton = true,
             childFactory = ::child,
@@ -56,11 +56,12 @@ class DefaultRootComponent @AssistedInject constructor(
         }
     }
 
-    sealed interface Config : Parcelable {
-        @Parcelize
+    @Serializable
+    private sealed interface Config {
+        @Serializable
         data object Auth : Config
 
-        @Parcelize
+        @Serializable
         data object Main : Config
     }
 
