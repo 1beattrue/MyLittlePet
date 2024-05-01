@@ -19,4 +19,6 @@ interface MainComponent {
     }
 
     fun navigateTo(navigationItem: NavigationItem)
+
+    fun changeBottomMenuVisibility(visibility: Boolean = true)
 }

@@ -10,6 +10,5 @@ interface TypeComponent {
 
     fun next()
 
-    fun openDropdownMenu()
-    fun closeDropdownMenu()
+    fun changeDropdownMenuExpanded(expanded: Boolean)
 }

@@ -57,8 +57,9 @@ fun TypeContent(
                 expanded = state.expanded,
                 selectedPetType = state.petType,
                 isIncorrect = state.isIncorrect,
-                openPetTypeList = { component.openDropdownMenu() },
-                closePetTypeList = { component.closeDropdownMenu() }
+                changeExpanded = {
+                    component.changeDropdownMenuExpanded(it)
+                }
             ) { petType ->
                 component.setPetType(petType)
             }
@@ -75,8 +76,7 @@ private fun SelectedTypeField(
     expanded: Boolean,
     selectedPetType: PetType?,
     isIncorrect: Boolean,
-    openPetTypeList: () -> Unit,
-    closePetTypeList: () -> Unit,
+    changeExpanded: (Boolean) -> Unit,
     selectPetType: (PetType) -> Unit
 ) {
     Box(
@@ -91,7 +91,7 @@ private fun SelectedTypeField(
         ) {
             ExposedDropdownMenuBox(
                 expanded = expanded,
-                onExpandedChange = { openPetTypeList() }
+                onExpandedChange = { changeExpanded(!expanded) }
             ) {
                 OutlinedTextField(
                     modifier = Modifier
@@ -119,7 +119,7 @@ private fun SelectedTypeField(
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
-                    onDismissRequest = { closePetTypeList() }
+                    onDismissRequest = { changeExpanded(false) }
                 ) {
                     PetType.getTypes().forEach { petType ->
                         val petTypeName = petType.getName()
@@ -136,7 +136,7 @@ private fun SelectedTypeField(
                             },
                             onClick = {
                                 selectPetType(petType)
-                                closePetTypeList()
+                                changeExpanded(false)
                             }
                         )
                     }

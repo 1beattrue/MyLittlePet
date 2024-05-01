@@ -44,12 +44,8 @@ class DefaultTypeComponent @AssistedInject constructor(
         store.accept(TypeStore.Intent.Next)
     }
 
-    override fun openDropdownMenu() {
-        store.accept(TypeStore.Intent.OpenDropdownMenu)
-    }
-
-    override fun closeDropdownMenu() {
-        store.accept(TypeStore.Intent.CloseDropdownMenu)
+    override fun changeDropdownMenuExpanded(expanded: Boolean) {
+        store.accept(TypeStore.Intent.ChangeDropdownMenuExpanded(expanded))
     }
 
 

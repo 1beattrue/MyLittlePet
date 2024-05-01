@@ -44,6 +44,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
@@ -103,6 +105,7 @@ fun PetListContent(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun PetCard(
     modifier: Modifier = Modifier,
@@ -120,14 +123,25 @@ private fun PetCard(
                 style = MaterialTheme.typography.titleLarge,
                 text = pet.name,
             )
-            Image(
-                modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.Crop,
-                painter = painterResource(
-                    id = pet.type.getImageId()
-                ),
-                contentDescription = null,
-            )
+            Box(
+                modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
+            ) {
+                if (pet.imageUri == Uri.EMPTY) {
+                    Image(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.Crop,
+                        painter = painterResource(id = pet.type.getImageId()),
+                        contentDescription = null
+                    )
+                } else {
+                    GlideImage(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.Fit,
+                        model = pet.imageUri,
+                        contentDescription = null
+                    )
+                }
+            }
         }
         Box(
             modifier = Modifier
@@ -140,48 +154,56 @@ private fun PetCard(
             ) {
                 Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
             }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
+            MaterialTheme(
+                shapes = MaterialTheme.shapes.copy(
+                    extraSmall = RoundedCornerShape(
+                        CORNER_RADIUS_CONTAINER
+                    )
+                )
             ) {
-                DropdownMenuItem(
-                    modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER)),
-                    contentPadding = MENU_ITEM_PADDING,
-                    text = {
-                        Text(
-                            text = stringResource(id = R.string.edit),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Edit,
-                            contentDescription = null
-                        )
-                    },
-                    onClick = { /* TODO(): */ }
-                )
-                DropdownMenuItem(
-                    modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER)),
-                    contentPadding = MENU_ITEM_PADDING,
-                    text = {
-                        Text(
-                            text = stringResource(id = R.string.delete),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Delete,
-                            contentDescription = null
-                        )
-                    },
-                    colors = MenuDefaults.itemColors(
-                        textColor = Color.Red,
-                        trailingIconColor = Color.Red
-                    ),
-                    onClick = { deletePet() }
-                )
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    DropdownMenuItem(
+                        modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER)),
+                        contentPadding = MENU_ITEM_PADDING,
+                        text = {
+                            Text(
+                                text = stringResource(id = R.string.edit),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Rounded.Edit,
+                                contentDescription = null
+                            )
+                        },
+                        onClick = { /* TODO(): */ }
+                    )
+                    DropdownMenuItem(
+                        modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER)),
+                        contentPadding = MENU_ITEM_PADDING,
+                        text = {
+                            Text(
+                                text = stringResource(id = R.string.delete),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Rounded.Delete,
+                                contentDescription = null
+                            )
+                        },
+                        colors = MenuDefaults.itemColors(
+                            textColor = Color.Red,
+                            trailingIconColor = Color.Red
+                        ),
+                        onClick = { deletePet() }
+                    )
+                }
             }
         }
     }

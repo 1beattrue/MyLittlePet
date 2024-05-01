@@ -16,8 +16,7 @@ interface TypeStore : Store<Intent, State, Label> {
     sealed interface Intent {
         data class SetPetType(val petType: PetType) : Intent
         data object Next : Intent
-        data object OpenDropdownMenu : Intent
-        data object CloseDropdownMenu : Intent
+        data class ChangeDropdownMenuExpanded(val expanded: Boolean) : Intent
     }
 
     data class State(
@@ -53,8 +52,7 @@ class TypeStoreFactory @Inject constructor(
     private sealed interface Msg {
         data class SetPetType(val petType: PetType) : Msg
         data object TypeNotSelected : Msg
-        data object OpenDropdownMenu : Msg
-        data object CloseDropdownMenu : Msg
+        data class ChangeDropdownMenuExpanded(val expanded: Boolean) : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -78,12 +76,8 @@ class TypeStoreFactory @Inject constructor(
                     dispatch(Msg.SetPetType(intent.petType))
                 }
 
-                Intent.OpenDropdownMenu -> {
-                    dispatch(Msg.OpenDropdownMenu)
-                }
-
-                Intent.CloseDropdownMenu -> {
-                    dispatch(Msg.CloseDropdownMenu)
+                is Intent.ChangeDropdownMenuExpanded -> {
+                    dispatch(Msg.ChangeDropdownMenuExpanded(intent.expanded))
                 }
             }
         }
@@ -94,8 +88,7 @@ class TypeStoreFactory @Inject constructor(
             when (msg) {
                 is Msg.SetPetType -> copy(petType = msg.petType, isIncorrect = false)
                 Msg.TypeNotSelected -> copy(isIncorrect = true)
-                Msg.OpenDropdownMenu -> copy(expanded = true)
-                Msg.CloseDropdownMenu -> copy(expanded = false)
+                is Msg.ChangeDropdownMenuExpanded -> copy(expanded = msg.expanded)
             }
     }
 }

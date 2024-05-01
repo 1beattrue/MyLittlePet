@@ -1,6 +1,9 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -30,11 +33,17 @@ fun MainContent(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
-            BottomNavigation(
-                onNavigationItemClick = component::navigateTo,
-                selectedItem = state.selectedItem,
-                backHandlingEnabled = state.backHandlingEnabled
-            )
+            AnimatedVisibility(
+                visible = state.bottomMenuVisibility,
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
+                BottomNavigation(
+                    onNavigationItemClick = component::navigateTo,
+                    selectedItem = state.selectedItem,
+                    backHandlingEnabled = state.backHandlingEnabled
+                )
+            }
         }
     ) { paddingValues ->
         Children(

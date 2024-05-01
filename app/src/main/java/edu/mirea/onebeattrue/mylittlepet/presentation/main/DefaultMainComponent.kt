@@ -59,7 +59,7 @@ class DefaultMainComponent @AssistedInject constructor(
 
         Config.Pets -> {
             val component = petsComponentFactory.create(
-                componentContext = componentContext
+                componentContext = componentContext,
             )
             MainComponent.Child.Pets(component)
         }
@@ -80,6 +80,10 @@ class DefaultMainComponent @AssistedInject constructor(
             NavigationItem.PetsItem -> navigation.replaceCurrent(Config.Pets)
             NavigationItem.ProfileItem -> navigation.replaceCurrent(Config.Profile)
         }
+    }
+
+    override fun changeBottomMenuVisibility(visibility: Boolean) {
+        store.accept(MainStore.Intent.ChangeBottomMenuVisibility(visibility))
     }
 
     @Serializable

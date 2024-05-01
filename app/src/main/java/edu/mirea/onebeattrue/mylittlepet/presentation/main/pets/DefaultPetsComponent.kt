@@ -37,6 +37,7 @@ class DefaultPetsComponent @AssistedInject constructor(
             key = "pets"
         )
 
+
     private fun child(
         config: Config,
         componentContext: ComponentContext
@@ -97,7 +98,6 @@ class DefaultPetsComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultPetsComponent
     }
