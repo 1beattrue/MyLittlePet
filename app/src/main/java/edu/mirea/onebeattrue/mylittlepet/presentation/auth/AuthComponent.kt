@@ -8,8 +8,8 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.auth.phone.PhoneComponent
 interface AuthComponent {
     val stack: Value<ChildStack<*, Child>>
 
-    sealed interface Child {
-        data class Phone(val component: PhoneComponent) : Child
-        data class Otp(val component: OtpComponent) : Child
+    sealed class Child {
+        class Phone(val component: PhoneComponent) : Child()
+        class Otp(val component: OtpComponent) : Child()
     }
 }

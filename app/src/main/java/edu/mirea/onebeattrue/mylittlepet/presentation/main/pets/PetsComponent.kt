@@ -11,10 +11,10 @@ interface PetsComponent {
 
     val stack: Value<ChildStack<*, Child>>
 
-    sealed interface Child {
-        data class PetList(val component: PetListComponent) : Child
-        data class AddPet(val component: AddPetComponent) : Child
-        data class EditPet(val component: EditPetComponent) : Child
-        data class Details(val component: DetailsComponent) : Child
+    sealed class Child {
+        class PetList(val component: PetListComponent) : Child()
+        class AddPet(val component: AddPetComponent) : Child()
+        class EditPet(val component: EditPetComponent) : Child()
+        class Details(val component: DetailsComponent) : Child()
     }
 }

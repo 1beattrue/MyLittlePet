@@ -8,8 +8,8 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.MainComponent
 interface RootComponent {
     val stack: Value<ChildStack<*, Child>>
 
-    sealed interface Child {
-        data class Auth(val component: AuthComponent) : Child
-        data class Main(val component: MainComponent) : Child
+    sealed class Child {
+        class Auth(val component: AuthComponent) : Child()
+        class Main(val component: MainComponent) : Child()
     }
 }

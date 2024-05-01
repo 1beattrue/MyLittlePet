@@ -12,10 +12,10 @@ interface MainComponent {
 
     val stack: Value<ChildStack<*, Child>>
 
-    sealed interface Child {
-        data class Feed(val component: FeedComponent) : Child
-        data class Pets(val component: PetsComponent) : Child
-        data class Profile(val component: ProfileComponent) : Child
+    sealed class Child {
+        class Feed(val component: FeedComponent) : Child()
+        class Pets(val component: PetsComponent) : Child()
+        class Profile(val component: ProfileComponent) : Child()
     }
 
     fun navigateTo(navigationItem: NavigationItem)

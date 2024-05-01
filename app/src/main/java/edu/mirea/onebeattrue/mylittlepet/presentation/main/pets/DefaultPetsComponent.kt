@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -30,7 +31,7 @@ class DefaultPetsComponent @AssistedInject constructor(
             source = navigation,
             serializer = Config.serializer(),
             initialConfiguration = Config.PetList,
-            handleBackButton = false,
+            handleBackButton = true,
             childFactory = ::child,
             key = "pets"
         )
@@ -62,8 +63,12 @@ class DefaultPetsComponent @AssistedInject constructor(
 
         Config.PetList -> {
             val component = petListComponentFactory.create(
-                onAddPetClicked = {},
-                onEditPetClicked = {},
+                onAddPetClicked = {
+                    navigation.push(Config.AddPet)
+                },
+                onEditPetClicked = {
+                    navigation.push(Config.EditPet)
+                },
                 componentContext = componentContext
             )
             PetsComponent.Child.PetList(component)
