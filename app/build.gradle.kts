@@ -54,6 +54,9 @@ android {
 }
 
 dependencies {
+    val glideVersion = "1.0.0-beta01"
+    implementation("com.github.bumptech.glide:compose:$glideVersion")
+
     val serializationVersion = "1.6.3"
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 
