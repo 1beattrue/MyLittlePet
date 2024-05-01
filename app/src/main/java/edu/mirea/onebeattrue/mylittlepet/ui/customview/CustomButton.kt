@@ -135,6 +135,24 @@ fun CustomAddButton(
 }
 
 @Composable
+fun CustomReadyButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        CustomButton(
+            onClick = { onClick() },
+            text = stringResource(id = R.string.ready),
+            enabled = enabled
+        )
+    }
+}
+
+@Composable
 fun CustomResendButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,

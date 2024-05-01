@@ -48,7 +48,7 @@ import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardDefaultElevation
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MENU_ITEM_PADDING
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
@@ -114,7 +114,7 @@ private fun PetCard(
     Box(
         modifier = modifier
     ) {
-        CustomCardDefaultElevation {
+        CustomCardExtremeElevation {
             Text(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,

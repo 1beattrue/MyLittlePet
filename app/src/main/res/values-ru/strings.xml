@@ -14,6 +14,7 @@
     <string name="back">Назад</string>
     <string name="confirm">Подтвердить</string>
     <string name="add">Добавить</string>
+    <string name="ready">Готово</string>
 
     <string name="resend_code">Отправить повторно</string>
     <string name="resend_code_exception">Повторная отправка кода будет доступна через %s секунд</string>
