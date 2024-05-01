@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist
 
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -92,7 +93,7 @@ fun PetListContent(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(items = state.petList, key = { it.id }) { pet ->
-                edu.mirea.onebeattrue.mylittlepet.presentation.pets.PetCard(
+                PetCard(
                     modifier = Modifier.animateItemPlacement(),
                     pet = pet,
                     deletePet = { component.deletePet(pet) }
@@ -190,7 +191,7 @@ private fun PetCard(
 @Composable
 private fun PetCardPreviewLight() {
     MyLittlePetTheme(darkTheme = false) {
-        PetCard(pet = Pet(PetType.CAT, "Cat", "")) {}
+        PetCard(pet = Pet(PetType.CAT, "Cat", Uri.EMPTY)) {}
     }
 }
 
@@ -198,6 +199,6 @@ private fun PetCardPreviewLight() {
 @Composable
 private fun PetCardPreviewDark() {
     MyLittlePetTheme(darkTheme = true) {
-        PetCard(pet = Pet(PetType.DOG, "Dog", "")) {}
+        PetCard(pet = Pet(PetType.DOG, "Dog", Uri.EMPTY)) {}
     }
 }

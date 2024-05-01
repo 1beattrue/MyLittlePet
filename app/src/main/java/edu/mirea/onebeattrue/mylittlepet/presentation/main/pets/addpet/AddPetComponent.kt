@@ -14,4 +14,6 @@ interface AddPetComponent {
         class Name(val component: NameComponent) : Child()
         class Image(val component: ImageComponent) : Child()
     }
+
+    fun onBackClicked()
 }

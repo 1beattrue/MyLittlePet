@@ -12,3 +12,4 @@ data class Pet(
         private const val UNDEFINED_ID = 0
     }
 }
+

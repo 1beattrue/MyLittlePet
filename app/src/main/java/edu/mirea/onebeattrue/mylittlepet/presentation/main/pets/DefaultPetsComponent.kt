@@ -44,7 +44,7 @@ class DefaultPetsComponent @AssistedInject constructor(
         Config.AddPet -> {
             val component = addPetComponentFactory.create(
                 componentContext = componentContext,
-                onAddPetClicked = {
+                onAddPetClosed = {
                     navigation.pop()
                 }
             )

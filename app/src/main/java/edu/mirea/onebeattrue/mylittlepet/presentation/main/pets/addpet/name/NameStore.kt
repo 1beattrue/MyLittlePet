@@ -63,11 +63,7 @@ class NameStoreFactory @Inject constructor(
                     if (petName.isBlank()) {
                         dispatch(Msg.NameNotEntered)
                     } else {
-                        publish(
-                            Label.Next(
-                                petName = petName
-                            )
-                        )
+                        publish(Label.Next(petName))
                     }
                 }
 

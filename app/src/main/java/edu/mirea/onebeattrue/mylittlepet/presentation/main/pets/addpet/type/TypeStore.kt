@@ -19,7 +19,7 @@ interface TypeStore : Store<Intent, State, Label> {
     }
 
     data class State(
-        val petType: PetType,
+        val petType: PetType?,
         val isIncorrect: Boolean
     )
 
@@ -36,7 +36,7 @@ class TypeStoreFactory @Inject constructor(
         object : TypeStore, Store<Intent, State, Label> by storeFactory.create(
             name = "AddPetStore",
             initialState = State(
-                petType = PetType.NOT_SELECTED,
+                petType = null,
                 isIncorrect = false
             ),
             bootstrapper = BootstrapperImpl(),
@@ -61,7 +61,7 @@ class TypeStoreFactory @Inject constructor(
             when (intent) {
                 is Intent.Next -> {
                     val petType = getState().petType
-                    if (petType != PetType.NOT_SELECTED) {
+                    if (petType == null) {
                         dispatch(Msg.TypeNotSelected)
                     } else {
                         publish(Label.Next(petType))

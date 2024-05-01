@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 
 enum class PetType {
-    NOT_SELECTED, CAT, DOG, RABBIT, BIRD, FISH, SNAKE, TIGER, MOUSE, TURTLE;
+    CAT, DOG, RABBIT, BIRD, FISH, SNAKE, TIGER, MOUSE, TURTLE;
 
     companion object {
         @Composable

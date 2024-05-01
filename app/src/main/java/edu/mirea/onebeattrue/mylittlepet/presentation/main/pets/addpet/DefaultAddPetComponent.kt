@@ -20,7 +20,7 @@ class DefaultAddPetComponent @AssistedInject constructor(
     private val nameComponentFactory: DefaultNameComponent.Factory,
     private val imageComponentFactory: DefaultImageComponent.Factory,
 
-    @Assisted("onAddPetClicked") private val onAddPetClicked: () -> Unit,
+    @Assisted("onAddPetClosed") private val onAddPetClosed: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : AddPetComponent, ComponentContext by componentContext {
 
@@ -66,13 +66,17 @@ class DefaultAddPetComponent @AssistedInject constructor(
             val component = imageComponentFactory.create(
                 petType = config.petType,
                 petName = config.petName,
-                onAddPetClicked = {
-                    onAddPetClicked()
+                onAddPetClosed = {
+                    onAddPetClosed()
                 },
                 componentContext = componentContext
             )
             AddPetComponent.Child.Image(component)
         }
+    }
+
+    override fun onBackClicked() {
+        onAddPetClosed()
     }
 
     @Serializable
@@ -90,7 +94,7 @@ class DefaultAddPetComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("onAddPetClicked") onAddPetClicked: () -> Unit,
+            @Assisted("onAddPetClosed") onAddPetClosed: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultAddPetComponent
     }

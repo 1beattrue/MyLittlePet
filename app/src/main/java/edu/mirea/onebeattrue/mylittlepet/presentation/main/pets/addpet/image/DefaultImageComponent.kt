@@ -19,7 +19,7 @@ class DefaultImageComponent @AssistedInject constructor(
 
     @Assisted("petType") private val petType: PetType,
     @Assisted("petName") private val petName: String,
-    @Assisted("onNextClicked") private val onAddPetClicked: () -> Unit,
+    @Assisted("onAddPetClosed") private val onAddPetClosed: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : ImageComponent, ComponentContext by componentContext {
 
@@ -29,7 +29,7 @@ class DefaultImageComponent @AssistedInject constructor(
         componentScope.launch {
             store.labels.collect {
                 when (it) {
-                    ImageStore.Label.AddPet -> onAddPetClicked()
+                    ImageStore.Label.AddPet -> onAddPetClosed()
                 }
             }
         }
@@ -52,7 +52,7 @@ class DefaultImageComponent @AssistedInject constructor(
         fun create(
             @Assisted("petType") petType: PetType,
             @Assisted("petName") petName: String,
-            @Assisted("onNextClicked") onAddPetClicked: () -> Unit,
+            @Assisted("onAddPetClosed") onAddPetClosed: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultImageComponent
     }

@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.AddPetContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListContent
 
 @Composable
@@ -20,7 +21,7 @@ fun PetsContent(
     ) {
         when (val instance = it.instance) {
             is PetsComponent.Child.AddPet -> {
-                Text(text = "add pet")
+                AddPetContent(component = instance.component)
             }
 
             is PetsComponent.Child.Details -> {
