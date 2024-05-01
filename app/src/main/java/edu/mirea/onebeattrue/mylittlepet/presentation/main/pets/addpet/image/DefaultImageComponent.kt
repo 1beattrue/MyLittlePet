@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class DefaultImageComponent @AssistedInject constructor(
     private val storeFactory: ImageStoreFactory,
 
-    @Assisted("petType") private val petType: PetType,
+    @Assisted("petType") override val petType: PetType,
     @Assisted("petName") private val petName: String,
     @Assisted("onAddPetClosed") private val onAddPetClosed: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext

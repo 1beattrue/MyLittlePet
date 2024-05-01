@@ -16,11 +16,14 @@ interface TypeStore : Store<Intent, State, Label> {
     sealed interface Intent {
         data class SetPetType(val petType: PetType) : Intent
         data object Next : Intent
+        data object OpenDropdownMenu : Intent
+        data object CloseDropdownMenu : Intent
     }
 
     data class State(
         val petType: PetType?,
-        val isIncorrect: Boolean
+        val isIncorrect: Boolean,
+        val expanded: Boolean
     )
 
     sealed interface Label {
@@ -37,7 +40,8 @@ class TypeStoreFactory @Inject constructor(
             name = "AddPetStore",
             initialState = State(
                 petType = null,
-                isIncorrect = false
+                isIncorrect = false,
+                expanded = false
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -49,6 +53,8 @@ class TypeStoreFactory @Inject constructor(
     private sealed interface Msg {
         data class SetPetType(val petType: PetType) : Msg
         data object TypeNotSelected : Msg
+        data object OpenDropdownMenu : Msg
+        data object CloseDropdownMenu : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -68,7 +74,17 @@ class TypeStoreFactory @Inject constructor(
                     }
                 }
 
-                is Intent.SetPetType -> dispatch(Msg.SetPetType(intent.petType))
+                is Intent.SetPetType -> {
+                    dispatch(Msg.SetPetType(intent.petType))
+                }
+
+                Intent.OpenDropdownMenu -> {
+                    dispatch(Msg.OpenDropdownMenu)
+                }
+
+                Intent.CloseDropdownMenu -> {
+                    dispatch(Msg.CloseDropdownMenu)
+                }
             }
         }
     }
@@ -78,6 +94,8 @@ class TypeStoreFactory @Inject constructor(
             when (msg) {
                 is Msg.SetPetType -> copy(petType = msg.petType, isIncorrect = false)
                 Msg.TypeNotSelected -> copy(isIncorrect = true)
+                Msg.OpenDropdownMenu -> copy(expanded = true)
+                Msg.CloseDropdownMenu -> copy(expanded = false)
             }
     }
 }

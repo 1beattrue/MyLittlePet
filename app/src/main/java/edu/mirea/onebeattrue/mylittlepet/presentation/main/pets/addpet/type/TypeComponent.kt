@@ -9,4 +9,7 @@ interface TypeComponent {
     fun setPetType(petType: PetType)
 
     fun next()
+
+    fun openDropdownMenu()
+    fun closeDropdownMenu()
 }

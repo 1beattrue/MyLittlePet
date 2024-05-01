@@ -67,7 +67,7 @@ class ImageStoreFactory @Inject constructor(
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
-                is Intent.AddPet -> {
+                Intent.AddPet -> {
                     scope.launch {
                         val imageUri = getState().imageUri
                         addPetUseCase(
@@ -77,8 +77,8 @@ class ImageStoreFactory @Inject constructor(
                                 imageUri = imageUri
                             )
                         )
+                        publish(Label.AddPet)
                     }
-                    publish(Label.AddPet)
                 }
 
                 is Intent.SetPetImage -> dispatch(Msg.SetPetImage(intent.imageUri))
