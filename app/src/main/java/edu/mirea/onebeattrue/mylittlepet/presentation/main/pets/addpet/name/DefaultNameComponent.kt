@@ -48,6 +48,7 @@ class DefaultNameComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
+            @Assisted("petType") petType: PetType,
             @Assisted("onNextClicked") onNextClicked: (PetType, String) -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultNameComponent
