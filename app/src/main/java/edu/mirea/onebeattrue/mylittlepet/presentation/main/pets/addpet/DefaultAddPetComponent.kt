@@ -26,8 +26,7 @@ class DefaultAddPetComponent @AssistedInject constructor(
 
     private val navigation = StackNavigation<Config>()
 
-    override val stack: Value<ChildStack<*, AddPetComponent.Child>>
-        get() = childStack(
+    override val stack: Value<ChildStack<*, AddPetComponent.Child>> = childStack(
             source = navigation,
             serializer = Config.serializer(),
             initialConfiguration = Config.Type,

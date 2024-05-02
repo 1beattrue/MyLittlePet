@@ -95,7 +95,10 @@ fun PetListContent(
                 PetCard(
                     modifier = Modifier.animateItemPlacement(),
                     pet = pet,
-                    deletePet = { component.deletePet(pet) }
+                    deletePet = { component.deletePet(pet) },
+                    editPet = {
+                        component.editPet(pet)
+                    }
                 )
             }
         }
@@ -107,7 +110,8 @@ fun PetListContent(
 private fun PetCard(
     modifier: Modifier = Modifier,
     pet: Pet,
-    deletePet: () -> Unit
+    deletePet: () -> Unit,
+    editPet: () -> Unit,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
@@ -177,7 +181,9 @@ private fun PetCard(
                                 contentDescription = null
                             )
                         },
-                        onClick = { /* TODO(): */ }
+                        onClick = {
+                            editPet()
+                        }
                     )
                     DropdownMenuItem(
                         modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER)),

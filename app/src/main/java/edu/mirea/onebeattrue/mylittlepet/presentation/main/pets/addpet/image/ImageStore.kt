@@ -9,6 +9,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddPetUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.State
@@ -20,6 +21,7 @@ interface ImageStore : Store<Intent, State, Label> {
     sealed interface Intent {
         data class SetPetImage(val imageUri: Uri) : Intent
         data object AddPet : Intent
+        data class EditPet(val pet: Pet) : Intent
         data object DeletePetImage : Intent
     }
 
@@ -34,7 +36,8 @@ interface ImageStore : Store<Intent, State, Label> {
 
 class ImageStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
-    private val addPetUseCase: AddPetUseCase
+    private val addPetUseCase: AddPetUseCase,
+    private val editPetUseCase: EditPetUseCase,
 ) {
 
     fun create(
@@ -80,6 +83,18 @@ class ImageStoreFactory @Inject constructor(
                             )
                         )
                         publish(Label.AddPet)
+                    }
+                }
+
+                is Intent.EditPet -> {
+                    scope.launch {
+                        val imageUri = getState().imageUri
+                        editPetUseCase(
+                            pet = intent.pet.copy(
+                                name = petName,
+                                imageUri = imageUri
+                            )
+                        )
                     }
                 }
 

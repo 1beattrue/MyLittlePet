@@ -10,6 +10,7 @@ import com.arkivanov.decompose.value.Value
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.DefaultAddPetComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DefaultDetailsComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.editpet.DefaultEditPetComponent
@@ -58,9 +59,13 @@ class DefaultPetsComponent @AssistedInject constructor(
             PetsComponent.Child.Details(component)
         }
 
-        Config.EditPet -> {
+        is Config.EditPet -> {
             val component = editPetComponentFactory.create(
-                componentContext = componentContext
+                componentContext = componentContext,
+                petType = config.pet.type,
+                onEditPetClosed = {
+                    navigation.pop()
+                }
             )
             PetsComponent.Child.EditPet(component)
         }
@@ -70,8 +75,8 @@ class DefaultPetsComponent @AssistedInject constructor(
                 onAddPetClicked = {
                     navigation.push(Config.AddPet)
                 },
-                onEditPetClicked = {
-                    navigation.push(Config.EditPet)
+                onEditPetClicked = { pet ->
+                    navigation.push(Config.EditPet(pet))
                 },
                 componentContext = componentContext
             )
@@ -92,7 +97,7 @@ class DefaultPetsComponent @AssistedInject constructor(
         data object AddPet : Config
 
         @Serializable
-        data object EditPet : Config
+        data class EditPet(val pet: Pet) : Config
 
         @Serializable
         data object Details : Config

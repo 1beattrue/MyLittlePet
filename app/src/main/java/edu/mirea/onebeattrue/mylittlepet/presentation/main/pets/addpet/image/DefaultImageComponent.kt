@@ -8,6 +8,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,6 +46,10 @@ class DefaultImageComponent @AssistedInject constructor(
 
     override fun addPet() {
         store.accept(ImageStore.Intent.AddPet)
+    }
+
+    override fun editPet(pet: Pet) {
+        store.accept(ImageStore.Intent.EditPet(pet))
     }
 
     override fun deletePetImage() {

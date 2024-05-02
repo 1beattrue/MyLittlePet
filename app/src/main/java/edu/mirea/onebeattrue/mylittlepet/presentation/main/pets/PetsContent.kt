@@ -8,6 +8,7 @@ import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.AddPetContent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.editpet.EditPetContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListContent
 
 @Composable
@@ -36,6 +37,10 @@ fun PetsContent(
 
             is PetsComponent.Child.EditPet -> {
                 Text(text = "edit pet")
+                LaunchedEffect(key1 = stack) {
+                    component.changeBottomMenuVisibility(false)
+                }
+                EditPetContent(component = instance.component)
             }
 
             is PetsComponent.Child.PetList -> {
