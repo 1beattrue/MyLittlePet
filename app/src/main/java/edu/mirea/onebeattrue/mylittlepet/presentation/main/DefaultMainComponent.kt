@@ -3,8 +3,8 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
@@ -36,15 +36,14 @@ class DefaultMainComponent @AssistedInject constructor(
 
     private val navigation = StackNavigation<Config>()
 
-    override val stack: Value<ChildStack<*, MainComponent.Child>>
-        get() = childStack(
-            source = navigation,
-            serializer = Config.serializer(),
-            initialConfiguration = Config.Pets,
-            handleBackButton = false,
-            childFactory = ::child,
-            key = "main"
-        )
+    override val stack: Value<ChildStack<*, MainComponent.Child>> = childStack(
+        source = navigation,
+        serializer = Config.serializer(),
+        initialConfiguration = Config.Pets,
+        handleBackButton = false,
+        childFactory = ::child,
+        key = "main"
+    )
 
     private fun child(
         config: Config,
@@ -79,9 +78,9 @@ class DefaultMainComponent @AssistedInject constructor(
     override fun navigateTo(navigationItem: NavigationItem) {
         store.accept(MainStore.Intent.NavigateTo(navigationItem))
         when (navigationItem) {
-            NavigationItem.FeedItem -> navigation.replaceCurrent(Config.Feed)
-            NavigationItem.PetsItem -> navigation.replaceCurrent(Config.Pets)
-            NavigationItem.ProfileItem -> navigation.replaceCurrent(Config.Profile)
+            NavigationItem.FeedItem -> navigation.bringToFront(Config.Feed)
+            NavigationItem.PetsItem -> navigation.bringToFront(Config.Pets)
+            NavigationItem.ProfileItem -> navigation.bringToFront(Config.Profile)
         }
     }
 

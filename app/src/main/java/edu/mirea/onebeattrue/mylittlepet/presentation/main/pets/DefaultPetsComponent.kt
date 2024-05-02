@@ -28,15 +28,14 @@ class DefaultPetsComponent @AssistedInject constructor(
 
     private val navigation = StackNavigation<Config>()
 
-    override val stack: Value<ChildStack<*, PetsComponent.Child>>
-        get() = childStack(
-            source = navigation,
-            serializer = Config.serializer(),
-            initialConfiguration = Config.PetList,
-            handleBackButton = true,
-            childFactory = ::child,
-            key = "pets"
-        )
+    override val stack: Value<ChildStack<*, PetsComponent.Child>> = childStack(
+        source = navigation,
+        serializer = Config.serializer(),
+        initialConfiguration = Config.PetList,
+        handleBackButton = true,
+        childFactory = ::child,
+        key = "pets"
+    )
 
     private fun child(
         config: Config,

@@ -25,15 +25,14 @@ class DefaultAuthComponent @AssistedInject constructor(
 
     private val navigation = StackNavigation<Config>()
 
-    override val stack: Value<ChildStack<*, AuthComponent.Child>>
-        get() = childStack(
-            source = navigation,
-            serializer = Config.serializer(),
-            initialConfiguration = Config.Phone,
-            handleBackButton = true,
-            childFactory = ::child,
-            key = "auth"
-        )
+    override val stack: Value<ChildStack<*, AuthComponent.Child>> = childStack(
+        source = navigation,
+        serializer = Config.serializer(),
+        initialConfiguration = Config.Phone,
+        handleBackButton = true,
+        childFactory = ::child,
+        key = "auth"
+    )
 
     private fun child(
         config: Config,
