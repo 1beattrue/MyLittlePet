@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
@@ -97,7 +98,10 @@ private fun BottomNavigation(
                 selected = selectedItem == navigationItem,
                 onClick = { onNavigationItemClick(navigationItem) },
                 icon = {
-                    Icon(navigationItem.icon, contentDescription = null)
+                    Icon(
+                        painter = painterResource(navigationItem.iconResId),
+                        contentDescription = null
+                    )
                 },
                 label = {
                     Text(text = stringResource(id = navigationItem.titleResId))
