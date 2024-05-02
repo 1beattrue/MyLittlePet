@@ -43,7 +43,6 @@ class DefaultPetsComponent @AssistedInject constructor(
         componentContext: ComponentContext
     ): PetsComponent.Child = when (config) {
         Config.AddPet -> {
-            onChangedBottomMenuVisibility(false)
             val component = addPetComponentFactory.create(
                 componentContext = componentContext,
                 onAddPetClosed = {
@@ -79,6 +78,10 @@ class DefaultPetsComponent @AssistedInject constructor(
             )
             PetsComponent.Child.PetList(component)
         }
+    }
+
+    override fun changeBottomMenuVisibility(visibility: Boolean) {
+        onChangedBottomMenuVisibility(visibility)
     }
 
     @Serializable

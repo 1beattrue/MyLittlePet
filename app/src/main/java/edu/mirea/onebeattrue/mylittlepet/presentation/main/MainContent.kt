@@ -13,7 +13,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -22,8 +21,6 @@ import androidx.compose.ui.res.stringResource
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import com.arkivanov.decompose.router.stack.ChildStack
-import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.getValue
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.FeedContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.PetsContent
@@ -35,12 +32,13 @@ fun MainContent(
     component: MainComponent
 ) {
     val state by component.model.collectAsState()
+    val stack = component.stack
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
             AnimatedVisibility(
-                visible = true,
+                visible = state.bottomMenuVisibility,
                 enter = expandVertically(),
                 exit = shrinkVertically()
             ) {
@@ -55,7 +53,7 @@ fun MainContent(
         Log.d("MainContent", "перерисовка")
         Children(
             modifier = Modifier.padding(paddingValues),
-            stack = component.stack,
+            stack = stack,
             animation = stackAnimation(fade())
         ) {
             when (val instance = it.instance) {
