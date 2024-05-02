@@ -68,7 +68,7 @@ class NameStoreFactory @Inject constructor(
                 }
 
                 is Intent.SetPetName -> {
-                    dispatch(Msg.SetPetName(intent.petName))
+                    dispatch(Msg.SetPetName(formattedName(intent.petName)))
                 }
             }
         }
@@ -80,5 +80,10 @@ class NameStoreFactory @Inject constructor(
                 Msg.NameNotEntered -> copy(isIncorrect = true)
                 is Msg.SetPetName -> copy(isIncorrect = false, petName = msg.petName)
             }
+    }
+
+    private fun formattedName(name: String): String {
+        if (name.length > 50) return name.substring(0..<50)
+        return name
     }
 }
