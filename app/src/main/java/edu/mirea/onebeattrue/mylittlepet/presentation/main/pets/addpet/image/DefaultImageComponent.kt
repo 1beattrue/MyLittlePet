@@ -47,6 +47,10 @@ class DefaultImageComponent @AssistedInject constructor(
         store.accept(ImageStore.Intent.AddPet)
     }
 
+    override fun deletePetImage() {
+        store.accept(ImageStore.Intent.DeletePetImage)
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(

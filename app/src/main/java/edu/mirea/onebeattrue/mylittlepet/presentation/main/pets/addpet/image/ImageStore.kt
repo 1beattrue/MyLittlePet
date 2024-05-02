@@ -20,6 +20,7 @@ interface ImageStore : Store<Intent, State, Label> {
     sealed interface Intent {
         data class SetPetImage(val imageUri: Uri) : Intent
         data object AddPet : Intent
+        data object DeletePetImage : Intent
     }
 
     data class State(
@@ -54,6 +55,7 @@ class ImageStoreFactory @Inject constructor(
 
     private sealed interface Msg {
         data class SetPetImage(val imageUri: Uri) : Msg
+        data object DeletePetImage : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -82,6 +84,7 @@ class ImageStoreFactory @Inject constructor(
                 }
 
                 is Intent.SetPetImage -> dispatch(Msg.SetPetImage(intent.imageUri))
+                Intent.DeletePetImage -> dispatch(Msg.DeletePetImage)
             }
         }
     }
@@ -90,6 +93,7 @@ class ImageStoreFactory @Inject constructor(
         override fun State.reduce(msg: Msg): State =
             when (msg) {
                 is Msg.SetPetImage -> copy(imageUri = msg.imageUri)
+                Msg.DeletePetImage -> copy(imageUri = Uri.EMPTY)
             }
     }
 }

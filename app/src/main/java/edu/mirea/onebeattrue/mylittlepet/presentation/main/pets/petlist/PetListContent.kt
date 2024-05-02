@@ -208,19 +208,3 @@ private fun PetCard(
         }
     }
 }
-
-@Preview
-@Composable
-private fun PetCardPreviewLight() {
-    MyLittlePetTheme(darkTheme = false) {
-        PetCard(pet = Pet(PetType.CAT, "Cat", Uri.EMPTY)) {}
-    }
-}
-
-@Preview
-@Composable
-private fun PetCardPreviewDark() {
-    MyLittlePetTheme(darkTheme = true) {
-        PetCard(pet = Pet(PetType.DOG, "Dog", Uri.EMPTY)) {}
-    }
-}

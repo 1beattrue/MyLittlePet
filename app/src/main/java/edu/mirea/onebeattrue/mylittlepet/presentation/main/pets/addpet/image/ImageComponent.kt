@@ -13,4 +13,6 @@ interface ImageComponent {
     fun setPetImage(imageUri: Uri)
 
     fun addPet()
+
+    fun deletePetImage()
 }
