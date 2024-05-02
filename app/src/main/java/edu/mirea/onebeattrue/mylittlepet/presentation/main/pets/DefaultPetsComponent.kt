@@ -22,6 +22,7 @@ class DefaultPetsComponent @AssistedInject constructor(
     private val editPetComponentFactory: DefaultEditPetComponent.Factory,
     private val detailsComponentFactory: DefaultDetailsComponent.Factory,
 
+    @Assisted("onChangedBottomMenuVisibility") private val onChangedBottomMenuVisibility: (Boolean) -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : PetsComponent, ComponentContext by componentContext {
 
@@ -37,12 +38,12 @@ class DefaultPetsComponent @AssistedInject constructor(
             key = "pets"
         )
 
-
     private fun child(
         config: Config,
         componentContext: ComponentContext
     ): PetsComponent.Child = when (config) {
         Config.AddPet -> {
+            onChangedBottomMenuVisibility(false)
             val component = addPetComponentFactory.create(
                 componentContext = componentContext,
                 onAddPetClosed = {
@@ -98,6 +99,7 @@ class DefaultPetsComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
+            @Assisted("onChangedBottomMenuVisibility") onChangedBottomMenuVisibility: (Boolean) -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultPetsComponent
     }

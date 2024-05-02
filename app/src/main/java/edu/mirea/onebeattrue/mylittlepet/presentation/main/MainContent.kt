@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -12,6 +13,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -20,6 +22,9 @@ import androidx.compose.ui.res.stringResource
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.value.Value
+import com.arkivanov.decompose.value.getValue
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.FeedContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.PetsContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileContent
@@ -35,7 +40,7 @@ fun MainContent(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
             AnimatedVisibility(
-                visible = state.bottomMenuVisibility,
+                visible = true,
                 enter = expandVertically(),
                 exit = shrinkVertically()
             ) {
@@ -47,6 +52,7 @@ fun MainContent(
             }
         }
     ) { paddingValues ->
+        Log.d("MainContent", "перерисовка")
         Children(
             modifier = Modifier.padding(paddingValues),
             stack = component.stack,

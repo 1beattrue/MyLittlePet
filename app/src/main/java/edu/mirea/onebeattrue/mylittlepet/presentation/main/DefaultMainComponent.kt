@@ -60,6 +60,9 @@ class DefaultMainComponent @AssistedInject constructor(
         Config.Pets -> {
             val component = petsComponentFactory.create(
                 componentContext = componentContext,
+                onChangedBottomMenuVisibility = {
+                    changeBottomMenuVisibility(it)
+                }
             )
             MainComponent.Child.Pets(component)
         }
