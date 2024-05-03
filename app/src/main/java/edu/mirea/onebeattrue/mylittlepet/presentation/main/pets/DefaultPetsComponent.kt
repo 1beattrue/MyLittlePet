@@ -3,7 +3,6 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
@@ -30,10 +29,12 @@ class DefaultPetsComponent @AssistedInject constructor(
 
     private val navigation = StackNavigation<Config>()
 
+    private val initialConfig = Config.PetList
+
     override val stack: Value<ChildStack<*, PetsComponent.Child>> = childStack(
         source = navigation,
         serializer = Config.serializer(),
-        initialConfiguration = Config.PetList,
+        initialConfiguration = initialConfig,
         handleBackButton = true,
         childFactory = ::child,
         key = "pets"
@@ -41,23 +42,8 @@ class DefaultPetsComponent @AssistedInject constructor(
 
     init {
         stack.subscribe {
-            when(it.active.configuration) {
-                Config.AddPet -> {
-                    changeBottomMenuVisibility(false)
-                }
-
-                Config.Details -> {
-                    changeBottomMenuVisibility(false)
-                }
-
-                is Config.EditPet -> {
-                    changeBottomMenuVisibility(false)
-                }
-
-                Config.PetList -> {
-                    changeBottomMenuVisibility(true)
-                }
-            }
+            val bottomBarVisibility = it.active.configuration == initialConfig
+            changeBottomMenuVisibility(bottomBarVisibility)
         }
     }
 
