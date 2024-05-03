@@ -5,7 +5,9 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.popWhile
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.backhandler.BackCallback
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import dagger.assisted.Assisted
@@ -36,14 +38,33 @@ class DefaultMainComponent @AssistedInject constructor(
 
     private val navigation = StackNavigation<Config>()
 
+    private val initialConfig = Config.Pets
+
     override val stack: Value<ChildStack<*, MainComponent.Child>> = childStack(
         source = navigation,
         serializer = Config.serializer(),
-        initialConfiguration = Config.Pets,
+        initialConfiguration = initialConfig,
         handleBackButton = false,
         childFactory = ::child,
         key = "main"
     )
+
+    private val backCallback = BackCallback {
+        navigation.popWhile { topOfStack: Config -> topOfStack != initialConfig }
+    }
+
+    init {
+        registerBackHandler()
+    }
+
+    private fun registerBackHandler() {
+        backHandler.register(backCallback)
+
+        stack.subscribe {
+            val isFirstTab = it.active.configuration == initialConfig
+            backCallback.isEnabled = !isFirstTab
+        }
+    }
 
     private fun child(
         config: Config,
@@ -76,7 +97,6 @@ class DefaultMainComponent @AssistedInject constructor(
     }
 
     override fun navigateTo(navigationItem: NavigationItem) {
-        store.accept(MainStore.Intent.NavigateTo(navigationItem))
         when (navigationItem) {
             NavigationItem.FeedItem -> navigation.bringToFront(Config.Feed)
             NavigationItem.PetsItem -> navigation.bringToFront(Config.Pets)

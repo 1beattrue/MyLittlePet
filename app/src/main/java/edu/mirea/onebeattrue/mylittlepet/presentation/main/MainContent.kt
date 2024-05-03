@@ -1,7 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -21,7 +19,9 @@ import androidx.compose.ui.res.stringResource
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import com.arkivanov.decompose.value.getValue
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.value.Value
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.FeedContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.PetsContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileContent
@@ -43,8 +43,7 @@ fun MainContent(
             ) {
                 BottomNavigation(
                     onNavigationItemClick = component::navigateTo,
-                    selectedItem = state.selectedItem,
-                    backHandlingEnabled = state.backHandlingEnabled
+                    stack = component.stack,
                 )
             }
         }
@@ -75,9 +74,10 @@ fun MainContent(
 private fun BottomNavigation(
     modifier: Modifier = Modifier,
     onNavigationItemClick: (NavigationItem) -> Unit,
-    selectedItem: NavigationItem,
-    backHandlingEnabled: Boolean
+    stack: Value<ChildStack<*, MainComponent.Child>>,
 ) {
+    val selectedConfig by stack.subscribeAsState()
+
     val navigationItems = listOf(
         NavigationItem.FeedItem,
         NavigationItem.PetsItem,
@@ -89,15 +89,8 @@ private fun BottomNavigation(
     ) {
         navigationItems.forEach { navigationItem ->
 
-            // TODO: мне не очень нравится это решение, возможно стоит найти решение получше
-            BackHandler(
-                enabled = backHandlingEnabled
-            ) {
-                onNavigationItemClick(NavigationItem.PetsItem)
-            }
-
             NavigationBarItem(
-                selected = selectedItem == navigationItem,
+                selected = selectedConfig.active.configuration == navigationItem.config,
                 onClick = { onNavigationItemClick(navigationItem) },
                 icon = {
                     Icon(
