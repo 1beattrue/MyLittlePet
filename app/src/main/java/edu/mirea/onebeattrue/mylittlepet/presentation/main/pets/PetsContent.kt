@@ -25,9 +25,6 @@ fun PetsContent(
     ) {
         when (val instance = it.instance) {
             is PetsComponent.Child.AddPet -> {
-                LaunchedEffect(key1 = stack) {
-                    component.changeBottomMenuVisibility(false)
-                }
                 AddPetContent(component = instance.component)
             }
 
@@ -36,17 +33,10 @@ fun PetsContent(
             }
 
             is PetsComponent.Child.EditPet -> {
-                Text(text = "edit pet")
-                LaunchedEffect(key1 = stack) {
-                    component.changeBottomMenuVisibility(false)
-                }
                 EditPetContent(component = instance.component)
             }
 
             is PetsComponent.Child.PetList -> {
-                LaunchedEffect(key1 = stack) {
-                    component.changeBottomMenuVisibility(true)
-                }
                 PetListContent(component = instance.component)
             }
         }

@@ -32,7 +32,6 @@ fun MainContent(
     component: MainComponent
 ) {
     val state by component.model.collectAsState()
-    val stack = component.stack
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -50,10 +49,9 @@ fun MainContent(
             }
         }
     ) { paddingValues ->
-        Log.d("MainContent", "перерисовка")
         Children(
             modifier = Modifier.padding(paddingValues),
-            stack = stack,
+            stack = component.stack,
             animation = stackAnimation(fade())
         ) {
             when (val instance = it.instance) {

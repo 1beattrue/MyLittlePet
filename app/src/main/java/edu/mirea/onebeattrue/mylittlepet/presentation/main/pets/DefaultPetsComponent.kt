@@ -3,6 +3,7 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
@@ -37,6 +38,28 @@ class DefaultPetsComponent @AssistedInject constructor(
         childFactory = ::child,
         key = "pets"
     )
+
+    init {
+        stack.subscribe {
+            when(it.active.configuration) {
+                Config.AddPet -> {
+                    changeBottomMenuVisibility(false)
+                }
+
+                Config.Details -> {
+                    changeBottomMenuVisibility(false)
+                }
+
+                is Config.EditPet -> {
+                    changeBottomMenuVisibility(false)
+                }
+
+                Config.PetList -> {
+                    changeBottomMenuVisibility(true)
+                }
+            }
+        }
+    }
 
     private fun child(
         config: Config,
