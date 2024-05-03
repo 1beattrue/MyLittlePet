@@ -72,7 +72,10 @@ class DefaultMainComponent @AssistedInject constructor(
     ): MainComponent.Child = when (config) {
         Config.Feed -> {
             val component = feedComponentFactory.create(
-                componentContext = componentContext
+                componentContext = componentContext,
+                onChangedBottomMenuVisibility = {
+                    changeBottomMenuVisibility(it)
+                }
             )
             MainComponent.Child.Feed(component)
         }
@@ -90,7 +93,10 @@ class DefaultMainComponent @AssistedInject constructor(
         Config.Profile -> {
             val component = profileComponentFactory.create(
                 componentContext = componentContext,
-                onSignOutClicked = { onSignOutClicked() }
+                onSignOutClicked = { onSignOutClicked() },
+                onChangedBottomMenuVisibility = {
+                    changeBottomMenuVisibility(it)
+                }
             )
             MainComponent.Child.Profile(component)
         }

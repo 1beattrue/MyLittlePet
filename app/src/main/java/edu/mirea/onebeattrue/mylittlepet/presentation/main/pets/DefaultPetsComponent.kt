@@ -43,7 +43,7 @@ class DefaultPetsComponent @AssistedInject constructor(
     init {
         stack.subscribe {
             val bottomBarVisibility = it.active.configuration == initialConfig
-            changeBottomMenuVisibility(bottomBarVisibility)
+            onChangedBottomMenuVisibility(bottomBarVisibility)
         }
     }
 
@@ -91,10 +91,6 @@ class DefaultPetsComponent @AssistedInject constructor(
             )
             PetsComponent.Child.PetList(component)
         }
-    }
-
-    override fun changeBottomMenuVisibility(visibility: Boolean) {
-        onChangedBottomMenuVisibility(visibility)
     }
 
     @Serializable

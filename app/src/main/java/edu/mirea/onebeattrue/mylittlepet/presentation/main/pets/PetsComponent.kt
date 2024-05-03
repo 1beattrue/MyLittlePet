@@ -17,6 +17,4 @@ interface PetsComponent {
         class EditPet(val component: EditPetComponent) : Child()
         class Details(val component: DetailsComponent) : Child()
     }
-
-    fun changeBottomMenuVisibility(visibility: Boolean = true)
 }

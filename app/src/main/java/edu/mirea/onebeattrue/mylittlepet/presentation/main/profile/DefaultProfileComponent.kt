@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 
 class DefaultProfileComponent @AssistedInject constructor(
     private val storeFactory: ProfileStoreFactory,
+    @Assisted("onChangedBottomMenuVisibility") private val onChangedBottomMenuVisibility: (Boolean) -> Unit,
     @Assisted("onSignOutClicked") private val onSignOutClicked: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : ProfileComponent, ComponentContext by componentContext {
@@ -43,6 +44,7 @@ class DefaultProfileComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
+            @Assisted("onChangedBottomMenuVisibility") onChangedBottomMenuVisibility: (Boolean) -> Unit,
             @Assisted("onSignOutClicked") onSignOutClicked: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultProfileComponent
