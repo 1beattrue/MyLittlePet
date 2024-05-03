@@ -20,17 +20,18 @@ class DefaultImageComponent @AssistedInject constructor(
 
     @Assisted("petType") override val petType: PetType,
     @Assisted("petName") private val petName: String,
-    @Assisted("onAddPetClosed") private val onAddPetClosed: () -> Unit,
+    @Assisted("pet") private val pet: Pet?,
+    @Assisted("onFinished") private val onFinished: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : ImageComponent, ComponentContext by componentContext {
 
-    private val store = instanceKeeper.getStore { storeFactory.create(petType, petName) }
+    private val store = instanceKeeper.getStore { storeFactory.create(petType, petName, pet) }
 
     init {
         componentScope.launch {
             store.labels.collect {
                 when (it) {
-                    ImageStore.Label.AddPet -> onAddPetClosed()
+                    ImageStore.Label.AddPet -> onFinished()
                 }
             }
         }
@@ -44,12 +45,8 @@ class DefaultImageComponent @AssistedInject constructor(
         store.accept(ImageStore.Intent.SetPetImage(imageUri))
     }
 
-    override fun addPet() {
+    override fun finish() {
         store.accept(ImageStore.Intent.AddPet)
-    }
-
-    override fun editPet(pet: Pet) {
-        store.accept(ImageStore.Intent.EditPet(pet))
     }
 
     override fun deletePetImage() {
@@ -61,7 +58,8 @@ class DefaultImageComponent @AssistedInject constructor(
         fun create(
             @Assisted("petType") petType: PetType,
             @Assisted("petName") petName: String,
-            @Assisted("onAddPetClosed") onAddPetClosed: () -> Unit,
+            @Assisted("pet") pet: Pet? = null,
+            @Assisted("onFinished") onFinished: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultImageComponent
     }

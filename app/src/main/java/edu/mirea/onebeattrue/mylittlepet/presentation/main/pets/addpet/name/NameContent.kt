@@ -39,7 +39,7 @@ fun NameContent(
         CustomCardExtremeElevation {
 
             Text(
-                text = stringResource(id = R.string.select_pet_type),
+                text = stringResource(id = R.string.enter_pet_name),
                 style = MaterialTheme.typography.titleLarge
             )
 

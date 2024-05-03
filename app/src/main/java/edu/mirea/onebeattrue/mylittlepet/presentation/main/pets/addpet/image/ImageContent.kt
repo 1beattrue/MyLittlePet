@@ -131,7 +131,7 @@ fun ImageContent(
                 }
             }
 
-            CustomReadyButton(onClick = { component.addPet() })
+            CustomReadyButton(onClick = { component.finish() })
         }
     }
 }

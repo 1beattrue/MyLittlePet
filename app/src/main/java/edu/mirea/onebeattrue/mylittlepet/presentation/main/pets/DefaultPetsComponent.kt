@@ -62,7 +62,7 @@ class DefaultPetsComponent @AssistedInject constructor(
         is Config.EditPet -> {
             val component = editPetComponentFactory.create(
                 componentContext = componentContext,
-                petType = config.pet.type,
+                pet = config.pet,
                 onEditPetClosed = {
                     navigation.pop()
                 }

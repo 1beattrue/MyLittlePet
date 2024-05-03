@@ -65,7 +65,7 @@ class DefaultAddPetComponent @AssistedInject constructor(
             val component = imageComponentFactory.create(
                 petType = config.petType,
                 petName = config.petName,
-                onAddPetClosed = {
+                onFinished = {
                     onAddPetClosed()
                 },
                 componentContext = componentContext

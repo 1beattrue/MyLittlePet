@@ -9,6 +9,7 @@ import com.arkivanov.decompose.value.Value
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.DefaultImageComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.name.DefaultNameComponent
@@ -18,7 +19,7 @@ class DefaultEditPetComponent @AssistedInject constructor(
     private val nameComponentFactory: DefaultNameComponent.Factory,
     private val imageComponentFactory: DefaultImageComponent.Factory,
 
-    @Assisted("petType") private val petType: PetType,
+    @Assisted("pet") private val pet: Pet,
     @Assisted("onEditPetClosed") private val onEditPetClosed: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : EditPetComponent, ComponentContext by componentContext {
@@ -26,13 +27,13 @@ class DefaultEditPetComponent @AssistedInject constructor(
     private val navigation = StackNavigation<Config>()
 
     override val stack: Value<ChildStack<*, EditPetComponent.Child>> = childStack(
-            source = navigation,
-            serializer = Config.serializer(),
-            initialConfiguration = Config.Name(petType = petType),
-            handleBackButton = true,
-            childFactory = ::child,
-            key = "edit_pet"
-        )
+        source = navigation,
+        serializer = Config.serializer(),
+        initialConfiguration = Config.Name(petType = pet.type),
+        handleBackButton = true,
+        childFactory = ::child,
+        key = "edit_pet"
+    )
 
     private fun child(
         config: Config,
@@ -54,9 +55,10 @@ class DefaultEditPetComponent @AssistedInject constructor(
             val component = imageComponentFactory.create(
                 petType = config.petType,
                 petName = config.petName,
-                onAddPetClosed = {
+                onFinished = {
                     onEditPetClosed()
                 },
+                pet = pet,
                 componentContext = componentContext
             )
             EditPetComponent.Child.Image(component)
@@ -82,7 +84,7 @@ class DefaultEditPetComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("petType") petType: PetType,
+            @Assisted("pet") pet: Pet,
             @Assisted("onEditPetClosed") onEditPetClosed: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultEditPetComponent

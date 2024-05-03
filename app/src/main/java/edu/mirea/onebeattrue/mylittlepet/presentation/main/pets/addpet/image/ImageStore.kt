@@ -21,7 +21,6 @@ interface ImageStore : Store<Intent, State, Label> {
     sealed interface Intent {
         data class SetPetImage(val imageUri: Uri) : Intent
         data object AddPet : Intent
-        data class EditPet(val pet: Pet) : Intent
         data object DeletePetImage : Intent
     }
 
@@ -42,7 +41,8 @@ class ImageStoreFactory @Inject constructor(
 
     fun create(
         petType: PetType,
-        petName: String
+        petName: String,
+        pet: Pet?
     ): ImageStore =
         object : ImageStore, Store<Intent, State, Label> by storeFactory.create(
             name = "ImageStore",
@@ -50,7 +50,7 @@ class ImageStoreFactory @Inject constructor(
                 imageUri = Uri.EMPTY
             ),
             bootstrapper = BootstrapperImpl(),
-            executorFactory = { ExecutorImpl(petType = petType, petName = petName) },
+            executorFactory = { ExecutorImpl(petType = petType, petName = petName, pet = pet) },
             reducer = ReducerImpl
         ) {}
 
@@ -68,33 +68,33 @@ class ImageStoreFactory @Inject constructor(
 
     private inner class ExecutorImpl(
         private val petType: PetType,
-        private val petName: String
+        private val petName: String,
+        private val pet: Pet?
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 Intent.AddPet -> {
                     scope.launch {
                         val imageUri = getState().imageUri
-                        addPetUseCase(
-                            Pet(
-                                type = petType,
-                                name = petName,
-                                imageUri = imageUri
-                            )
-                        )
-                        publish(Label.AddPet)
-                    }
-                }
 
-                is Intent.EditPet -> {
-                    scope.launch {
-                        val imageUri = getState().imageUri
-                        editPetUseCase(
-                            pet = intent.pet.copy(
-                                name = petName,
-                                imageUri = imageUri
+                        if (pet == null) {
+                            addPetUseCase(
+                                Pet(
+                                    type = petType,
+                                    name = petName,
+                                    imageUri = imageUri
+                                )
                             )
-                        )
+                        } else {
+                            editPetUseCase(
+                                pet.copy(
+                                    name = petName,
+                                    imageUri = imageUri
+                                )
+                            )
+                        }
+
+                        publish(Label.AddPet)
                     }
                 }
 

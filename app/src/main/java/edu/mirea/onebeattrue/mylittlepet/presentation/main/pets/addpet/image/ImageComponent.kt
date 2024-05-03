@@ -1,7 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image
 
 import android.net.Uri
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import kotlinx.coroutines.flow.StateFlow
 
@@ -13,9 +12,7 @@ interface ImageComponent {
 
     fun setPetImage(imageUri: Uri)
 
-    fun addPet()
-
-    fun editPet(pet: Pet)
+    fun finish()
 
     fun deletePetImage()
 }
