@@ -43,6 +43,7 @@ class DefaultEditPetComponent @AssistedInject constructor(
         is Config.Name -> {
             val component = nameComponentFactory.create(
                 petType = config.petType,
+                pet = pet,
                 onNextClicked = { petType, petName ->
                     navigation.push(Config.Image(petType, petName))
                 },

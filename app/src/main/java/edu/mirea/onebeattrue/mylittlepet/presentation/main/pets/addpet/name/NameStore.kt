@@ -5,6 +5,7 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.name.NameStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.name.NameStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.name.NameStore.State
@@ -31,11 +32,13 @@ class NameStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory
 ) {
 
-    fun create(): NameStore =
+    fun create(
+        pet: Pet?
+    ): NameStore =
         object : NameStore, Store<Intent, State, Label> by storeFactory.create(
             name = "NameStore",
             initialState = State(
-                petName = "",
+                petName = pet?.name ?: "",
                 isIncorrect = false
             ),
             bootstrapper = BootstrapperImpl(),

@@ -182,6 +182,7 @@ private fun PetCard(
                             )
                         },
                         onClick = {
+                            expanded = false
                             editPet()
                         }
                     )
@@ -204,7 +205,10 @@ private fun PetCard(
                             textColor = Color.Red,
                             trailingIconColor = Color.Red
                         ),
-                        onClick = { deletePet() }
+                        onClick = {
+                            expanded = false
+                            deletePet()
+                        }
                     )
                 }
             }

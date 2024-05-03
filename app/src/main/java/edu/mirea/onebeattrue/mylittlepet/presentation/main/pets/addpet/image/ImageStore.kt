@@ -47,7 +47,7 @@ class ImageStoreFactory @Inject constructor(
         object : ImageStore, Store<Intent, State, Label> by storeFactory.create(
             name = "ImageStore",
             initialState = State(
-                imageUri = Uri.EMPTY
+                imageUri = pet?.imageUri ?: Uri.EMPTY
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = { ExecutorImpl(petType = petType, petName = petName, pet = pet) },
