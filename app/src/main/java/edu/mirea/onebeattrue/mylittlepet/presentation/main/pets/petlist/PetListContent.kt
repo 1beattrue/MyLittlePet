@@ -136,8 +136,6 @@ private fun PetCard(
                     )
                 } else {
                     GlideImage(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Fit,
                         model = pet.imageUri,
                         contentDescription = null
                     )

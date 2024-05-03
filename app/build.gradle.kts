@@ -54,6 +54,9 @@ android {
 }
 
 dependencies {
+    val coilVersion = "2.6.0"
+    implementation("io.coil-kt:coil-compose:$coilVersion")
+
     val constraintLayoutVersion = "1.1.0-alpha13"
     implementation("androidx.constraintlayout:constraintlayout-compose:$constraintLayoutVersion")
 

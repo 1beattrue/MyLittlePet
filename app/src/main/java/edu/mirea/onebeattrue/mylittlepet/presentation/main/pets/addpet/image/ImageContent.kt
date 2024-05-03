@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,9 +31,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -81,22 +85,34 @@ fun ImageContent(
                         painter = painterResource(id = component.petType.getImageId()),
                         contentDescription = null
                     )
-                    Icon(
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .fillMaxHeight(0.5f)
-                            .alpha(0.25f)
+                            .clip(RoundedCornerShape(CORNER_RADIUS_SURFACE))
+                            .background(
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                            )
                             .clickable {
                                 photoPickerLauncher.launch(
                                     PickVisualMediaRequest(
                                         ActivityResultContracts.PickVisualMedia.ImageOnly
                                     )
                                 )
-                            }
-                            .padding(32.dp),
-                        painter = painterResource(R.drawable.ic_add_photo),
-                        contentDescription = null
-                    )
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(CORNER_RADIUS_SURFACE))
+                                .background(MaterialTheme.colorScheme.surface)
+                                .padding(16.dp),
+                            text = stringResource(R.string.select_image),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
                 } else {
                     GlideImage(
                         modifier = Modifier

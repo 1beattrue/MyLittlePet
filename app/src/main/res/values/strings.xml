@@ -53,4 +53,5 @@
 
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
+    <string name="select_image">Select image</string>
 </resources>
