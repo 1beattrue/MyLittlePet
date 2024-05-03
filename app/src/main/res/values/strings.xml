@@ -29,6 +29,8 @@
 
     <string name="auth_app_bar_title">Authorization</string>
 
+    <string name="settings_app_bar_title">Settings</string>
+
     <string name="pets_app_bar_title">Pets</string>
     <string name="add_pet_app_bar_title">Adding a pet</string>
     <string name="edit_pet_app_bar_title">Editing a pet</string>

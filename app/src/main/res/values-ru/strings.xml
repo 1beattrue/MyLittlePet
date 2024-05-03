@@ -30,6 +30,8 @@
 
     <string name="auth_app_bar_title">Авторизация</string>
 
+    <string name="settings_app_bar_title">Настройки</string>
+
     <string name="pets_app_bar_title">Питомцы</string>
     <string name="add_pet_app_bar_title">Добавление питомца</string>
     <string name="edit_pet_app_bar_title">Изменение питомца</string>
