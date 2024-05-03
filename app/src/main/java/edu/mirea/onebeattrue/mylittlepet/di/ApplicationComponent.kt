@@ -3,14 +3,14 @@ package edu.mirea.onebeattrue.mylittlepet.di
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
-import edu.mirea.onebeattrue.mylittlepet.presentation.ViewModelFactory
+import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 
 @ApplicationScope
 @Component(
-    modules = [DataModule::class, ViewModelModule::class]
+    modules = [DataModule::class, PresentationModule::class]
 )
 interface ApplicationComponent {
-    fun getViewModelFactory(): ViewModelFactory
+    fun inject(activity: MainActivity)
 
     @Component.Factory
     interface Factory {

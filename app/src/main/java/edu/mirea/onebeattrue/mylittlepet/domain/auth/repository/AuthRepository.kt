@@ -2,26 +2,25 @@ package edu.mirea.onebeattrue.mylittlepet.domain.auth.repository
 
 import android.app.Activity
 import com.google.firebase.auth.FirebaseUser
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthScreenState
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthState
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
 
     val currentUser: FirebaseUser?
 
+    val loggedIn: Flow<Boolean>
+
     suspend fun createUserWithPhone(
         phoneNumber: String,
         activity: Activity
-    ): Flow<AuthScreenState>
+    ): Flow<AuthState>
 
     suspend fun signInWithCredential(
         code: String
-    ): Flow<AuthScreenState>
+    ): Flow<AuthState>
 
-    suspend fun resendVerificationCode(
-        phoneNumber: String,
-        activity: Activity
-    ): Flow<AuthScreenState>
+    suspend fun resendVerificationCode(): Flow<AuthState>
 
     fun signOut()
 
