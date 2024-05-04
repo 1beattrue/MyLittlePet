@@ -35,6 +35,8 @@
     <string name="edit_pet_app_bar_title">Editing a pet</string>
     <string name="pet_details_app_bar_title">Details</string>
 
+    <string name="date_picker_title">Date of Birth</string>
+
     <string name="select_pet_type">Select pet type</string>
     <string name="initial_pet_type">Pet type</string>
     <string name="pet_type_dog">Dog</string>
@@ -58,4 +60,20 @@
     <string name="details">Details</string>
 
     <string name="select_image">Select image</string>
+
+    <string name="unknown_age">Indicate your pet\'s age</string>
+
+    <plurals name="years_format">
+        <item quantity="one">%1$d year</item>
+        <item quantity="few">%1$d years</item>
+        <item quantity="many">%1$d years</item>
+        <item quantity="other">%1$d years</item>
+    </plurals>
+
+    <plurals name="months_format">
+        <item quantity="one">%1$d month</item>
+        <item quantity="few">%1$d months</item>
+        <item quantity="many">%1$d months</item>
+        <item quantity="other">%1$d months</item>
+    </plurals>
 </resources>

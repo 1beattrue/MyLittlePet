@@ -17,7 +17,7 @@ data class PetDbModel(
     val name: String,
     val imageUri: Uri,
 
-    val age: String?,
+    val dateOfBirth: Long?,
     val weight: Int?,
 
     val eventList: List<Event>,

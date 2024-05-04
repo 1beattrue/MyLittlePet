@@ -3,6 +3,7 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -54,6 +56,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDate
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -105,8 +108,17 @@ fun DetailsContent(
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    AgeCard(age = state.age ?: "0") {
+                    AgeCard(
+                        modifier = Modifier.weight(0.5f),
+                        age = state.age
+                    ) {
                         component.openDatePickerDialog()
+                    }
+                    AgeCard(
+                        modifier = Modifier.weight(0.5f),
+                        age = state.age
+                    ) {
+
                     }
                 }
             }
@@ -170,7 +182,7 @@ private fun PetCard(
     modifier: Modifier = Modifier,
     pet: Pet
 ) {
-    CustomCard(elevation = 0.dp) {
+    CustomCardExtremeElevation {
         Text(
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleLarge,
@@ -197,26 +209,40 @@ private fun PetCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 private fun AgeCard(
     modifier: Modifier = Modifier,
-    age: String,
+    age: DetailsStore.State.Age?,
     onAgeClicked: () -> Unit
 ) {
-    MaterialTheme(
-        colorScheme = if (isSystemInDarkTheme()) {
-            darkColorScheme()
-        } else {
-            lightColorScheme(surface = Color.White, surfaceTint = Color.White)
-        }
+    Box(
+        modifier = modifier
     ) {
-        Card(
-            onClick = {
+        CustomCardExtremeElevation(
+            modifier = Modifier.clickable {
                 onAgeClicked()
             }
         ) {
-            Text(text = age)
+            val formattedAge = if (age == null) {
+                stringResource(R.string.unknown_age)
+            } else {
+                val years = age.years
+                val months = age.months
+
+                val yearsString = pluralStringResource(id = R.plurals.years_format, count = years, years)
+                val monthsString = pluralStringResource(id = R.plurals.months_format, count = months, months)
+
+                if (years <= 0) {
+                    monthsString
+                } else if (months <= 0) {
+                    yearsString
+                } else {
+                    "$yearsString $monthsString"
+                }
+            }
+
+            Text(text = formattedAge)
         }
     }
 }
@@ -228,7 +254,7 @@ private fun CustomDatePickerDialog(
     modifier: Modifier = Modifier,
     state: Boolean,
     onDismissRequest: () -> Unit,
-    onDatePicked: (LocalDate) -> Unit
+    onDatePicked: (Long) -> Unit
 ) {
     if (state) {
         val datePickerState = rememberDatePickerState()
@@ -239,9 +265,7 @@ private fun CustomDatePickerDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val date = datePickerState.selectedDateMillis?.convertMillisToLocalDate()
-                            ?: LocalDate.now()
-                        onDatePicked(date)
+                        onDatePicked(datePickerState.selectedDateMillis ?: 0)
                     },
                     enabled = confirmEnabled
                 ) {
@@ -249,7 +273,20 @@ private fun CustomDatePickerDialog(
                 }
             }
         ) {
-            DatePicker(state = datePickerState)
+            DatePicker(
+                title = {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleMedium,
+                        text = stringResource(R.string.date_picker_title),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                },
+                state = datePickerState
+            )
         }
     }
 }

@@ -36,6 +36,8 @@
     <string name="edit_pet_app_bar_title">Изменение питомца</string>
     <string name="pet_details_app_bar_title">Детали</string>
 
+    <string name="date_picker_title">Дата рождения</string>
+
     <string name="select_pet_type">Выберите тип животного</string>
     <string name="initial_pet_type">Тип животного</string>
     <string name="pet_type_dog">Собака</string>
@@ -59,4 +61,20 @@
     <string name="details">Детали</string>
 
     <string name="select_image">Выберите изображение</string>
+
+    <string name="unknown_age">Укажите возраст питомца</string>
+
+    <plurals name="years_format">
+        <item quantity="one">%1$d год</item>
+        <item quantity="few">%1$d года</item>
+        <item quantity="many">%1$d лет</item>
+        <item quantity="other">%1$d года</item>
+    </plurals>
+
+    <plurals name="months_format">
+        <item quantity="one">%1$d месяц</item>
+        <item quantity="few">%1$d месяца</item>
+        <item quantity="many">%1$d месяцев</item>
+        <item quantity="other">%1$d месяца</item>
+    </plurals>
 </resources>

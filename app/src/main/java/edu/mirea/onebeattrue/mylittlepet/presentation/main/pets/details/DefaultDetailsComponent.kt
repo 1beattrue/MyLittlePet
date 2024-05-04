@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
+import androidx.collection.LongIntMap
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
@@ -42,7 +43,7 @@ class DefaultDetailsComponent @AssistedInject constructor(
     override val model: StateFlow<DetailsStore.State>
         get() = store.stateFlow
 
-    override fun setAge(age: LocalDate) {
+    override fun setAge(age: Long) {
         store.accept(DetailsStore.Intent.SetAge(age))
     }
 

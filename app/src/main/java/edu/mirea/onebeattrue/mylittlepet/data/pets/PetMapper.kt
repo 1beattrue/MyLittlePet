@@ -10,7 +10,7 @@ class PetMapper @Inject constructor() {
         imageUri = entity.imageUri,
         id = entity.id,
 
-        age = entity.age,
+        dateOfBirth = entity.dateOfBirth,
         weight = entity.weight,
         eventList = entity.eventList,
         noteList = entity.noteList,
@@ -23,7 +23,7 @@ class PetMapper @Inject constructor() {
         imageUri = dbModel.imageUri,
         id = dbModel.id,
 
-        age = dbModel.age,
+        dateOfBirth = dbModel.dateOfBirth,
         weight = dbModel.weight,
         eventList = dbModel.eventList,
         noteList = dbModel.noteList,

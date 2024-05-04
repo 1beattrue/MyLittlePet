@@ -12,7 +12,7 @@ interface DetailsComponent {
     val pet: Pet
     val model: StateFlow<DetailsStore.State>
 
-    fun setAge(age: LocalDate)
+    fun setAge(age: Long)
     fun setWeight(weight: Int)
 
     fun onAddEventClick()

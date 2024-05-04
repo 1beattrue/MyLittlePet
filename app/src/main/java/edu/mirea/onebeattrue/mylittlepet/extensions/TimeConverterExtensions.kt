@@ -9,3 +9,15 @@ fun Long.convertMillisToLocalDate(): LocalDate {
         .atZone(ZoneId.systemDefault())
         .toLocalDate()
 }
+
+fun Long.convertMillisToYearsAndMonths(): Pair<Int, Int> {
+    val birthDate = Instant.ofEpochMilli(this)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
+    val currentDate = LocalDate.now()
+
+    var years = birthDate.until(currentDate).years.toInt()
+    var months = birthDate.until(currentDate).months.toInt()
+
+    return Pair(years, months)
+}

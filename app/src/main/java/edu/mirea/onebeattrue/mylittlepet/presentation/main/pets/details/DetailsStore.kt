@@ -11,6 +11,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
+import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToYearsAndMonths
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.State
@@ -23,7 +24,7 @@ interface DetailsStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
         data object ClickBack : Intent
-        data class SetAge(val dateOfBirth: LocalDate) : Intent
+        data class SetAge(val dateOfBirth: Long) : Intent
         data class SetWeight(val weight: Int) : Intent
 
         data object OpenDatePickerDialog : Intent
@@ -41,7 +42,7 @@ interface DetailsStore : Store<Intent, State, Label> {
     }
 
     data class State(
-        val age: String?,
+        val age: Age?,
         val weight: Int?,
 
         val eventBottomSheetState: Boolean,
@@ -53,7 +54,12 @@ interface DetailsStore : Store<Intent, State, Label> {
         val eventList: List<Event>,
         val noteList: List<Note>,
         val medicalDataList: List<MedicalData>,
-    )
+    ) {
+        data class Age(
+            val years: Int,
+            val months: Int
+        )
+    }
 
     sealed interface Label {
         data object ClickBack : Label
@@ -69,7 +75,10 @@ class DetailsStoreFactory @Inject constructor(
         object : DetailsStore, Store<Intent, State, Label> by storeFactory.create(
             name = "DetailsStore",
             initialState = State(
-                age = pet.age,
+                age = if (pet.dateOfBirth == null) null else State.Age(
+                    years = pet.dateOfBirth.convertMillisToYearsAndMonths().first,
+                    months = pet.dateOfBirth.convertMillisToYearsAndMonths().second
+                ),
                 weight = pet.weight,
 
                 eventBottomSheetState = false,
@@ -90,7 +99,7 @@ class DetailsStoreFactory @Inject constructor(
     private sealed interface Action
 
     private sealed interface Msg {
-        data class SetAge(val age: String) : Msg
+        data class SetAge(val age: State.Age) : Msg
         data class SetWeight(val weight: Int) : Msg
 
         data object OpenDatePickerDialog : Msg
@@ -117,13 +126,10 @@ class DetailsStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 is Intent.SetAge -> {
-                    val localDate = intent.dateOfBirth
-
-                    val year = localDate.year
-                    val month = localDate.monthValue
-                    val day = localDate.dayOfMonth
-
-                    val age = calculateAge(year, month, day)
+                    val age = State.Age(
+                        years = intent.dateOfBirth.convertMillisToYearsAndMonths().first,
+                        months = intent.dateOfBirth.convertMillisToYearsAndMonths().second
+                    )
 
                     dispatch(Msg.SetAge(age))
                 }
