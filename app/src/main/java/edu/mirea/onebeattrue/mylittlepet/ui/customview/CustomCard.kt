@@ -1,8 +1,10 @@
 package edu.mirea.onebeattrue.mylittlepet.ui.customview
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +28,8 @@ import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 fun CustomCard(
     modifier: Modifier = Modifier,
     elevation: Dp,
+    paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp),
+    onClick: () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
@@ -38,7 +42,7 @@ fun CustomCard(
         Card(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(paddingValues),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.onSurface
@@ -48,6 +52,9 @@ fun CustomCard(
         ) {
             Column(
                 modifier = Modifier
+                    .clickable {
+                        onClick()
+                    }
                     .fillMaxWidth()
                     .padding(32.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),

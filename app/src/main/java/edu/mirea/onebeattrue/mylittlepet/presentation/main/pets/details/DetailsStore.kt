@@ -25,7 +25,7 @@ interface DetailsStore : Store<Intent, State, Label> {
     sealed interface Intent {
         data object ClickBack : Intent
         data class SetAge(val dateOfBirth: Long) : Intent
-        data class SetWeight(val weight: Int) : Intent
+        data class SetWeight(val weight: String) : Intent
 
         data object OpenDatePickerDialog : Intent
         data object CloseDatePickerDialog : Intent
@@ -43,7 +43,7 @@ interface DetailsStore : Store<Intent, State, Label> {
 
     data class State(
         val age: Age?,
-        val weight: Int?,
+        val weight: Float?,
 
         val eventBottomSheetState: Boolean,
         val noteBottomSheetState: Boolean,
@@ -100,7 +100,7 @@ class DetailsStoreFactory @Inject constructor(
 
     private sealed interface Msg {
         data class SetAge(val age: State.Age) : Msg
-        data class SetWeight(val weight: Int) : Msg
+        data class SetWeight(val weight: Float) : Msg
 
         data object OpenDatePickerDialog : Msg
         data object CloseDatePickerDialog : Msg
@@ -126,16 +126,20 @@ class DetailsStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 is Intent.SetAge -> {
-                    val age = State.Age(
-                        years = intent.dateOfBirth.convertMillisToYearsAndMonths().first,
-                        months = intent.dateOfBirth.convertMillisToYearsAndMonths().second
-                    )
+                    scope.launch {
+                        val age = State.Age(
+                            years = intent.dateOfBirth.convertMillisToYearsAndMonths().first,
+                            months = intent.dateOfBirth.convertMillisToYearsAndMonths().second
+                        )
+                        editPetUseCase(pet.copy(dateOfBirth = intent.dateOfBirth))
+                        dispatch(Msg.SetAge(age))
+                    }
 
-                    dispatch(Msg.SetAge(age))
                 }
 
                 is Intent.SetWeight -> {
-                    dispatch(Msg.SetWeight(intent.weight))
+                    val weight = formattedWeight(intent.weight)
+                    dispatch(Msg.SetWeight(weight))
                 }
 
                 is Intent.AddEvent -> {
@@ -228,6 +232,10 @@ class DetailsStoreFactory @Inject constructor(
                 Msg.OpenDatePickerDialog -> copy(datePickerDialogState = true)
                 Msg.CloseDatePickerDialog -> copy(datePickerDialogState = false)
             }
+    }
+
+    private fun formattedWeight(weight: String): Float {
+        return weight.toFloatOrNull() ?: 0f
     }
 
     private fun calculateAge(year: Int, month: Int, day: Int): String {

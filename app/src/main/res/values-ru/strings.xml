@@ -62,7 +62,9 @@
 
     <string name="select_image">Выберите изображение</string>
 
-    <string name="unknown_age">Укажите возраст питомца</string>
+    <string name="unknown_age">Указать</string>
+    <string name="age_title">Возраст</string>
+    <string name="weight_title">Вес</string>
 
     <plurals name="years_format">
         <item quantity="one">%1$d год</item>

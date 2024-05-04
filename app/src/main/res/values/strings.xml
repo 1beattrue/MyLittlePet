@@ -61,7 +61,9 @@
 
     <string name="select_image">Select image</string>
 
-    <string name="unknown_age">Indicate your pet\'s age</string>
+    <string name="unknown_age">Enter</string>
+    <string name="age_title">Age</string>
+    <string name="weight_title">Weight</string>
 
     <plurals name="years_format">
         <item quantity="one">%1$d year</item>

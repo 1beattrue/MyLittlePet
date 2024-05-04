@@ -3,8 +3,6 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,8 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -41,11 +36,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -53,13 +50,12 @@ import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDate
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,9 +110,9 @@ fun DetailsContent(
                     ) {
                         component.openDatePickerDialog()
                     }
-                    AgeCard(
+                    WeightCard(
                         modifier = Modifier.weight(0.5f),
-                        age = state.age
+                        weight = state.weight
                     ) {
 
                     }
@@ -219,19 +215,28 @@ private fun AgeCard(
     Box(
         modifier = modifier
     ) {
-        CustomCardExtremeElevation(
-            modifier = Modifier.clickable {
-                onAgeClicked()
-            }
+        CustomCard(
+            elevation = EXTREME_ELEVATION,
+            paddingValues = PaddingValues(start = 16.dp, end = 8.dp),
+            onClick = { onAgeClicked() }
         ) {
+            Text(
+                text = stringResource(R.string.age_title),
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center
+            )
+
             val formattedAge = if (age == null) {
                 stringResource(R.string.unknown_age)
             } else {
                 val years = age.years
                 val months = age.months
 
-                val yearsString = pluralStringResource(id = R.plurals.years_format, count = years, years)
-                val monthsString = pluralStringResource(id = R.plurals.months_format, count = months, months)
+                val yearsString =
+                    pluralStringResource(id = R.plurals.years_format, count = years, years)
+                val monthsString =
+                    pluralStringResource(id = R.plurals.months_format, count = months, months)
 
                 if (years <= 0) {
                     monthsString
@@ -242,7 +247,41 @@ private fun AgeCard(
                 }
             }
 
-            Text(text = formattedAge)
+            Text(
+                text = formattedAge,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+private fun WeightCard(
+    modifier: Modifier = Modifier,
+    weight: Float?,
+    onWeightClicked: () -> Unit
+) {
+    Box(
+        modifier = modifier
+    ) {
+        CustomCard(
+            elevation = EXTREME_ELEVATION,
+            paddingValues = PaddingValues(start = 8.dp, end = 16.dp),
+            onClick = { onWeightClicked() }
+        ) {
+            Text(
+                text = stringResource(R.string.weight_title),
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center
+            )
+
+            Text(
+                text = weight.toString(),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }

@@ -18,7 +18,7 @@ data class PetDbModel(
     val imageUri: Uri,
 
     val dateOfBirth: Long?,
-    val weight: Int?,
+    val weight: Float?,
 
     val eventList: List<Event>,
     val noteList: List<Note>,

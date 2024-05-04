@@ -51,8 +51,10 @@ import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MENU_ITEM_PADDING
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -126,16 +128,17 @@ private fun PetCard(
     Box(
         modifier = modifier
     ) {
-        CustomCardExtremeElevation {
+        CustomCard(
+            elevation = EXTREME_ELEVATION,
+            onClick = { openDetails() }
+        ) {
             Text(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
                 text = pet.name,
             )
             Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
-                    .clickable { openDetails() }
+                modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
             ) {
                 if (pet.imageUri == Uri.EMPTY) {
                     Image(

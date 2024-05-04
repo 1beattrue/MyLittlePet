@@ -11,7 +11,7 @@ data class Pet(
     @Contextual val imageUri: Uri,
 
     val dateOfBirth: Long? = null,
-    val weight: Int? = null,
+    val weight: Float? = null,
 
     val eventList: List<Event> = listOf(),
     val noteList: List<Note> = listOf(),

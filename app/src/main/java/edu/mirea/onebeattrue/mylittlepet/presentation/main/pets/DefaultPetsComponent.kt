@@ -6,6 +6,7 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -86,13 +87,13 @@ class DefaultPetsComponent @AssistedInject constructor(
         Config.PetList -> {
             val component = petListComponentFactory.create(
                 onAddPetClicked = {
-                    navigation.push(Config.AddPet)
+                    navigation.pushNew(Config.AddPet)
                 },
                 onEditPetClicked = { pet ->
-                    navigation.push(Config.EditPet(pet))
+                    navigation.pushNew(Config.EditPet(pet))
                 },
                 onOpenDetails = { pet ->
-                    navigation.push(Config.Details(pet))
+                    navigation.pushNew(Config.Details(pet))
                 },
                 componentContext = componentContext
             )

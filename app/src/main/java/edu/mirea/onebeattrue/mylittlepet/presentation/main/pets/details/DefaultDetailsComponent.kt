@@ -47,7 +47,7 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.SetAge(age))
     }
 
-    override fun setWeight(weight: Int) {
+    override fun setWeight(weight: String) {
         store.accept(DetailsStore.Intent.SetWeight(weight))
     }
 
