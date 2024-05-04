@@ -63,7 +63,11 @@ class DefaultPetsComponent @AssistedInject constructor(
 
         is Config.Details -> {
             val component = detailsComponentFactory.create(
-                componentContext = componentContext
+                componentContext = componentContext,
+                pet = config.pet,
+                onBackClick = {
+                    navigation.pop()
+                }
             )
             PetsComponent.Child.Details(component)
         }

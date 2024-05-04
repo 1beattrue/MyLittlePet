@@ -10,7 +10,7 @@ data class Pet(
     val name: String,
     @Contextual val imageUri: Uri,
 
-    val age: Int? = null,
+    val age: String? = null,
     val weight: Int? = null,
 
     val eventList: List<Event> = listOf(),
