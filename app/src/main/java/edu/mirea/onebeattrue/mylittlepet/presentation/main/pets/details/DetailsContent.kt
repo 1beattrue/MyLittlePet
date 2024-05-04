@@ -1,52 +1,73 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
-import android.net.Uri
-import androidx.compose.foundation.layout.Column
+import android.annotation.SuppressLint
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun DetailsContent(
     modifier: Modifier = Modifier,
-    component: DetailsComponent? = null
+    component: DetailsComponent
 ) {
-    val state by component!!.model.collectAsState()
+    val state by component.model.collectAsState()
 
-    Column(
-        modifier = modifier
-    ) {
+    Button(onClick = { component.onAddEventClick() }) {
 
     }
-    CustomCard(elevation = 0.dp) {
 
-        GlideImage(
-            model = Uri.EMPTY,
-            contentDescription = null
-        )
-    }
+    EventBottomSheet(
+        isExpanded = state.eventBottomSheetState,
+        onCloseBottomSheet = {
+            component.onCloseBottomSheetClick()
+        },
+        onAddEvent = { event ->
+            component.addEvent(event)
+        }
+    )
 }
 
-@Preview
+@SuppressLint("CoroutineCreationDuringComposition")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DetailsContentPreviewLight() {
-    MyLittlePetTheme(darkTheme = false) {
-        DetailsContent()
-    }
-}
+private fun EventBottomSheet(
+    modifier: Modifier = Modifier,
+    isExpanded: Boolean,
+    onCloseBottomSheet: () -> Unit,
+    onAddEvent: (Event) -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
 
-@Preview
-@Composable
-private fun DetailsContentPreviewDark() {
-    MyLittlePetTheme(darkTheme = true) {
-        DetailsContent()
+    if (isExpanded) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                onCloseBottomSheet()
+            },
+            sheetState = sheetState
+        ) {
+            Button(onClick = {
+                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                    if (!sheetState.isVisible) {
+                        onCloseBottomSheet()
+                    }
+                }
+            }) {
+                Text("Hide bottom sheet")
+            }
+        }
     }
 }

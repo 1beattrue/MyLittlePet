@@ -162,15 +162,15 @@ class DetailsStoreFactory @Inject constructor(
                 }
 
                 Intent.OnAddEventClick -> {
-
+                    dispatch(Msg.OpenEventBottomSheet)
                 }
 
                 Intent.OnAddMedicalDataClick -> {
-
+                    dispatch(Msg.OpenMedicalDataBottomSheet)
                 }
 
                 Intent.OnAddNoteClick -> {
-
+                    dispatch(Msg.OpenNoteBottomSheet)
                 }
 
                 Intent.CloseBottomSheet -> {
