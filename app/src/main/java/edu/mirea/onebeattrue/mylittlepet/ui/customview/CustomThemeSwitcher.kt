@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -25,14 +23,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
+import edu.mirea.onebeattrue.mylittlepet.R
 
 @Composable
 fun CustomThemeSwitcher(
     modifier: Modifier = Modifier,
-    darkTheme: Boolean = false,
+    isDarkTheme: Boolean,
     size: Dp = 150.dp,
     iconSize: Dp = size / 3,
     padding: Dp = 10.dp,
@@ -40,10 +39,10 @@ fun CustomThemeSwitcher(
     parentShape: Shape = CircleShape,
     toggleShape: Shape = CircleShape,
     animationSpec: AnimationSpec<Dp> = tween(durationMillis = 300),
-    onClick: () -> Unit
+    changeTheme: (Boolean) -> Unit
 ) {
     val offset by animateDpAsState(
-        targetValue = if (darkTheme) 0.dp else size,
+        targetValue = if (isDarkTheme) 0.dp else size,
         animationSpec = animationSpec,
         label = "animation",
     )
@@ -52,7 +51,9 @@ fun CustomThemeSwitcher(
         .width(size * 2)
         .height(size)
         .clip(shape = parentShape)
-        .clickable { onClick() }
+        .clickable {
+            changeTheme(!isDarkTheme)
+        }
         .background(MaterialTheme.colorScheme.secondaryContainer)
     ) {
         Box(
@@ -79,9 +80,9 @@ fun CustomThemeSwitcher(
             ) {
                 Icon(
                     modifier = Modifier.size(iconSize),
-                    imageVector = Icons.Default.Delete/*NightLight*/,
-                    contentDescription = "Theme Icon",
-                    tint = if (darkTheme) MaterialTheme.colorScheme.secondaryContainer
+                    painter = painterResource(R.drawable.ic_night),
+                    contentDescription = null,
+                    tint = if (isDarkTheme) MaterialTheme.colorScheme.secondaryContainer
                     else MaterialTheme.colorScheme.primary
                 )
             }
@@ -91,9 +92,9 @@ fun CustomThemeSwitcher(
             ) {
                 Icon(
                     modifier = Modifier.size(iconSize),
-                    imageVector = Icons.Default.Delete/*LightMode*/,
-                    contentDescription = "Theme Icon",
-                    tint = if (darkTheme) MaterialTheme.colorScheme.primary
+                    painter = painterResource(R.drawable.ic_light),
+                    contentDescription = null,
+                    tint = if (isDarkTheme) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.secondaryContainer
                 )
             }

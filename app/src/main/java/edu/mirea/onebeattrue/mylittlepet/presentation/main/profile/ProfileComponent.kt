@@ -7,4 +7,6 @@ interface ProfileComponent {
     val model: StateFlow<ProfileStore.State>
 
     fun signOut()
+
+    fun changeTheme(isDarkTheme: Boolean)
 }

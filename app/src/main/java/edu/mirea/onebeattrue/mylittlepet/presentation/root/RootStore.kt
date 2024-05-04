@@ -1,40 +1,37 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.main.profile
+package edu.mirea.onebeattrue.mylittlepet.presentation.root
 
+import android.util.Log
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.SignOutUseCase
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.Intent
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.Label
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.State
+import edu.mirea.onebeattrue.mylittlepet.presentation.root.RootStore.Intent
+import edu.mirea.onebeattrue.mylittlepet.presentation.root.RootStore.Label
+import edu.mirea.onebeattrue.mylittlepet.presentation.root.RootStore.State
 import javax.inject.Inject
 
-interface ProfileStore : Store<Intent, State, Label> {
+interface RootStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
-        data object SignOut : Intent
         data class ChangeTheme(val isDarkTheme: Boolean) : Intent
     }
 
     data class State(
-        val isDarkTheme: Boolean
+        var isDarkTheme: Boolean
     )
 
     sealed interface Label {
-        data object SignOut : Label
     }
 }
 
-class ProfileStoreFactory @Inject constructor(
-    private val storeFactory: StoreFactory,
-    private val signOutUseCase: SignOutUseCase,
+class RootStoreFactory @Inject constructor(
+    private val storeFactory: StoreFactory
 ) {
 
-    fun create(isDarkTheme: Boolean): ProfileStore =
-        object : ProfileStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "ProfileStore",
+    fun create(isDarkTheme: Boolean): RootStore =
+        object : RootStore, Store<Intent, State, Label> by storeFactory.create(
+            name = "RootStore",
             initialState = State(
                 isDarkTheme = isDarkTheme
             ),
@@ -43,7 +40,8 @@ class ProfileStoreFactory @Inject constructor(
             reducer = ReducerImpl
         ) {}
 
-    private sealed interface Action
+    private sealed interface Action {
+    }
 
     private sealed interface Msg {
         data class ChangeTheme(val isDarkTheme: Boolean) : Msg
@@ -54,15 +52,11 @@ class ProfileStoreFactory @Inject constructor(
         }
     }
 
-    private inner class ExecutorImpl : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+    private class ExecutorImpl : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
-                Intent.SignOut -> {
-                    signOutUseCase()
-                    publish(Label.SignOut)
-                }
-
                 is Intent.ChangeTheme -> {
+                    Log.d("RootStore", "$intent.isDarkTheme")
                     dispatch(Msg.ChangeTheme(intent.isDarkTheme))
                 }
             }
@@ -71,8 +65,9 @@ class ProfileStoreFactory @Inject constructor(
 
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
-            when(msg) {
+            when (msg) {
                 is Msg.ChangeTheme -> copy(isDarkTheme = msg.isDarkTheme)
             }
     }
 }
+

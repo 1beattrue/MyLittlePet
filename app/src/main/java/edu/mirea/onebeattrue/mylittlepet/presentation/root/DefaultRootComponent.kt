@@ -1,27 +1,39 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.root
 
+import android.util.Log
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.mvikotlin.core.instancekeeper.getStore
+import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.DefaultMainComponent
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 
 class DefaultRootComponent @AssistedInject constructor(
+    private val storeFactory: RootStoreFactory,
+
     private val authComponentFactory: DefaultAuthComponent.Factory,
     private val mainComponentFactory: DefaultMainComponent.Factory,
 
     private val authRepository: AuthRepository,
 
+    @Assisted("isDarkTheme") private val isDarkTheme: Boolean,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : RootComponent, ComponentContext by componentContext {
+    val store = instanceKeeper.getStore { storeFactory.create(isDarkTheme = isDarkTheme) }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val model: StateFlow<RootStore.State>
+        get() = store.stateFlow
 
     private val navigation = StackNavigation<Config>()
 
@@ -49,10 +61,17 @@ class DefaultRootComponent @AssistedInject constructor(
         Config.Main -> {
             val component = mainComponentFactory.create(
                 componentContext = componentContext,
-                onSignOutClicked = { navigation.replaceAll(Config.Auth) }
+                onSignOutClicked = { navigation.replaceAll(Config.Auth) },
+                onChangedThemeClicked = { isDarkTheme ->
+                    onThemeChanged(isDarkTheme)
+                },
+                isDarkTheme = isDarkTheme
             )
             RootComponent.Child.Main(component)
         }
+    }
+    override fun onThemeChanged(isDarkTheme: Boolean) {
+        store.accept(RootStore.Intent.ChangeTheme(isDarkTheme))
     }
 
     @Serializable
@@ -67,6 +86,7 @@ class DefaultRootComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
+            @Assisted("isDarkTheme") isDarkTheme: Boolean,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultRootComponent
     }

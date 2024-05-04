@@ -15,11 +15,13 @@ import kotlinx.coroutines.launch
 class DefaultProfileComponent @AssistedInject constructor(
     private val storeFactory: ProfileStoreFactory,
     @Assisted("onChangedBottomMenuVisibility") private val onChangedBottomMenuVisibility: (Boolean) -> Unit,
+    @Assisted("isDarkTheme") private val isDarkTheme: Boolean,
     @Assisted("onSignOutClicked") private val onSignOutClicked: () -> Unit,
+    @Assisted("onChangedThemeClicked") private val onChangedThemeClicked: (Boolean) -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : ProfileComponent, ComponentContext by componentContext {
 
-    private val store = instanceKeeper.getStore { storeFactory.create() }
+    private val store = instanceKeeper.getStore { storeFactory.create(isDarkTheme) }
 
     init {
         componentScope.launch {
@@ -41,11 +43,18 @@ class DefaultProfileComponent @AssistedInject constructor(
         store.accept(ProfileStore.Intent.SignOut)
     }
 
+    override fun changeTheme(isDarkTheme: Boolean) {
+        onChangedThemeClicked(isDarkTheme)
+        store.accept(ProfileStore.Intent.ChangeTheme(isDarkTheme))
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(
             @Assisted("onChangedBottomMenuVisibility") onChangedBottomMenuVisibility: (Boolean) -> Unit,
+            @Assisted("isDarkTheme") isDarkTheme: Boolean,
             @Assisted("onSignOutClicked") onSignOutClicked: () -> Unit,
+            @Assisted("onChangedThemeClicked") onChangedThemeClicked: (Boolean) -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultProfileComponent
     }
