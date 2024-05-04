@@ -15,6 +15,7 @@
     <string name="confirm">Подтвердить</string>
     <string name="add">Добавить</string>
     <string name="ready">Готово</string>
+    <string name="ok">OK</string>
 
     <string name="resend_code">Отправить повторно</string>
     <string name="resend_code_exception">Повторная отправка кода будет доступна через %s секунд</string>
@@ -33,6 +34,7 @@
     <string name="pets_app_bar_title">Питомцы</string>
     <string name="add_pet_app_bar_title">Добавление питомца</string>
     <string name="edit_pet_app_bar_title">Изменение питомца</string>
+    <string name="pet_details_app_bar_title">Детали</string>
 
     <string name="select_pet_type">Выберите тип животного</string>
     <string name="initial_pet_type">Тип животного</string>

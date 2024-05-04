@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
-import android.widget.DatePicker
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
@@ -16,6 +15,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class DefaultDetailsComponent @AssistedInject constructor(
     private val storeFactory: DetailsStoreFactory,
@@ -42,7 +42,7 @@ class DefaultDetailsComponent @AssistedInject constructor(
     override val model: StateFlow<DetailsStore.State>
         get() = store.stateFlow
 
-    override fun setAge(age: DatePicker) {
+    override fun setAge(age: LocalDate) {
         store.accept(DetailsStore.Intent.SetAge(age))
     }
 
@@ -76,6 +76,18 @@ class DefaultDetailsComponent @AssistedInject constructor(
 
     override fun addMedicalData(medicalData: MedicalData) {
         store.accept(DetailsStore.Intent.AddMedicalData(medicalData))
+    }
+
+    override fun onBackClicked() {
+        store.accept(DetailsStore.Intent.ClickBack)
+    }
+
+    override fun openDatePickerDialog() {
+        store.accept(DetailsStore.Intent.OpenDatePickerDialog)
+    }
+
+    override fun closeDatePickerDialog() {
+        store.accept(DetailsStore.Intent.CloseDatePickerDialog)
     }
 
     @AssistedFactory

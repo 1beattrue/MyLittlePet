@@ -54,7 +54,6 @@ android {
 }
 
 dependencies {
-
     val gsonVersion = "2.10.1"
     implementation("com.google.code.gson:gson:$gsonVersion")
 

@@ -15,6 +15,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsS
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.State
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -22,8 +23,11 @@ interface DetailsStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
         data object ClickBack : Intent
-        data class SetAge(val dateOfBirth: DatePicker) : Intent
+        data class SetAge(val dateOfBirth: LocalDate) : Intent
         data class SetWeight(val weight: Int) : Intent
+
+        data object OpenDatePickerDialog : Intent
+        data object CloseDatePickerDialog : Intent
 
         data object OnAddEventClick : Intent
         data object OnAddNoteClick : Intent
@@ -43,6 +47,8 @@ interface DetailsStore : Store<Intent, State, Label> {
         val eventBottomSheetState: Boolean,
         val noteBottomSheetState: Boolean,
         val medicalDataBottomSheetState: Boolean,
+
+        val datePickerDialogState: Boolean,
 
         val eventList: List<Event>,
         val noteList: List<Note>,
@@ -70,6 +76,8 @@ class DetailsStoreFactory @Inject constructor(
                 noteBottomSheetState = false,
                 medicalDataBottomSheetState = false,
 
+                datePickerDialogState = false,
+
                 eventList = pet.eventList,
                 noteList = pet.noteList,
                 medicalDataList = pet.medicalDataList
@@ -84,6 +92,9 @@ class DetailsStoreFactory @Inject constructor(
     private sealed interface Msg {
         data class SetAge(val age: String) : Msg
         data class SetWeight(val weight: Int) : Msg
+
+        data object OpenDatePickerDialog : Msg
+        data object CloseDatePickerDialog : Msg
 
         data object OpenEventBottomSheet : Msg
         data object OpenNoteBottomSheet : Msg
@@ -106,11 +117,11 @@ class DetailsStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 is Intent.SetAge -> {
-                    val datePicker = intent.dateOfBirth
+                    val localDate = intent.dateOfBirth
 
-                    val year = datePicker.year
-                    val month = datePicker.month
-                    val day = datePicker.dayOfMonth
+                    val year = localDate.year
+                    val month = localDate.monthValue
+                    val day = localDate.dayOfMonth
 
                     val age = calculateAge(year, month, day)
 
@@ -176,6 +187,14 @@ class DetailsStoreFactory @Inject constructor(
                 Intent.CloseBottomSheet -> {
                     dispatch(Msg.CloseBottomSheet)
                 }
+
+                Intent.OpenDatePickerDialog -> {
+                    dispatch(Msg.OpenDatePickerDialog)
+                }
+
+                Intent.CloseDatePickerDialog -> {
+                    dispatch(Msg.CloseDatePickerDialog)
+                }
             }
         }
     }
@@ -183,7 +202,7 @@ class DetailsStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.SetAge -> copy(age = msg.age)
+                is Msg.SetAge -> copy(age = msg.age, datePickerDialogState = false)
                 is Msg.SetWeight -> copy(weight = msg.weight)
 
                 is Msg.UpdateEvents -> copy(eventList = msg.events, eventBottomSheetState = false)
@@ -199,12 +218,15 @@ class DetailsStoreFactory @Inject constructor(
                     noteBottomSheetState = false,
                     medicalDataBottomSheetState = false
                 )
+
+                Msg.OpenDatePickerDialog -> copy(datePickerDialogState = true)
+                Msg.CloseDatePickerDialog -> copy(datePickerDialogState = false)
             }
     }
 
     private fun calculateAge(year: Int, month: Int, day: Int): String {
         val dob = Calendar.getInstance()
-        dob.set(year, month, day)
+        dob.set(year, month - 1, day)
 
         val today = Calendar.getInstance()
 

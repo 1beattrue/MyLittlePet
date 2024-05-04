@@ -14,6 +14,7 @@
     <string name="confirm">Confirm</string>
     <string name="add">Add</string>
     <string name="ready">Ready</string>
+    <string name="ok">OK</string>
 
     <string name="resend_code">Resend code</string>
     <string name="resend_code_exception">Resending the code will be available in %s seconds</string>
@@ -32,6 +33,7 @@
     <string name="pets_app_bar_title">Pets</string>
     <string name="add_pet_app_bar_title">Adding a pet</string>
     <string name="edit_pet_app_bar_title">Editing a pet</string>
+    <string name="pet_details_app_bar_title">Details</string>
 
     <string name="select_pet_type">Select pet type</string>
     <string name="initial_pet_type">Pet type</string>

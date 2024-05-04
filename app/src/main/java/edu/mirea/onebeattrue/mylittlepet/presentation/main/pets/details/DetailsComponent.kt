@@ -6,12 +6,13 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import kotlinx.coroutines.flow.StateFlow
+import java.time.LocalDate
 
 interface DetailsComponent {
     val pet: Pet
     val model: StateFlow<DetailsStore.State>
 
-    fun setAge(age: DatePicker)
+    fun setAge(age: LocalDate)
     fun setWeight(weight: Int)
 
     fun onAddEventClick()
@@ -23,4 +24,9 @@ interface DetailsComponent {
     fun addEvent(event: Event)
     fun addNote(note: Note)
     fun addMedicalData(medicalData: MedicalData)
+
+    fun onBackClicked()
+
+    fun openDatePickerDialog()
+    fun closeDatePickerDialog()
 }
