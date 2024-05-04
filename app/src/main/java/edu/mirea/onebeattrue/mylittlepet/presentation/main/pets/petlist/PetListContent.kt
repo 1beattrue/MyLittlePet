@@ -3,6 +3,7 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -93,11 +96,15 @@ fun PetListContent(
         ) {
             items(items = state.petList, key = { it.id }) { pet ->
                 PetCard(
-                    modifier = Modifier.animateItemPlacement(),
+                    modifier = Modifier
+                        .animateItemPlacement(),
                     pet = pet,
                     deletePet = { component.deletePet(pet) },
                     editPet = {
                         component.editPet(pet)
+                    },
+                    openDetails = {
+                        component.openDetails(pet)
                     }
                 )
             }
@@ -112,6 +119,7 @@ private fun PetCard(
     pet: Pet,
     deletePet: () -> Unit,
     editPet: () -> Unit,
+    openDetails: () -> Unit
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
@@ -125,7 +133,9 @@ private fun PetCard(
                 text = pet.name,
             )
             Box(
-                modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
+                modifier = Modifier
+                    .clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
+                    .clickable { openDetails() }
             ) {
                 if (pet.imageUri == Uri.EMPTY) {
                     Image(
@@ -184,6 +194,28 @@ private fun PetCard(
                             editPet()
                         }
                     )
+
+                    DropdownMenuItem(
+                        modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER)),
+                        contentPadding = MENU_ITEM_PADDING,
+                        text = {
+                            Text(
+                                text = stringResource(id = R.string.details),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Rounded.Info,
+                                contentDescription = null
+                            )
+                        },
+                        onClick = {
+                            expanded = false
+                            openDetails()
+                        }
+                    )
+
                     DropdownMenuItem(
                         modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER)),
                         contentPadding = MENU_ITEM_PADDING,

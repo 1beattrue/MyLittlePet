@@ -5,12 +5,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import edu.mirea.onebeattrue.mylittlepet.data.pets.Converters
 import edu.mirea.onebeattrue.mylittlepet.data.pets.PetDbModel
 import edu.mirea.onebeattrue.mylittlepet.data.pets.PetListDao
-import edu.mirea.onebeattrue.mylittlepet.data.pets.UriConverter
 
 @Database(entities = [PetDbModel::class], version = 1, exportSchema = false)
-@TypeConverters(UriConverter::class)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun petListDao(): PetListDao
 

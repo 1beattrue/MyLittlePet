@@ -8,6 +8,7 @@ import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.AddPetContent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.editpet.EditPetContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListContent
 
@@ -29,7 +30,7 @@ fun PetsContent(
             }
 
             is PetsComponent.Child.Details -> {
-                Text(text = "details")
+                DetailsContent(component = instance.component)
             }
 
             is PetsComponent.Child.EditPet -> {

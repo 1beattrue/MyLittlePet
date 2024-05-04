@@ -9,6 +9,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,6 +19,7 @@ class DefaultPetListComponent @AssistedInject constructor(
 
     @Assisted("onAddPetClicked") private val onAddPetClicked: () -> Unit,
     @Assisted("onEditPetClicked") private val onEditPetClicked: (Pet) -> Unit,
+    @Assisted("onOpenDetails") private val onOpenDetails: (Pet) -> Unit,
 
     @Assisted("componentContext") componentContext: ComponentContext
 ) : PetListComponent, ComponentContext by componentContext {
@@ -34,6 +36,10 @@ class DefaultPetListComponent @AssistedInject constructor(
 
                     is PetListStore.Label.EditPet -> {
                         onEditPetClicked(it.pet)
+                    }
+
+                    is PetListStore.Label.OpenDetails -> {
+                        onOpenDetails(it.pet)
                     }
                 }
             }
@@ -56,11 +62,16 @@ class DefaultPetListComponent @AssistedInject constructor(
         store.accept(PetListStore.Intent.DeletePet(pet))
     }
 
+    override fun openDetails(pet: Pet) {
+        store.accept(PetListStore.Intent.OpenDetails(pet))
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(
             @Assisted("onAddPetClicked") onAddPetClicked: () -> Unit,
             @Assisted("onEditPetClicked") onEditPetClicked: (Pet) -> Unit,
+            @Assisted("onOpenDetails") onOpenDetails: (Pet) -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultPetListComponent
     }

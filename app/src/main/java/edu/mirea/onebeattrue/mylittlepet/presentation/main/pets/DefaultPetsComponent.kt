@@ -61,7 +61,7 @@ class DefaultPetsComponent @AssistedInject constructor(
             PetsComponent.Child.AddPet(component)
         }
 
-        Config.Details -> {
+        is Config.Details -> {
             val component = detailsComponentFactory.create(
                 componentContext = componentContext
             )
@@ -87,6 +87,9 @@ class DefaultPetsComponent @AssistedInject constructor(
                 onEditPetClicked = { pet ->
                     navigation.push(Config.EditPet(pet))
                 },
+                onOpenDetails = { pet ->
+                    navigation.push(Config.Details(pet))
+                },
                 componentContext = componentContext
             )
             PetsComponent.Child.PetList(component)
@@ -105,7 +108,7 @@ class DefaultPetsComponent @AssistedInject constructor(
         data class EditPet(val pet: Pet) : Config
 
         @Serializable
-        data object Details : Config
+        data class Details(val pet: Pet) : Config
     }
 
     @AssistedFactory

@@ -9,6 +9,14 @@ data class Pet(
     val type: PetType,
     val name: String,
     @Contextual val imageUri: Uri,
+
+    val age: Int? = null,
+    val weight: Int? = null,
+
+    val eventList: List<Event> = listOf(),
+    val noteList: List<Note> = listOf(),
+    val medicalDataList: List<MedicalData> = listOf(),
+
     val id: Int = UNDEFINED_ID
 ) {
     companion object {

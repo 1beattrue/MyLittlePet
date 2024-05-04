@@ -54,6 +54,10 @@ android {
 }
 
 dependencies {
+
+    val gsonVersion = "2.10.1"
+    implementation("com.google.code.gson:gson:$gsonVersion")
+
     val coilVersion = "2.6.0"
     implementation("io.coil-kt:coil-compose:$coilVersion")
 
