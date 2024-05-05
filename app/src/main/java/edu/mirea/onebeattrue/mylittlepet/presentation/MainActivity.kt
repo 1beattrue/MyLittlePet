@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,7 +24,7 @@ class MainActivity : ComponentActivity() {
 
         val component = rootComponentFactory.create(
             componentContext =  defaultComponentContext(),
-            isDarkTheme = isSystemInDarkTheme()
+            context = application
         )
 
         setContent {
@@ -40,8 +39,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun isSystemInDarkTheme(): Boolean {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
-    }
 }

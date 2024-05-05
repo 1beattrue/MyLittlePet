@@ -1,14 +1,22 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.profile
 
+import android.app.Application
+import android.content.Context
+import android.content.res.Configuration
+import androidx.datastore.dataStore
+import androidx.datastore.preferences.core.edit
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.SignOutUseCase
+import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.dataStore
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.State
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_NIGHT_MODE_KEY
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface ProfileStore : Store<Intent, State, Label> {
@@ -30,13 +38,15 @@ interface ProfileStore : Store<Intent, State, Label> {
 class ProfileStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val signOutUseCase: SignOutUseCase,
+    private val application: Application
 ) {
 
-    fun create(isDarkTheme: Boolean): ProfileStore =
+    fun create(): ProfileStore =
         object : ProfileStore, Store<Intent, State, Label> by storeFactory.create(
             name = "ProfileStore",
             initialState = State(
-                isDarkTheme = isDarkTheme
+                isDarkTheme =
+                (application.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -63,6 +73,11 @@ class ProfileStoreFactory @Inject constructor(
                 }
 
                 is Intent.ChangeTheme -> {
+                    scope.launch {
+                        application.dataStore.edit { preferences ->
+                            preferences[IS_NIGHT_MODE_KEY] = intent.isDarkTheme
+                        }
+                    }
                     dispatch(Msg.ChangeTheme(intent.isDarkTheme))
                 }
             }

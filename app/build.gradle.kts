@@ -54,6 +54,9 @@ android {
 }
 
 dependencies {
+    val dataStoreVersion = "1.1.1"
+    implementation("androidx.datastore:datastore-preferences:$dataStoreVersion")
+
     val coilVersion = "2.6.0"
     implementation("io.coil-kt:coil-compose:$coilVersion")
 

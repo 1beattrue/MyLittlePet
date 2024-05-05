@@ -28,8 +28,6 @@ class DefaultMainComponent @AssistedInject constructor(
     private val profileComponentFactory: DefaultProfileComponent.Factory,
 
     @Assisted("onSignOutClicked") private val onSignOutClicked: () -> Unit,
-    @Assisted("onChangedThemeClicked") private val onChangedThemeClicked: (Boolean) -> Unit,
-    @Assisted("isDarkTheme") private val isDarkTheme: Boolean,
     @Assisted("componentContext") componentContext: ComponentContext,
 ) : MainComponent, ComponentContext by componentContext {
 
@@ -99,11 +97,7 @@ class DefaultMainComponent @AssistedInject constructor(
                 onSignOutClicked = { onSignOutClicked() },
                 onChangedBottomMenuVisibility = {
                     changeBottomMenuVisibility(it)
-                },
-                onChangedThemeClicked = { isDarkTheme ->
-                    onChangedThemeClicked(isDarkTheme)
-                },
-                isDarkTheme = isDarkTheme
+                }
             )
             MainComponent.Child.Profile(component)
         }
@@ -137,8 +131,6 @@ class DefaultMainComponent @AssistedInject constructor(
     interface Factory {
         fun create(
             @Assisted("onSignOutClicked") onSignOutClicked: () -> Unit,
-            @Assisted("onChangedThemeClicked") onChangedThemeClicked: (Boolean) -> Unit,
-            @Assisted("isDarkTheme") isDarkTheme: Boolean,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultMainComponent
     }

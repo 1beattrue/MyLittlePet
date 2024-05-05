@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.root
 
-import android.util.Log
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -18,7 +17,7 @@ interface RootStore : Store<Intent, State, Label> {
     }
 
     data class State(
-        var isDarkTheme: Boolean
+        var isDarkTheme: Boolean?
     )
 
     sealed interface Label {
@@ -29,11 +28,11 @@ class RootStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory
 ) {
 
-    fun create(isDarkTheme: Boolean): RootStore =
+    fun create(): RootStore =
         object : RootStore, Store<Intent, State, Label> by storeFactory.create(
             name = "RootStore",
             initialState = State(
-                isDarkTheme = isDarkTheme
+                isDarkTheme = null
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -56,7 +55,6 @@ class RootStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 is Intent.ChangeTheme -> {
-                    Log.d("RootStore", "$intent.isDarkTheme")
                     dispatch(Msg.ChangeTheme(intent.isDarkTheme))
                 }
             }

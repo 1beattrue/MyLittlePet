@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.profile
 
+import android.app.Application
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
@@ -14,14 +15,15 @@ import kotlinx.coroutines.launch
 
 class DefaultProfileComponent @AssistedInject constructor(
     private val storeFactory: ProfileStoreFactory,
+
+    private val application: Application,
+
     @Assisted("onChangedBottomMenuVisibility") private val onChangedBottomMenuVisibility: (Boolean) -> Unit,
-    @Assisted("isDarkTheme") private val isDarkTheme: Boolean,
     @Assisted("onSignOutClicked") private val onSignOutClicked: () -> Unit,
-    @Assisted("onChangedThemeClicked") private val onChangedThemeClicked: (Boolean) -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : ProfileComponent, ComponentContext by componentContext {
 
-    private val store = instanceKeeper.getStore { storeFactory.create(isDarkTheme) }
+    private val store = instanceKeeper.getStore { storeFactory.create() }
 
     init {
         componentScope.launch {
@@ -44,7 +46,6 @@ class DefaultProfileComponent @AssistedInject constructor(
     }
 
     override fun changeTheme(isDarkTheme: Boolean) {
-        onChangedThemeClicked(isDarkTheme)
         store.accept(ProfileStore.Intent.ChangeTheme(isDarkTheme))
     }
 
@@ -52,9 +53,7 @@ class DefaultProfileComponent @AssistedInject constructor(
     interface Factory {
         fun create(
             @Assisted("onChangedBottomMenuVisibility") onChangedBottomMenuVisibility: (Boolean) -> Unit,
-            @Assisted("isDarkTheme") isDarkTheme: Boolean,
             @Assisted("onSignOutClicked") onSignOutClicked: () -> Unit,
-            @Assisted("onChangedThemeClicked") onChangedThemeClicked: (Boolean) -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultProfileComponent
     }

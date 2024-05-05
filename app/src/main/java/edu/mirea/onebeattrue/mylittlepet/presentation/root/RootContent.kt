@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.root
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,7 +19,7 @@ fun RootContent(
 ) {
     val state by component.model.collectAsState()
     MyLittlePetTheme(
-        darkTheme = state.isDarkTheme
+        darkTheme = state.isDarkTheme ?: isSystemInDarkTheme()
     ) {
         Children(
             modifier = modifier,

@@ -1,5 +1,9 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.extensions
 
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnDestroy
 import kotlinx.coroutines.CoroutineScope
@@ -13,3 +17,6 @@ val ComponentContext.componentScope
     ).apply {
         lifecycle.doOnDestroy { this.cancel() }
     }
+
+
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")

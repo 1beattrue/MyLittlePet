@@ -1,6 +1,11 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.root
 
-import android.util.Log
+import android.app.Application
+import android.content.Context
+import android.content.res.Configuration
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -14,9 +19,13 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
+import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.dataStore
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.DefaultMainComponent
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_NIGHT_MODE_KEY
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 class DefaultRootComponent @AssistedInject constructor(
@@ -24,13 +33,27 @@ class DefaultRootComponent @AssistedInject constructor(
 
     private val authComponentFactory: DefaultAuthComponent.Factory,
     private val mainComponentFactory: DefaultMainComponent.Factory,
-
     private val authRepository: AuthRepository,
 
-    @Assisted("isDarkTheme") private val isDarkTheme: Boolean,
+    private val application: Application,
+
+    @Assisted("context") private val context: Context,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : RootComponent, ComponentContext by componentContext {
-    val store = instanceKeeper.getStore { storeFactory.create(isDarkTheme = isDarkTheme) }
+    private var isDarkTheme: Boolean =
+        (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+
+    val store = instanceKeeper.getStore { storeFactory.create() }
+
+    init {
+        componentScope.launch {
+            context.dataStore.data
+                .collect {
+                    onThemeChanged(it[IS_NIGHT_MODE_KEY] ?: isDarkTheme)
+                }
+        }
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override val model: StateFlow<RootStore.State>
         get() = store.stateFlow
@@ -61,15 +84,12 @@ class DefaultRootComponent @AssistedInject constructor(
         Config.Main -> {
             val component = mainComponentFactory.create(
                 componentContext = componentContext,
-                onSignOutClicked = { navigation.replaceAll(Config.Auth) },
-                onChangedThemeClicked = { isDarkTheme ->
-                    onThemeChanged(isDarkTheme)
-                },
-                isDarkTheme = isDarkTheme
+                onSignOutClicked = { navigation.replaceAll(Config.Auth) }
             )
             RootComponent.Child.Main(component)
         }
     }
+
     override fun onThemeChanged(isDarkTheme: Boolean) {
         store.accept(RootStore.Intent.ChangeTheme(isDarkTheme))
     }
@@ -86,7 +106,7 @@ class DefaultRootComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("isDarkTheme") isDarkTheme: Boolean,
+            @Assisted("context") context: Context,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultRootComponent
     }
