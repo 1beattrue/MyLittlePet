@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Event(
-    val date: String,
+    val date: Long,
     val label: String
 )

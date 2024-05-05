@@ -62,8 +62,14 @@
     <string name="select_image">Select image</string>
 
     <string name="unknown_age">Enter</string>
+    <string name="unknown_weight">Enter</string>
     <string name="age_title">Age</string>
     <string name="weight_title">Weight</string>
+    <string name="error_weight">Incorrect format</string>
+    <string name="weight_hint">2.28</string>
+    <string name="weight_suffix">kg</string>
+    <string name="weight_format">%1\$s kg</string>
+    <string name="enter_weight">Enter weight</string>
 
     <plurals name="years_format">
         <item quantity="one">%1$d year</item>

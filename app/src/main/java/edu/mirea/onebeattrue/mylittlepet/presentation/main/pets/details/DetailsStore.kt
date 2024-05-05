@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
-import android.widget.DatePicker
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -16,8 +15,6 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsS
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.State
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.util.Calendar
 import javax.inject.Inject
 
 interface DetailsStore : Store<Intent, State, Label> {
@@ -25,7 +22,10 @@ interface DetailsStore : Store<Intent, State, Label> {
     sealed interface Intent {
         data object ClickBack : Intent
         data class SetAge(val dateOfBirth: Long) : Intent
-        data class SetWeight(val weight: String) : Intent
+        data object SetWeight : Intent
+
+        data object OnChangeWeightClick : Intent
+        data class OnWeightChanged(val weight: String) : Intent
 
         data object OpenDatePickerDialog : Intent
         data object CloseDatePickerDialog : Intent
@@ -44,7 +44,10 @@ interface DetailsStore : Store<Intent, State, Label> {
     data class State(
         val age: Age?,
         val weight: Float?,
+        val weightInput: String,
+        val isIncorrectWeight: Boolean,
 
+        val weightBottomSheetState: Boolean,
         val eventBottomSheetState: Boolean,
         val noteBottomSheetState: Boolean,
         val medicalDataBottomSheetState: Boolean,
@@ -80,7 +83,10 @@ class DetailsStoreFactory @Inject constructor(
                     months = pet.dateOfBirth.convertMillisToYearsAndMonths().second
                 ),
                 weight = pet.weight,
+                weightInput = pet.weight?.toString() ?: "",
+                isIncorrectWeight = false,
 
+                weightBottomSheetState = false,
                 eventBottomSheetState = false,
                 noteBottomSheetState = false,
                 medicalDataBottomSheetState = false,
@@ -101,6 +107,9 @@ class DetailsStoreFactory @Inject constructor(
     private sealed interface Msg {
         data class SetAge(val age: State.Age) : Msg
         data class SetWeight(val weight: Float) : Msg
+        data class OpenWeightBottomSheet(val weight: String) : Msg
+        data class OnWeightChanged(val weight: String) : Msg
+        data object OnIncorrectWeight : Msg
 
         data object OpenDatePickerDialog : Msg
         data object CloseDatePickerDialog : Msg
@@ -138,8 +147,15 @@ class DetailsStoreFactory @Inject constructor(
                 }
 
                 is Intent.SetWeight -> {
-                    val weight = formattedWeight(intent.weight)
-                    dispatch(Msg.SetWeight(weight))
+                    scope.launch {
+                        val weight = getState().weightInput
+                        if (isCorrectWeight(weight)) {
+                            editPetUseCase(pet.copy(weight = weight.toFloat()))
+                            dispatch(Msg.SetWeight(weight.toFloat()))
+                        } else {
+                            dispatch(Msg.OnIncorrectWeight)
+                        }
+                    }
                 }
 
                 is Intent.AddEvent -> {
@@ -205,6 +221,16 @@ class DetailsStoreFactory @Inject constructor(
                 Intent.CloseDatePickerDialog -> {
                     dispatch(Msg.CloseDatePickerDialog)
                 }
+
+                Intent.OnChangeWeightClick -> {
+                    val weight = getState().weight?.toString() ?: ""
+                    dispatch(Msg.OpenWeightBottomSheet(weight))
+                }
+
+                is Intent.OnWeightChanged -> {
+                    val weight = formattedWeight(intent.weight)
+                    dispatch(Msg.OnWeightChanged(weight))
+                }
             }
         }
     }
@@ -213,17 +239,21 @@ class DetailsStoreFactory @Inject constructor(
         override fun State.reduce(msg: Msg): State =
             when (msg) {
                 is Msg.SetAge -> copy(age = msg.age, datePickerDialogState = false)
-                is Msg.SetWeight -> copy(weight = msg.weight)
+                is Msg.SetWeight -> copy(weight = msg.weight, weightBottomSheetState = false)
 
                 is Msg.UpdateEvents -> copy(eventList = msg.events, eventBottomSheetState = false)
                 is Msg.UpdateNotes -> copy(noteList = msg.notes, noteBottomSheetState = false)
-                is Msg.UpdateMedicalDatas -> copy(medicalDataList = msg.medicalDatas, medicalDataBottomSheetState = false)
+                is Msg.UpdateMedicalDatas -> copy(
+                    medicalDataList = msg.medicalDatas,
+                    medicalDataBottomSheetState = false
+                )
 
                 Msg.OpenEventBottomSheet -> copy(eventBottomSheetState = true)
                 Msg.OpenNoteBottomSheet -> copy(noteBottomSheetState = true)
                 Msg.OpenMedicalDataBottomSheet -> copy(medicalDataBottomSheetState = true)
 
                 Msg.CloseBottomSheet -> copy(
+                    weightBottomSheetState = false,
                     eventBottomSheetState = false,
                     noteBottomSheetState = false,
                     medicalDataBottomSheetState = false
@@ -231,42 +261,26 @@ class DetailsStoreFactory @Inject constructor(
 
                 Msg.OpenDatePickerDialog -> copy(datePickerDialogState = true)
                 Msg.CloseDatePickerDialog -> copy(datePickerDialogState = false)
+
+                is Msg.OnWeightChanged -> copy(weightInput = msg.weight, isIncorrectWeight = false)
+                is Msg.OpenWeightBottomSheet -> copy(
+                    weightBottomSheetState = true,
+                    weightInput = msg.weight,
+                    isIncorrectWeight = false
+                )
+
+                Msg.OnIncorrectWeight -> copy(isIncorrectWeight = true)
             }
     }
 
-    private fun formattedWeight(weight: String): Float {
-        return weight.toFloatOrNull() ?: 0f
-    }
+    private fun formattedWeight(weight: String): String = weight.replace(',', '.')
 
-    private fun calculateAge(year: Int, month: Int, day: Int): String {
-        val dob = Calendar.getInstance()
-        dob.set(year, month - 1, day)
-
-        val today = Calendar.getInstance()
-
-        var years = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR)
-        var months = today.get(Calendar.MONTH) - dob.get(Calendar.MONTH)
-        var days = today.get(Calendar.DAY_OF_MONTH) - dob.get(Calendar.DAY_OF_MONTH)
-
-        if (months < 0 || (months == 0 && days < 0)) {
-            years--
-            months += 12
+    private fun isCorrectWeight(weight: String): Boolean {
+        try {
+            weight.toFloat()
+            return true
+        } catch (_: Exception) {
+            return false
         }
-
-        val ageString = if (years > 0) {
-            if (months > 0) {
-                "$years лет $months месяцев"
-            } else {
-                "$years лет"
-            }
-        } else {
-            if (months > 0) {
-                "$months месяцев"
-            } else {
-                "Менее месяца"
-            }
-        }
-
-        return ageString
     }
 }

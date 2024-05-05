@@ -7,14 +7,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,9 +44,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -53,6 +56,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import kotlinx.coroutines.launch
@@ -114,7 +118,7 @@ fun DetailsContent(
                         modifier = Modifier.weight(0.5f),
                         weight = state.weight
                     ) {
-
+                        component.onChangeWeightClick()
                     }
                 }
             }
@@ -129,6 +133,17 @@ fun DetailsContent(
         }
     )
 
+    WeightBottomSheet(
+        isExpanded = state.weightBottomSheetState,
+        onCloseBottomSheet = { component.onCloseBottomSheetClick() },
+        weightInput = state.weightInput,
+        isError = state.isIncorrectWeight,
+        onChangeWeight = {
+            component.onWeightChages(it)
+        },
+        onSetWeight = { component.setWeight() }
+    )
+
     EventBottomSheet(
         isExpanded = state.eventBottomSheetState,
         onCloseBottomSheet = {
@@ -138,6 +153,76 @@ fun DetailsContent(
             component.addEvent(event)
         }
     )
+}
+
+
+@SuppressLint("CoroutineCreationDuringComposition")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun WeightBottomSheet(
+    modifier: Modifier = Modifier,
+    isExpanded: Boolean,
+    onCloseBottomSheet: () -> Unit,
+    weightInput: String,
+    isError: Boolean,
+    onChangeWeight: (String) -> Unit,
+    onSetWeight: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+
+    if (isExpanded) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                onCloseBottomSheet()
+            },
+            sheetState = sheetState
+        ) {
+            CustomCard(elevation = 4.dp) {
+                Text(
+                    text = stringResource(id = R.string.enter_weight),
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                OutlinedTextField(
+                    modifier = modifier.fillMaxWidth(),
+                    value = weightInput,
+                    onValueChange = {
+                        onChangeWeight(it)
+                    },
+                    isError = isError,
+                    supportingText = {
+                        if (isError) {
+                            Text(text = stringResource(id = R.string.error_weight))
+                        }
+                    },
+                    trailingIcon = {
+                        if (isError) {
+                            Icon(
+                                imageVector = Icons.Rounded.Warning,
+                                contentDescription = null
+                            )
+                        }
+                    },
+                    shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    placeholder = {
+                        Text(stringResource(id = R.string.weight_hint))
+                    },
+                    suffix = {
+                        Text(stringResource(R.string.weight_suffix))
+                    }
+                )
+
+                CustomReadyButton(onClick = {
+                    onSetWeight()
+                })
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -159,15 +244,7 @@ private fun EventBottomSheet(
             },
             sheetState = sheetState
         ) {
-            Button(onClick = {
-                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                    if (!sheetState.isVisible) {
-                        onCloseBottomSheet()
-                    }
-                }
-            }) {
-                Text("Hide bottom sheet")
-            }
+
         }
     }
 }
@@ -277,8 +354,14 @@ private fun WeightCard(
                 textAlign = TextAlign.Center
             )
 
+            val displayWeight = if (weight == null) {
+                stringResource(R.string.unknown_weight)
+            } else {
+                stringResource(R.string.weight_format, weight)
+            }
+
             Text(
-                text = weight.toString(),
+                text = displayWeight,
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center
             )

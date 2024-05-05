@@ -13,7 +13,10 @@ interface DetailsComponent {
     val model: StateFlow<DetailsStore.State>
 
     fun setAge(age: Long)
-    fun setWeight(weight: String)
+    fun setWeight()
+
+    fun onChangeWeightClick()
+    fun onWeightChages(weight: String)
 
     fun onAddEventClick()
     fun onAddNoteClick()

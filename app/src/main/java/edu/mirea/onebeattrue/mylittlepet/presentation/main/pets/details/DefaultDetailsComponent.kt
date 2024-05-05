@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
-import androidx.collection.LongIntMap
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
@@ -16,7 +15,6 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 class DefaultDetailsComponent @AssistedInject constructor(
     private val storeFactory: DetailsStoreFactory,
@@ -47,8 +45,16 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.SetAge(age))
     }
 
-    override fun setWeight(weight: String) {
-        store.accept(DetailsStore.Intent.SetWeight(weight))
+    override fun onChangeWeightClick() {
+        store.accept(DetailsStore.Intent.OnChangeWeightClick)
+    }
+
+    override fun onWeightChages(weight: String) {
+        store.accept(DetailsStore.Intent.OnWeightChanged(weight))
+    }
+
+    override fun setWeight() {
+        store.accept(DetailsStore.Intent.SetWeight)
     }
 
     override fun onAddEventClick() {
