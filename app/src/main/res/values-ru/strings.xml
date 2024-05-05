@@ -72,6 +72,24 @@
     <string name="weight_format">%1\$s кг</string>
     <string name="enter_weight">Введите вес</string>
 
+    <string name="event_list_title">События</string>
+    <string name="add_event">Добавить событие</string>
+
+    <string name="january">января</string>
+    <string name="february">февраля</string>
+    <string name="march">марта</string>
+    <string name="april">апреля</string>
+    <string name="may">мая</string>
+    <string name="june">июня</string>
+    <string name="july">июля</string>
+    <string name="august">августа</string>
+    <string name="september">сентября</string>
+    <string name="october">октября</string>
+    <string name="november">ноября</string>
+    <string name="december">декабря</string>
+
+    <string name="date_format">%1$d %2$s %3$d</string>
+
     <plurals name="years_format">
         <item quantity="one">%1$d год</item>
         <item quantity="few">%1$d года</item>

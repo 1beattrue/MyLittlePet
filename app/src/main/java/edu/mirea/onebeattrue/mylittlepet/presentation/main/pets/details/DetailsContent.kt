@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -53,12 +55,14 @@ import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
+import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDate
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
+import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 import kotlinx.coroutines.launch
@@ -124,6 +128,13 @@ fun DetailsContent(
                     }
                 }
             }
+
+            EventList(
+                eventList = state.eventList,
+                onAddEvent = {
+                    component.onAddEventClick()
+                }
+            )
         }
     }
 
@@ -157,7 +168,6 @@ fun DetailsContent(
         }
     )
 }
-
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -274,6 +284,7 @@ private fun PetCard(
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleLarge,
             text = pet.name,
+            fontWeight = FontWeight.Bold,
         )
 
         Box(
@@ -424,5 +435,64 @@ private fun CustomDatePickerDialog(
                 state = datePickerState
             )
         }
+    }
+}
+
+private fun LazyListScope.EventList(
+    modifier: Modifier = Modifier,
+    eventList: List<Event>,
+    onAddEvent: () -> Unit
+) {
+    item {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.event_list_title),
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center
+        )
+    }
+    items(
+        items = eventList,
+        key = { it }
+    ) { event ->
+        EventCard(event = event)
+    }
+    item {
+        CustomCardWithAddButton(
+            elevation = EXTREME_ELEVATION,
+            onAddClick = { onAddEvent() }
+        ) {
+            Text(
+                text = stringResource(R.string.add_event),
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+private fun EventCard(
+    modifier: Modifier = Modifier,
+    event: Event
+) {
+    CustomCardExtremeElevation {
+        Text(
+            text = event.label,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+
+        val localDate = event.date.convertMillisToLocalDate()
+        val day = localDate.dayOfMonth
+        val month = localDate.month.getName()
+        val year = localDate.year
+
+        val date = stringResource(R.string.date_format, day, month, year)
+
+        Text(
+            text = event.label,
+            style = MaterialTheme.typography.bodySmall,
+        )
     }
 }

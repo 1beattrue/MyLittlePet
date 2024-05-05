@@ -71,6 +71,24 @@
     <string name="weight_format">%1\$s kg</string>
     <string name="enter_weight">Enter weight</string>
 
+    <string name="event_list_title">Events</string>
+    <string name="add_event">Add event</string>
+
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+
+    <string name="date_format">%1$d %2$s %3$d</string>
+
     <plurals name="years_format">
         <item quantity="one">%1$d year</item>
         <item quantity="few">%1$d years</item>
