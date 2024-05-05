@@ -5,7 +5,6 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import com.google.errorprone.annotations.MustBeClosed
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
@@ -279,7 +278,11 @@ class DetailsStoreFactory @Inject constructor(
             }
     }
 
-    private fun formattedWeight(weight: String): String = weight.replace(',', '.')
+    private fun formattedWeight(weight: String): String {
+        val formattedWeight = weight.replace(',', '.')
+        if (formattedWeight.length > 10) return formattedWeight.substring(0 until 10)
+        return formattedWeight
+    }
 
     private fun isCorrectWeight(weight: String): Boolean {
         try {

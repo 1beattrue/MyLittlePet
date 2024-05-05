@@ -58,7 +58,9 @@ import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -190,7 +192,7 @@ private fun WeightBottomSheet(
             },
             sheetState = sheetState
         ) {
-            CustomCard(elevation = 4.dp) {
+            CustomCard(elevation = STRONG_ELEVATION) {
                 Text(
                     text = stringResource(id = R.string.enter_weight),
                     style = MaterialTheme.typography.titleLarge
