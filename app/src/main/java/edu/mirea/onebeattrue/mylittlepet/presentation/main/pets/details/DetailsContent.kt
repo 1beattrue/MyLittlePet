@@ -141,7 +141,8 @@ fun DetailsContent(
         onChangeWeight = {
             component.onWeightChages(it)
         },
-        onSetWeight = { component.setWeight() }
+        onSetWeight = { component.setWeight() },
+        mustBeClosed = state.mustBeClosed
     )
 
     EventBottomSheet(
@@ -166,10 +167,21 @@ private fun WeightBottomSheet(
     weightInput: String,
     isError: Boolean,
     onChangeWeight: (String) -> Unit,
-    onSetWeight: () -> Unit
+    onSetWeight: () -> Unit,
+    mustBeClosed: Boolean
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
+
+    scope.launch {
+        if (mustBeClosed) {
+            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                if (!sheetState.isVisible) {
+                    onCloseBottomSheet()
+                }
+            }
+        }
+    }
 
     if (isExpanded) {
         ModalBottomSheet(

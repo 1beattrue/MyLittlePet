@@ -5,6 +5,7 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import com.google.errorprone.annotations.MustBeClosed
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
@@ -52,6 +53,8 @@ interface DetailsStore : Store<Intent, State, Label> {
         val noteBottomSheetState: Boolean,
         val medicalDataBottomSheetState: Boolean,
 
+        val mustBeClosed: Boolean,
+
         val datePickerDialogState: Boolean,
 
         val eventList: List<Event>,
@@ -90,6 +93,8 @@ class DetailsStoreFactory @Inject constructor(
                 eventBottomSheetState = false,
                 noteBottomSheetState = false,
                 medicalDataBottomSheetState = false,
+
+                mustBeClosed = false,
 
                 datePickerDialogState = false,
 
@@ -239,7 +244,7 @@ class DetailsStoreFactory @Inject constructor(
         override fun State.reduce(msg: Msg): State =
             when (msg) {
                 is Msg.SetAge -> copy(age = msg.age, datePickerDialogState = false)
-                is Msg.SetWeight -> copy(weight = msg.weight, weightBottomSheetState = false)
+                is Msg.SetWeight -> copy(weight = msg.weight, mustBeClosed = true)
 
                 is Msg.UpdateEvents -> copy(eventList = msg.events, eventBottomSheetState = false)
                 is Msg.UpdateNotes -> copy(noteList = msg.notes, noteBottomSheetState = false)
@@ -256,7 +261,8 @@ class DetailsStoreFactory @Inject constructor(
                     weightBottomSheetState = false,
                     eventBottomSheetState = false,
                     noteBottomSheetState = false,
-                    medicalDataBottomSheetState = false
+                    medicalDataBottomSheetState = false,
+                    mustBeClosed = false
                 )
 
                 Msg.OpenDatePickerDialog -> copy(datePickerDialogState = true)
