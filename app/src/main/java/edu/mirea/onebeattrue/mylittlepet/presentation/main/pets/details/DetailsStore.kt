@@ -5,6 +5,7 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context.ALARM_SERVICE
 import android.net.Uri
+import android.util.Log
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -424,12 +425,12 @@ class DetailsStoreFactory @Inject constructor(
     ) {
         val alarmManager = application.getSystemService(ALARM_SERVICE) as AlarmManager
 
-        // Создаем Calendar объект и устанавливаем в нем дату и время срабатывания уведомления
         val calendar = Calendar.getInstance().apply {
-            timeInMillis = date // Установка начальной даты, если необходимо
-            set(Calendar.HOUR_OF_DAY, hours) // Установка часов
-            set(Calendar.MINUTE, minutes) // Установка минут
-            set(Calendar.SECOND, 0) // Обнуляем секунды
+            Log.d("DetailsStoreFactory", "$hours")
+            timeInMillis = date
+            set(Calendar.HOUR_OF_DAY, hours)
+            set(Calendar.MINUTE, minutes)
+            set(Calendar.SECOND, 0)
         }
 
         val intent = AlarmReceiver.newIntent(
@@ -439,7 +440,7 @@ class DetailsStoreFactory @Inject constructor(
         )
         val pendingIntent = PendingIntent.getBroadcast(
             application,
-            228,
+            System.currentTimeMillis().toInt(),
             intent,
             PendingIntent.FLAG_MUTABLE
         )
