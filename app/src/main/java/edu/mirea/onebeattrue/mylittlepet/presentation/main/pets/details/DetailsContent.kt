@@ -3,6 +3,7 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -29,19 +31,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -63,6 +72,7 @@ import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevatio
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 import kotlinx.coroutines.launch
@@ -133,7 +143,10 @@ fun DetailsContent(
                 eventList = state.event.list,
                 onAddEvent = {
                     component.onAddEventClick()
-                }
+                },
+                onDeleteEvent = { event ->
+                    component.onDeleteEvent(event)
+                },
             )
         }
     }
@@ -170,7 +183,7 @@ fun DetailsContent(
         label = state.event.changeableLabel,
         onChangeLabel = { label ->
             component.onEventChages(label)
-        }
+        },
     )
 }
 
@@ -482,10 +495,12 @@ private fun CustomDatePickerDialog(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 private fun LazyListScope.EventList(
     modifier: Modifier = Modifier,
     eventList: List<Event>,
-    onAddEvent: () -> Unit
+    onAddEvent: () -> Unit,
+    onDeleteEvent: (Event) -> Unit,
 ) {
     item {
         Text(
@@ -501,7 +516,68 @@ private fun LazyListScope.EventList(
         items = eventList,
         //key = { it }
     ) { event ->
-        EventCard(event = event)
+        val swipeState = rememberSwipeToDismissBoxState()
+
+        lateinit var icon: ImageVector
+        lateinit var alignment: Alignment
+        val color: Color
+
+        when (swipeState.dismissDirection) {
+            SwipeToDismissBoxValue.StartToEnd -> {
+                icon = Icons.Outlined.Delete
+                alignment = Alignment.CenterEnd
+                color = MaterialTheme.colorScheme.errorContainer
+            }
+
+            SwipeToDismissBoxValue.EndToStart -> {
+                icon = Icons.Outlined.Delete
+                alignment = Alignment.CenterEnd
+                color = MaterialTheme.colorScheme.errorContainer
+            }
+
+            SwipeToDismissBoxValue.Settled -> {
+                icon = Icons.Outlined.Delete
+                alignment = Alignment.CenterEnd
+                color = MaterialTheme.colorScheme.errorContainer
+            }
+        }
+
+        when (swipeState.currentValue) {
+            SwipeToDismissBoxValue.StartToEnd -> {
+                onDeleteEvent(event)
+            }
+
+            SwipeToDismissBoxValue.EndToStart -> {
+                onDeleteEvent(event)
+            }
+
+            SwipeToDismissBoxValue.Settled -> {
+            }
+        }
+
+        SwipeToDismissBox(
+            state = swipeState,
+            enableDismissFromStartToEnd = false,
+            backgroundContent = {
+                Box(
+                    contentAlignment = alignment,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                        .clip(RoundedCornerShape(CORNER_RADIUS_SURFACE))
+                        .background(color)
+                ) {
+                    Icon(
+                        modifier = Modifier.minimumInteractiveComponentSize(),
+                        imageVector = icon, contentDescription = null
+                    )
+                }
+            }
+        ) {
+            EventCard(
+                event = event
+            )
+        }
     }
     item {
         CustomCardWithAddButton(
@@ -522,7 +598,9 @@ private fun EventCard(
     modifier: Modifier = Modifier,
     event: Event
 ) {
-    CustomCard(elevation = 0.dp) {
+    CustomCard(
+        elevation = 0.dp
+    ) {
         Text(
             text = event.label,
             style = MaterialTheme.typography.titleLarge,

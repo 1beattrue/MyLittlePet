@@ -21,6 +21,8 @@ interface DetailsComponent {
     fun onAddNoteClick()
     fun onAddMedicalDataClick()
 
+    fun onDeleteEvent(event: Event)
+
     fun onCloseBottomSheetClick()
 
     fun addEvent()

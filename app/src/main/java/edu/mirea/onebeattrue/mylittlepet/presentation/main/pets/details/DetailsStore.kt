@@ -38,6 +38,7 @@ interface DetailsStore : Store<Intent, State, Label> {
         data object OnAddEventClick : Intent
         data class OnEventChanged(val label: String) : Intent
         data object AddEvent : Intent
+        data class DeleteEvent(val event: Event) : Intent
 
         data object OnAddNoteClick : Intent
         data object OnAddMedicalDataClick : Intent
@@ -239,6 +240,19 @@ class DetailsStoreFactory @Inject constructor(
                                         label = getState().event.changeableLabel
                                     )
                                 )
+                            }
+                            .toList()
+                        editPetUseCase(pet.copy(eventList = newEventList))
+                        dispatch(Msg.UpdateEvents(newEventList))
+                    }
+                }
+                is Intent.DeleteEvent -> {
+                    scope.launch {
+                        val oldEventList = getState().event.list
+                        val newEventList = oldEventList
+                            .toMutableList()
+                            .apply {
+                                remove(intent.event)
                             }
                             .toList()
                         editPetUseCase(pet.copy(eventList = newEventList))

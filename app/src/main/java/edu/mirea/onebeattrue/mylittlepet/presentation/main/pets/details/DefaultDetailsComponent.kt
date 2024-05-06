@@ -73,6 +73,10 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.OnAddMedicalDataClick)
     }
 
+    override fun onDeleteEvent(event: Event) {
+        store.accept(DetailsStore.Intent.DeleteEvent(event))
+    }
+
     override fun onCloseBottomSheetClick() {
         store.accept(DetailsStore.Intent.CloseBottomSheet)
     }
