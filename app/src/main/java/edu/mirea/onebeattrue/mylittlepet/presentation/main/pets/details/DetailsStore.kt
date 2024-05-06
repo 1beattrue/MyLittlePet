@@ -2,7 +2,6 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
 import android.icu.util.Calendar
 import android.net.Uri
-import androidx.compose.ui.Modifier
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -19,7 +18,6 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsS
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.State
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import javax.inject.Inject
 
 interface DetailsStore : Store<Intent, State, Label> {
@@ -237,7 +235,8 @@ class DetailsStoreFactory @Inject constructor(
                                 add(
                                     Event(
                                         date = Calendar.getInstance().timeInMillis,
-                                        label = getState().event.changeableLabel
+                                        label = getState().event.changeableLabel,
+                                        id = generateEventId(this)
                                     )
                                 )
                             }
@@ -246,13 +245,14 @@ class DetailsStoreFactory @Inject constructor(
                         dispatch(Msg.UpdateEvents(newEventList))
                     }
                 }
+
                 is Intent.DeleteEvent -> {
                     scope.launch {
                         val oldEventList = getState().event.list
                         val newEventList = oldEventList
                             .toMutableList()
                             .apply {
-                                remove(intent.event)
+                                removeIf { it.id == intent.event.id }
                             }
                             .toList()
                         editPetUseCase(pet.copy(eventList = newEventList))
@@ -402,6 +402,16 @@ class DetailsStoreFactory @Inject constructor(
                     medicalData = medicalData.copy(bottomSheetState = false)
                 )
             }
+    }
+
+
+    private fun generateEventId(list: List<Event>): Int {
+        if (list.isEmpty()) return 0
+        var maxId = list[0].id
+        list.forEach {
+            if (it.id > maxId) maxId = it.id
+        }
+        return maxId + 1
     }
 
     private fun formattedWeight(weight: String): String {

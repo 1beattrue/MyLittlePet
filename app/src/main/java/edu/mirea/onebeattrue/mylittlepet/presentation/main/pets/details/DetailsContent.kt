@@ -42,6 +42,8 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -512,9 +514,8 @@ private fun LazyListScope.EventList(
         )
     }
     items(
-        // TODO(): не уверен, что так можно с data class, нужно почитать
         items = eventList,
-        //key = { it }
+        key = { it.id }
     ) { event ->
         val swipeState = rememberSwipeToDismissBoxState()
 
@@ -544,11 +545,17 @@ private fun LazyListScope.EventList(
 
         when (swipeState.currentValue) {
             SwipeToDismissBoxValue.StartToEnd -> {
-                onDeleteEvent(event)
+                LaunchedEffect(Any()) {
+                    onDeleteEvent(event)
+                    swipeState.snapTo(SwipeToDismissBoxValue.Settled)
+                }
             }
 
             SwipeToDismissBoxValue.EndToStart -> {
-                onDeleteEvent(event)
+                LaunchedEffect(Any()) {
+                    onDeleteEvent(event)
+                    swipeState.snapTo(SwipeToDismissBoxValue.Settled)
+                }
             }
 
             SwipeToDismissBoxValue.Settled -> {
