@@ -35,15 +35,16 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -269,7 +270,7 @@ private fun WeightBottomSheet(
     }
 }
 
-@SuppressLint("CoroutineCreationDuringComposition")
+@SuppressLint("CoroutineCreationDuringComposition", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EventBottomSheet(
@@ -301,33 +302,61 @@ private fun EventBottomSheet(
             },
             sheetState = sheetState
         ) {
-            CustomCard(elevation = STRONG_ELEVATION) {
-                Text(
-                    text = stringResource(id = R.string.new_event_title),
-                    style = MaterialTheme.typography.titleLarge
-                )
+            LazyColumn {
+                item {
+                    CustomCard(elevation = STRONG_ELEVATION) {
 
-                OutlinedTextField(
-                    minLines = 3,
-                    modifier = modifier.fillMaxWidth(),
-                    value = label,
-                    onValueChange = {
-                        onChangeLabel(it)
-                    },
-                    shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
-                    singleLine = false,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    placeholder = {
-                        Text(stringResource(id = R.string.new_event_hint))
+                        Text(
+                            text = stringResource(id = R.string.new_event_title),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        OutlinedTextField(
+                            minLines = 3,
+                            modifier = modifier.fillMaxWidth(),
+                            value = label,
+                            onValueChange = {
+                                onChangeLabel(it)
+                            },
+                            shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
+                            singleLine = false,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                            placeholder = {
+                                Text(stringResource(id = R.string.new_event_hint))
+                            }
+                        )
+
+                        val datePickerState = rememberDatePickerState()
+                        val timePickerState = rememberTimePickerState()
+
+                        DatePicker(
+                            title = {
+                                Text(
+                                    modifier = Modifier.fillMaxSize(),
+                                    text = stringResource(id = R.string.event_time_title),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    textAlign = TextAlign.Center
+                                )
+                            },
+                            state = datePickerState
+                        )
+                        TimePicker(state = timePickerState)
+
+                        val confirmEnabled by derivedStateOf {
+                            datePickerState.selectedDateMillis != null
+                        }
+
+                        CustomReadyButton(
+                            enabled = confirmEnabled,
+                            onClick = {
+                                onAddEvent()
+                            }
+                        )
                     }
-                )
 
-                CustomReadyButton(onClick = {
-                    onAddEvent()
-                })
+                    Spacer(modifier = Modifier.height(64.dp))
+                }
             }
-
-            Spacer(modifier = Modifier.height(64.dp))
         }
     }
 }
