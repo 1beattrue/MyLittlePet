@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
-import android.icu.util.Calendar
 import android.net.Uri
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
@@ -35,7 +34,12 @@ interface DetailsStore : Store<Intent, State, Label> {
 
         data object OnAddEventClick : Intent
         data class OnEventChanged(val label: String) : Intent
-        data object AddEvent : Intent
+        data class AddEvent(
+            val date: Long,
+            val hours: Int,
+            val minutes: Int,
+        ) : Intent
+
         data class DeleteEvent(val event: Event) : Intent
 
         data object OnAddNoteClick : Intent
@@ -84,10 +88,6 @@ interface DetailsStore : Store<Intent, State, Label> {
         data class MedicalDataState(
             val list: List<MedicalData>,
             val changeableName: String,
-            val datePickerDialogState: Boolean,
-            val changeableDate: Long?,
-            val timePickerDialogState: Boolean,
-            val changeableTime: Long?,
             val imageUri: Uri,
             val changeableText: String,
             val bottomSheetState: Boolean
@@ -137,10 +137,6 @@ class DetailsStoreFactory @Inject constructor(
                 medicalData = State.MedicalDataState(
                     list = pet.medicalDataList,
                     changeableName = "",
-                    datePickerDialogState = false,
-                    changeableDate = null,
-                    timePickerDialogState = false,
-                    changeableTime = null,
                     imageUri = Uri.EMPTY,
                     changeableText = "",
                     bottomSheetState = false
@@ -226,7 +222,7 @@ class DetailsStoreFactory @Inject constructor(
 
                 Intent.OnAddEventClick -> dispatch(Msg.OpenEventBottomSheet)
                 is Intent.OnEventChanged -> dispatch(Msg.OnEventChange(intent.label))
-                Intent.AddEvent -> {
+                is Intent.AddEvent -> {
                     scope.launch {
                         val oldEventList = getState().event.list
                         val newEventList = oldEventList
@@ -234,7 +230,9 @@ class DetailsStoreFactory @Inject constructor(
                             .apply {
                                 add(
                                     Event(
-                                        date = Calendar.getInstance().timeInMillis,
+                                        date = intent.date,
+                                        hours = intent.hours,
+                                        minutes = intent.minutes,
                                         label = getState().event.changeableLabel,
                                         id = generateEventId(this)
                                     )
@@ -292,8 +290,8 @@ class DetailsStoreFactory @Inject constructor(
                                 add(
                                     MedicalData(
                                         name = getState().medicalData.changeableName,
-                                        date = getState().medicalData.changeableDate ?: 0L,
-                                        time = getState().medicalData.changeableTime ?: 0L,
+                                        date = 0L,
+                                        time = 0L,
                                         imageUri = getState().medicalData.imageUri,
                                         note = getState().medicalData.changeableText
                                     )

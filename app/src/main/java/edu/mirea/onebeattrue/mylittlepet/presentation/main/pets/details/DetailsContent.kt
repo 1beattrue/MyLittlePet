@@ -179,8 +179,8 @@ fun DetailsContent(
         onCloseBottomSheet = {
             component.onCloseBottomSheetClick()
         },
-        onAddEvent = {
-            component.addEvent()
+        onAddEvent = { date, hours, minutes ->
+            component.addEvent(date, hours, minutes)
         },
         mustBeClosed = state.bottomSheetMustBeClosed,
         label = state.event.changeableLabel,
@@ -279,7 +279,7 @@ private fun EventBottomSheet(
     onCloseBottomSheet: () -> Unit,
     label: String,
     onChangeLabel: (String) -> Unit,
-    onAddEvent: () -> Unit,
+    onAddEvent: (Long, Int, Int) -> Unit,
     mustBeClosed: Boolean
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -349,7 +349,11 @@ private fun EventBottomSheet(
                         CustomReadyButton(
                             enabled = confirmEnabled,
                             onClick = {
-                                onAddEvent()
+                                onAddEvent(
+                                    datePickerState.selectedDateMillis ?: 0L,
+                                    timePickerState.hour,
+                                    timePickerState.minute
+                                )
                             }
                         )
                     }
@@ -648,7 +652,14 @@ private fun EventCard(
         val month = localDate.month.getName()
         val year = localDate.year
 
-        val date = stringResource(R.string.date_format, day, month, year)
+        val formattedTime = "${
+            event.hours.toString().padStart(2, '0')
+        }:${
+            event.minutes.toString().padStart(2, '0')
+        }"
+
+        val date =
+            stringResource(R.string.date_format, day, month, year, formattedTime)
 
         Text(
             text = date,

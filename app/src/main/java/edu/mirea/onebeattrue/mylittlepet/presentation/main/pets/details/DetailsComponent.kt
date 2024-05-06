@@ -25,7 +25,12 @@ interface DetailsComponent {
 
     fun onCloseBottomSheetClick()
 
-    fun addEvent()
+    fun addEvent(
+        date: Long,
+        hours: Int,
+        minutes: Int,
+    )
+
     fun addNote()
     fun addMedicalData()
 

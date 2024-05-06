@@ -91,7 +91,7 @@
     <string name="november">ноября</string>
     <string name="december">декабря</string>
 
-    <string name="date_format">%1$d %2$s %3$d</string>
+    <string name="date_format">%1$d %2$s %3$d, %4$s</string>
 
     <plurals name="years_format">
         <item quantity="one">%1$d год</item>

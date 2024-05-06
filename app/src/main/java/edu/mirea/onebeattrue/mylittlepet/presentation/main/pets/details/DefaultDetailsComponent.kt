@@ -8,8 +8,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -81,8 +79,12 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.CloseBottomSheet)
     }
 
-    override fun addEvent() {
-        store.accept(DetailsStore.Intent.AddEvent)
+    override fun addEvent(
+        date: Long,
+        hours: Int,
+        minutes: Int,
+    ) {
+        store.accept(DetailsStore.Intent.AddEvent(date, hours, minutes))
     }
 
     override fun addNote() {
