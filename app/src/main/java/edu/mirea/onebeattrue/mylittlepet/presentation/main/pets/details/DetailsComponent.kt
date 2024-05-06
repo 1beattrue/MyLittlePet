@@ -15,6 +15,7 @@ interface DetailsComponent {
 
     fun onChangeWeightClick()
     fun onWeightChages(weight: String)
+    fun onEventChages(label: String)
 
     fun onAddEventClick()
     fun onAddNoteClick()

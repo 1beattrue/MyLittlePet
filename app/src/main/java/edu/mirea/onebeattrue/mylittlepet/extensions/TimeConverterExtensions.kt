@@ -27,7 +27,7 @@ fun Long.convertMillisToYearsAndMonths(): Pair<Int, Int> {
 }
 
 @Composable
-fun Month.getName() {
+fun Month.getName() =
     when (this) {
         Month.JANUARY -> stringResource(R.string.january)
         Month.FEBRUARY -> stringResource(R.string.february)
@@ -42,4 +42,3 @@ fun Month.getName() {
         Month.NOVEMBER -> stringResource(R.string.november)
         Month.DECEMBER -> stringResource(R.string.december)
     }
-}

@@ -73,6 +73,8 @@
 
     <string name="event_list_title">Events</string>
     <string name="add_event">Add event</string>
+    <string name="new_event_title">New event</string>
+    <string name="new_event_hint">Mmm?</string>
 
     <string name="january">January</string>
     <string name="february">February</string>

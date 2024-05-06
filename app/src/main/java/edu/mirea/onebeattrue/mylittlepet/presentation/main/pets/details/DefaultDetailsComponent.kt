@@ -53,6 +53,10 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.OnWeightChanged(weight))
     }
 
+    override fun onEventChages(label: String) {
+        store.accept(DetailsStore.Intent.OnEventChanged(label))
+    }
+
     override fun setWeight() {
         store.accept(DetailsStore.Intent.SetWeight)
     }

@@ -151,8 +151,8 @@ fun DetailsContent(
         onCloseBottomSheet = { component.onCloseBottomSheetClick() },
         weightInput = state.weight.changeableValue,
         isError = state.weight.isIncorrect,
-        onChangeWeight = {
-            component.onWeightChages(it)
+        onChangeWeight = { weight ->
+            component.onWeightChages(weight)
         },
         onSetWeight = { component.setWeight() },
         mustBeClosed = state.bottomSheetMustBeClosed
@@ -163,10 +163,14 @@ fun DetailsContent(
         onCloseBottomSheet = {
             component.onCloseBottomSheetClick()
         },
-        onAddEvent = { event ->
+        onAddEvent = {
             component.addEvent()
         },
-        mustBeClosed = state.bottomSheetMustBeClosed
+        mustBeClosed = state.bottomSheetMustBeClosed,
+        label = state.event.changeableLabel,
+        onChangeLabel = { label ->
+            component.onEventChages(label)
+        }
     )
 }
 
@@ -245,7 +249,7 @@ private fun WeightBottomSheet(
                 })
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(64.dp))
         }
     }
 }
@@ -257,11 +261,23 @@ private fun EventBottomSheet(
     modifier: Modifier = Modifier,
     isExpanded: Boolean,
     onCloseBottomSheet: () -> Unit,
-    onAddEvent: (Event) -> Unit,
+    label: String,
+    onChangeLabel: (String) -> Unit,
+    onAddEvent: () -> Unit,
     mustBeClosed: Boolean
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
+
+    scope.launch {
+        if (mustBeClosed) {
+            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                if (!sheetState.isVisible) {
+                    onCloseBottomSheet()
+                }
+            }
+        }
+    }
 
     if (isExpanded) {
         ModalBottomSheet(
@@ -270,7 +286,33 @@ private fun EventBottomSheet(
             },
             sheetState = sheetState
         ) {
+            CustomCard(elevation = STRONG_ELEVATION) {
+                Text(
+                    text = stringResource(id = R.string.new_event_title),
+                    style = MaterialTheme.typography.titleLarge
+                )
 
+                OutlinedTextField(
+                    minLines = 3,
+                    modifier = modifier.fillMaxWidth(),
+                    value = label,
+                    onValueChange = {
+                        onChangeLabel(it)
+                    },
+                    shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
+                    singleLine = false,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    placeholder = {
+                        Text(stringResource(id = R.string.new_event_hint))
+                    }
+                )
+
+                CustomReadyButton(onClick = {
+                    onAddEvent()
+                })
+            }
+
+            Spacer(modifier = Modifier.height(64.dp))
         }
     }
 }
@@ -455,14 +497,15 @@ private fun LazyListScope.EventList(
         )
     }
     items(
+        // TODO(): не уверен, что так можно с data class, нужно почитать
         items = eventList,
-        key = { it }
+        //key = { it }
     ) { event ->
         EventCard(event = event)
     }
     item {
         CustomCardWithAddButton(
-            elevation = EXTREME_ELEVATION,
+            elevation = 0.dp,
             onAddClick = { onAddEvent() }
         ) {
             Text(
@@ -479,10 +522,11 @@ private fun EventCard(
     modifier: Modifier = Modifier,
     event: Event
 ) {
-    CustomCardExtremeElevation {
+    CustomCard(elevation = 0.dp) {
         Text(
             text = event.label,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center
         )
 
         val localDate = event.date.convertMillisToLocalDate()
@@ -493,7 +537,7 @@ private fun EventCard(
         val date = stringResource(R.string.date_format, day, month, year)
 
         Text(
-            text = event.label,
+            text = date,
             style = MaterialTheme.typography.bodySmall,
         )
     }

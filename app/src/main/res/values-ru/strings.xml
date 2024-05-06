@@ -74,6 +74,8 @@
 
     <string name="event_list_title">События</string>
     <string name="add_event">Добавить событие</string>
+    <string name="new_event_title">Новое событие</string>
+    <string name="new_event_hint">Ммм?</string>
 
     <string name="january">января</string>
     <string name="february">февраля</string>
