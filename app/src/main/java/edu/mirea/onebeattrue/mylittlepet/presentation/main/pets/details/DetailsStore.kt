@@ -1,5 +1,9 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
+import android.app.AlarmManager
+import android.app.Application
+import android.app.PendingIntent
+import android.content.Context.ALARM_SERVICE
 import android.net.Uri
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
@@ -17,6 +21,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsS
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.State
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 interface DetailsStore : Store<Intent, State, Label> {
@@ -101,7 +106,8 @@ interface DetailsStore : Store<Intent, State, Label> {
 
 class DetailsStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
-    private val editPetUseCase: EditPetUseCase
+    private val editPetUseCase: EditPetUseCase,
+    private val application: Application
 ) {
 
     fun create(pet: Pet): DetailsStore =
@@ -239,6 +245,15 @@ class DetailsStoreFactory @Inject constructor(
                                 )
                             }
                             .toList()
+
+                        createNotification(
+                            date = intent.date,
+                            hours = intent.hours,
+                            minutes = intent.minutes,
+                            title = pet.name,
+                            text = getState().event.changeableLabel
+                        )
+
                         editPetUseCase(pet.copy(eventList = newEventList))
                         dispatch(Msg.UpdateEvents(newEventList))
                     }
@@ -402,6 +417,39 @@ class DetailsStoreFactory @Inject constructor(
             }
     }
 
+    private fun createNotification(
+        date: Long, hours: Int, minutes: Int,
+        title: String,
+        text: String
+    ) {
+        val alarmManager = application.getSystemService(ALARM_SERVICE) as AlarmManager
+
+        // Создаем Calendar объект и устанавливаем в нем дату и время срабатывания уведомления
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = date // Установка начальной даты, если необходимо
+            set(Calendar.HOUR_OF_DAY, hours) // Установка часов
+            set(Calendar.MINUTE, minutes) // Установка минут
+            set(Calendar.SECOND, 0) // Обнуляем секунды
+        }
+
+        val intent = AlarmReceiver.newIntent(
+            context = application,
+            title = title,
+            text = text
+        )
+        val pendingIntent = PendingIntent.getBroadcast(
+            application,
+            228,
+            intent,
+            PendingIntent.FLAG_MUTABLE
+        )
+
+        alarmManager.setExact(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            pendingIntent
+        )
+    }
 
     private fun generateEventId(list: List<Event>): Int {
         if (list.isEmpty()) return 0
