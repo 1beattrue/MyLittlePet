@@ -73,16 +73,16 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.CloseBottomSheet)
     }
 
-    override fun addEvent(event: Event) {
-        store.accept(DetailsStore.Intent.AddEvent(event))
+    override fun addEvent() {
+        store.accept(DetailsStore.Intent.AddEvent)
     }
 
-    override fun addNote(note: Note) {
-        store.accept(DetailsStore.Intent.AddNote(note))
+    override fun addNote() {
+        store.accept(DetailsStore.Intent.AddNote)
     }
 
-    override fun addMedicalData(medicalData: MedicalData) {
-        store.accept(DetailsStore.Intent.AddMedicalData(medicalData))
+    override fun addMedicalData() {
+        store.accept(DetailsStore.Intent.AddMedicalData)
     }
 
     override fun onBackClicked() {

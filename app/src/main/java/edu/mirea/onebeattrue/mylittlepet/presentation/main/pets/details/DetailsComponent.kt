@@ -22,9 +22,9 @@ interface DetailsComponent {
 
     fun onCloseBottomSheetClick()
 
-    fun addEvent(event: Event)
-    fun addNote(note: Note)
-    fun addMedicalData(medicalData: MedicalData)
+    fun addEvent()
+    fun addNote()
+    fun addMedicalData()
 
     fun onBackClicked()
 

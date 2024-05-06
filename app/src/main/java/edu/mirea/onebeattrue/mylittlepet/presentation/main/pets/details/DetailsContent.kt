@@ -122,7 +122,7 @@ fun DetailsContent(
                     }
                     WeightCard(
                         modifier = Modifier.weight(0.5f),
-                        weight = state.weight
+                        weight = state.weight.value
                     ) {
                         component.onChangeWeightClick()
                     }
@@ -130,7 +130,7 @@ fun DetailsContent(
             }
 
             EventList(
-                eventList = state.eventList,
+                eventList = state.event.list,
                 onAddEvent = {
                     component.onAddEventClick()
                 }
@@ -139,7 +139,7 @@ fun DetailsContent(
     }
 
     CustomDatePickerDialog(
-        state = state.datePickerDialogState,
+        state = state.age.datePickerDialogState,
         onDismissRequest = { component.closeDatePickerDialog() },
         onDatePicked = { date ->
             component.setAge(date)
@@ -147,25 +147,26 @@ fun DetailsContent(
     )
 
     WeightBottomSheet(
-        isExpanded = state.weightBottomSheetState,
+        isExpanded = state.weight.bottomSheetState,
         onCloseBottomSheet = { component.onCloseBottomSheetClick() },
-        weightInput = state.weightInput,
-        isError = state.isIncorrectWeight,
+        weightInput = state.weight.changeableValue,
+        isError = state.weight.isIncorrect,
         onChangeWeight = {
             component.onWeightChages(it)
         },
         onSetWeight = { component.setWeight() },
-        mustBeClosed = state.mustBeClosed
+        mustBeClosed = state.bottomSheetMustBeClosed
     )
 
     EventBottomSheet(
-        isExpanded = state.eventBottomSheetState,
+        isExpanded = state.event.bottomSheetState,
         onCloseBottomSheet = {
             component.onCloseBottomSheetClick()
         },
         onAddEvent = { event ->
-            component.addEvent(event)
-        }
+            component.addEvent()
+        },
+        mustBeClosed = state.bottomSheetMustBeClosed
     )
 }
 
@@ -256,7 +257,8 @@ private fun EventBottomSheet(
     modifier: Modifier = Modifier,
     isExpanded: Boolean,
     onCloseBottomSheet: () -> Unit,
-    onAddEvent: (Event) -> Unit
+    onAddEvent: (Event) -> Unit,
+    mustBeClosed: Boolean
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -311,7 +313,7 @@ private fun PetCard(
 @Composable
 private fun AgeCard(
     modifier: Modifier = Modifier,
-    age: DetailsStore.State.Age?,
+    age: DetailsStore.State.AgeState,
     onAgeClicked: () -> Unit
 ) {
     Box(
@@ -329,7 +331,7 @@ private fun AgeCard(
                 textAlign = TextAlign.Center
             )
 
-            val formattedAge = if (age == null) {
+            val formattedAge = if (age.years == null || age.months == null) {
                 stringResource(R.string.unknown_age)
             } else {
                 val years = age.years

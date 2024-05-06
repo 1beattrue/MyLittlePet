@@ -1,10 +1,14 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
+import android.icu.util.Calendar
+import android.net.Uri
+import androidx.compose.ui.Modifier
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
@@ -15,54 +19,79 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsS
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.State
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 interface DetailsStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
         data object ClickBack : Intent
-        data class SetAge(val dateOfBirth: Long) : Intent
-        data object SetWeight : Intent
-
-        data object OnChangeWeightClick : Intent
-        data class OnWeightChanged(val weight: String) : Intent
 
         data object OpenDatePickerDialog : Intent
         data object CloseDatePickerDialog : Intent
+        data class SetAge(val dateOfBirth: Long) : Intent
+
+        data object OnChangeWeightClick : Intent
+        data class OnWeightChanged(val weight: String) : Intent
+        data object SetWeight : Intent
 
         data object OnAddEventClick : Intent
+        data class OnEventChanged(val label: String) : Intent
+        data object AddEvent : Intent
+
         data object OnAddNoteClick : Intent
         data object OnAddMedicalDataClick : Intent
 
-        data object CloseBottomSheet : Intent
+        data object AddNote : Intent
+        data object AddMedicalData : Intent
 
-        data class AddEvent(val event: Event) : Intent
-        data class AddNote(val note: Note) : Intent
-        data class AddMedicalData(val medicalData: MedicalData) : Intent
+        data object CloseBottomSheet : Intent
     }
 
     data class State(
-        val age: Age?,
-        val weight: Float?,
-        val weightInput: String,
-        val isIncorrectWeight: Boolean,
-
-        val weightBottomSheetState: Boolean,
-        val eventBottomSheetState: Boolean,
-        val noteBottomSheetState: Boolean,
-        val medicalDataBottomSheetState: Boolean,
-
-        val mustBeClosed: Boolean,
-
-        val datePickerDialogState: Boolean,
-
-        val eventList: List<Event>,
-        val noteList: List<Note>,
-        val medicalDataList: List<MedicalData>,
+        val age: AgeState,
+        val weight: WeightState,
+        val event: EventState,
+        val note: NoteState,
+        val medicalData: MedicalDataState,
+        val bottomSheetMustBeClosed: Boolean,
     ) {
-        data class Age(
-            val years: Int,
-            val months: Int
+        data class AgeState(
+            val years: Int?,
+            val months: Int?,
+            val datePickerDialogState: Boolean
+        )
+
+        data class WeightState(
+            val value: Float?,
+            val changeableValue: String,
+            val isIncorrect: Boolean,
+            val bottomSheetState: Boolean
+        )
+
+        data class EventState(
+            val list: List<Event>,
+            val changeableLabel: String,
+            val bottomSheetState: Boolean
+        )
+
+        data class NoteState(
+            val list: List<Note>,
+            val changeableText: String,
+            val changebleIcon: Int,
+            val bottomSheetState: Boolean
+        )
+
+        data class MedicalDataState(
+            val list: List<MedicalData>,
+            val changeableName: String,
+            val datePickerDialogState: Boolean,
+            val changeableDate: Long?,
+            val timePickerDialogState: Boolean,
+            val changeableTime: Long?,
+            val imageUri: Uri,
+            val changeableText: String,
+            val bottomSheetState: Boolean
         )
     }
 
@@ -80,26 +109,44 @@ class DetailsStoreFactory @Inject constructor(
         object : DetailsStore, Store<Intent, State, Label> by storeFactory.create(
             name = "DetailsStore",
             initialState = State(
-                age = if (pet.dateOfBirth == null) null else State.Age(
+                age = if (pet.dateOfBirth == null) State.AgeState(
+                    years = null,
+                    months = null,
+                    datePickerDialogState = false
+                ) else State.AgeState(
                     years = pet.dateOfBirth.convertMillisToYearsAndMonths().first,
-                    months = pet.dateOfBirth.convertMillisToYearsAndMonths().second
+                    months = pet.dateOfBirth.convertMillisToYearsAndMonths().second,
+                    datePickerDialogState = false
                 ),
-                weight = pet.weight,
-                weightInput = pet.weight?.toString() ?: "",
-                isIncorrectWeight = false,
-
-                weightBottomSheetState = false,
-                eventBottomSheetState = false,
-                noteBottomSheetState = false,
-                medicalDataBottomSheetState = false,
-
-                mustBeClosed = false,
-
-                datePickerDialogState = false,
-
-                eventList = pet.eventList,
-                noteList = pet.noteList,
-                medicalDataList = pet.medicalDataList
+                weight = State.WeightState(
+                    value = pet.weight,
+                    changeableValue = pet.weight?.toString() ?: "",
+                    isIncorrect = false,
+                    bottomSheetState = false
+                ),
+                event = State.EventState(
+                    list = pet.eventList,
+                    changeableLabel = "",
+                    bottomSheetState = false
+                ),
+                note = State.NoteState(
+                    list = pet.noteList,
+                    changebleIcon = R.drawable.ic_medical,
+                    changeableText = "",
+                    bottomSheetState = false
+                ),
+                medicalData = State.MedicalDataState(
+                    list = pet.medicalDataList,
+                    changeableName = "",
+                    datePickerDialogState = false,
+                    changeableDate = null,
+                    timePickerDialogState = false,
+                    changeableTime = null,
+                    imageUri = Uri.EMPTY,
+                    changeableText = "",
+                    bottomSheetState = false
+                ),
+                bottomSheetMustBeClosed = false
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = { ExecutorImpl(pet) },
@@ -109,23 +156,26 @@ class DetailsStoreFactory @Inject constructor(
     private sealed interface Action
 
     private sealed interface Msg {
-        data class SetAge(val age: State.Age) : Msg
-        data class SetWeight(val weight: Float) : Msg
+        data object OpenDatePickerDialog : Msg
+        data object CloseDatePickerDialog : Msg
+        data class SetAge(val age: Long) : Msg
+
         data class OpenWeightBottomSheet(val weight: String) : Msg
         data class OnWeightChanged(val weight: String) : Msg
         data object OnIncorrectWeight : Msg
-
-        data object OpenDatePickerDialog : Msg
-        data object CloseDatePickerDialog : Msg
+        data class SetWeight(val weight: Float) : Msg
 
         data object OpenEventBottomSheet : Msg
-        data object OpenNoteBottomSheet : Msg
-        data object OpenMedicalDataBottomSheet : Msg
-        data object CloseBottomSheet : Msg
-
+        data class OnEventChange(val label: String) : Msg
         data class UpdateEvents(val events: List<Event>) : Msg
+
+        data object OpenNoteBottomSheet : Msg
         data class UpdateNotes(val notes: List<Note>) : Msg
+
+        data object OpenMedicalDataBottomSheet : Msg
         data class UpdateMedicalDatas(val medicalDatas: List<MedicalData>) : Msg
+
+        data object CloseBottomSheet : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -138,21 +188,33 @@ class DetailsStoreFactory @Inject constructor(
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
+                Intent.ClickBack -> publish(Label.ClickBack)
+                Intent.CloseBottomSheet -> dispatch(Msg.CloseBottomSheet)
+
+
+                Intent.OpenDatePickerDialog -> dispatch(Msg.OpenDatePickerDialog)
+                Intent.CloseDatePickerDialog -> dispatch(Msg.CloseDatePickerDialog)
                 is Intent.SetAge -> {
                     scope.launch {
-                        val age = State.Age(
-                            years = intent.dateOfBirth.convertMillisToYearsAndMonths().first,
-                            months = intent.dateOfBirth.convertMillisToYearsAndMonths().second
-                        )
                         editPetUseCase(pet.copy(dateOfBirth = intent.dateOfBirth))
-                        dispatch(Msg.SetAge(age))
+                        dispatch(Msg.SetAge(intent.dateOfBirth))
                     }
-
                 }
 
-                is Intent.SetWeight -> {
+
+                Intent.OnChangeWeightClick -> {
+                    val weight = getState().weight.value?.toString() ?: ""
+                    dispatch(Msg.OpenWeightBottomSheet(weight))
+                }
+
+                is Intent.OnWeightChanged -> {
+                    val weight = formattedWeight(intent.weight)
+                    dispatch(Msg.OnWeightChanged(weight))
+                }
+
+                Intent.SetWeight -> {
                     scope.launch {
-                        val weight = getState().weightInput
+                        val weight = getState().weight.changeableValue
                         if (isCorrectWeight(weight)) {
                             editPetUseCase(pet.copy(weight = weight.toFloat()))
                             dispatch(Msg.SetWeight(weight.toFloat()))
@@ -162,78 +224,71 @@ class DetailsStoreFactory @Inject constructor(
                     }
                 }
 
-                is Intent.AddEvent -> {
+
+                Intent.OnAddEventClick -> dispatch(Msg.OpenEventBottomSheet)
+                is Intent.OnEventChanged -> dispatch(Msg.OnEventChange(intent.label))
+                Intent.AddEvent -> {
                     scope.launch {
-                        val oldEventList = getState().eventList
+                        val oldEventList = getState().event.list
                         val newEventList = oldEventList
                             .toMutableList()
-                            .apply { add(intent.event) }
+                            .apply {
+                                add(
+                                    Event(
+                                        date = Calendar.getInstance().timeInMillis,
+                                        label = getState().event.changeableLabel
+                                    )
+                                )
+                            }
                             .toList()
                         editPetUseCase(pet.copy(eventList = newEventList))
                         dispatch(Msg.UpdateEvents(newEventList))
                     }
                 }
 
-                is Intent.AddMedicalData -> {
-                    scope.launch {
-                        val oldMedicalDataList = getState().medicalDataList
-                        val newMedicalDataList = oldMedicalDataList
-                            .toMutableList()
-                            .apply { add(intent.medicalData) }
-                            .toList()
-                        editPetUseCase(pet.copy(medicalDataList = newMedicalDataList))
-                        dispatch(Msg.UpdateMedicalDatas(newMedicalDataList))
-                    }
-                }
 
+                Intent.OnAddNoteClick -> dispatch(Msg.OpenNoteBottomSheet)
                 is Intent.AddNote -> {
                     scope.launch {
-                        val oldNoteList = getState().noteList
+                        val oldNoteList = getState().note.list
                         val newNoteList = oldNoteList
                             .toMutableList()
-                            .apply { add(intent.note) }
+                            .apply {
+                                add(
+                                    Note(
+                                        text = getState().note.changeableText,
+                                        iconResId = getState().note.changebleIcon
+                                    )
+                                )
+                            }
                             .toList()
                         editPetUseCase(pet.copy(noteList = newNoteList))
                         dispatch(Msg.UpdateNotes(newNoteList))
                     }
                 }
 
-                Intent.ClickBack -> {
-                    publish(Label.ClickBack)
-                }
 
-                Intent.OnAddEventClick -> {
-                    dispatch(Msg.OpenEventBottomSheet)
-                }
-
-                Intent.OnAddMedicalDataClick -> {
-                    dispatch(Msg.OpenMedicalDataBottomSheet)
-                }
-
-                Intent.OnAddNoteClick -> {
-                    dispatch(Msg.OpenNoteBottomSheet)
-                }
-
-                Intent.CloseBottomSheet -> {
-                    dispatch(Msg.CloseBottomSheet)
-                }
-
-                Intent.OpenDatePickerDialog -> {
-                    dispatch(Msg.OpenDatePickerDialog)
-                }
-
-                Intent.CloseDatePickerDialog -> {
-                    dispatch(Msg.CloseDatePickerDialog)
-                }
-
-                Intent.OnChangeWeightClick -> {
-                    val weight = getState().weight?.toString() ?: ""
-                    dispatch(Msg.OpenWeightBottomSheet(weight))
-                }
-
-                is Intent.OnWeightChanged -> {
-                    val weight = formattedWeight(intent.weight)
-                    dispatch(Msg.OnWeightChanged(weight))
+                Intent.OnAddMedicalDataClick -> dispatch(Msg.OpenMedicalDataBottomSheet)
+                is Intent.AddMedicalData -> {
+                    scope.launch {
+                        val oldMedicalList = getState().medicalData.list
+                        val newMedicalList = oldMedicalList
+                            .toMutableList()
+                            .apply {
+                                add(
+                                    MedicalData(
+                                        name = getState().medicalData.changeableName,
+                                        date = getState().medicalData.changeableDate ?: 0L,
+                                        time = getState().medicalData.changeableTime ?: 0L,
+                                        imageUri = getState().medicalData.imageUri,
+                                        note = getState().medicalData.changeableText
+                                    )
+                                )
+                            }
+                            .toList()
+                        editPetUseCase(pet.copy(medicalDataList = newMedicalList))
+                        dispatch(Msg.UpdateMedicalDatas(newMedicalList))
+                    }
                 }
             }
         }
@@ -242,39 +297,96 @@ class DetailsStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.SetAge -> copy(age = msg.age, datePickerDialogState = false)
-                is Msg.SetWeight -> copy(weight = msg.weight, mustBeClosed = true)
-
-                is Msg.UpdateEvents -> copy(eventList = msg.events, eventBottomSheetState = false)
-                is Msg.UpdateNotes -> copy(noteList = msg.notes, noteBottomSheetState = false)
-                is Msg.UpdateMedicalDatas -> copy(
-                    medicalDataList = msg.medicalDatas,
-                    medicalDataBottomSheetState = false
+                Msg.OpenDatePickerDialog -> copy(age = age.copy(datePickerDialogState = true))
+                Msg.CloseDatePickerDialog -> copy(age = age.copy(datePickerDialogState = false))
+                is Msg.SetAge -> copy(
+                    age = age.copy(
+                        years = msg.age.convertMillisToYearsAndMonths().first,
+                        months = msg.age.convertMillisToYearsAndMonths().second,
+                        datePickerDialogState = false
+                    )
                 )
 
-                Msg.OpenEventBottomSheet -> copy(eventBottomSheetState = true)
-                Msg.OpenNoteBottomSheet -> copy(noteBottomSheetState = true)
-                Msg.OpenMedicalDataBottomSheet -> copy(medicalDataBottomSheetState = true)
+                is Msg.OpenWeightBottomSheet -> copy(
+                    weight = weight.copy(
+                        bottomSheetState = true,
+                        changeableValue = msg.weight,
+                        isIncorrect = false
+                    )
+                )
+
+                is Msg.OnWeightChanged -> copy(
+                    weight = weight.copy(
+                        changeableValue = msg.weight,
+                        isIncorrect = false
+                    )
+                )
+
+                Msg.OnIncorrectWeight -> copy(
+                    weight = weight.copy(
+                        isIncorrect = true
+                    )
+                )
+
+                is Msg.SetWeight -> copy(
+                    weight = weight.copy(
+                        value = msg.weight
+                    ),
+                    bottomSheetMustBeClosed = true
+                )
+
+                Msg.OpenEventBottomSheet -> copy(
+                    event = event.copy(
+                        bottomSheetState = true,
+                        changeableLabel = ""
+                    )
+                )
+
+                is Msg.OnEventChange -> copy(
+                    event = event.copy(
+                        changeableLabel = msg.label
+                    )
+                )
+
+                is Msg.UpdateEvents -> copy(
+                    event = event.copy(
+                        list = msg.events,
+                    ),
+                    bottomSheetMustBeClosed = true
+                )
+
+
+                Msg.OpenNoteBottomSheet -> copy(
+                    note = note.copy(
+                        bottomSheetState = true,
+                        // TODO()
+                    )
+                )
+
+                is Msg.UpdateNotes -> copy(
+                    // TODO(),
+                    bottomSheetMustBeClosed = true
+                )
+
+                Msg.OpenMedicalDataBottomSheet -> copy(
+                    medicalData = medicalData.copy(
+                        bottomSheetState = true
+                        // TODO()
+                    )
+                )
+
+                is Msg.UpdateMedicalDatas -> copy(
+                    // TODO(),
+                    bottomSheetMustBeClosed = true
+                )
 
                 Msg.CloseBottomSheet -> copy(
-                    weightBottomSheetState = false,
-                    eventBottomSheetState = false,
-                    noteBottomSheetState = false,
-                    medicalDataBottomSheetState = false,
-                    mustBeClosed = false
+                    bottomSheetMustBeClosed = false,
+                    weight = weight.copy(bottomSheetState = false),
+                    event = event.copy(bottomSheetState = false),
+                    note = note.copy(bottomSheetState = false),
+                    medicalData = medicalData.copy(bottomSheetState = false)
                 )
-
-                Msg.OpenDatePickerDialog -> copy(datePickerDialogState = true)
-                Msg.CloseDatePickerDialog -> copy(datePickerDialogState = false)
-
-                is Msg.OnWeightChanged -> copy(weightInput = msg.weight, isIncorrectWeight = false)
-                is Msg.OpenWeightBottomSheet -> copy(
-                    weightBottomSheetState = true,
-                    weightInput = msg.weight,
-                    isIncorrectWeight = false
-                )
-
-                Msg.OnIncorrectWeight -> copy(isIncorrectWeight = true)
             }
     }
 
