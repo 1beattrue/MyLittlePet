@@ -1,17 +1,15 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
-import android.app.AlarmManager
 import android.app.Application
-import android.app.PendingIntent
-import android.content.Context.ALARM_SERVICE
 import android.net.Uri
-import android.util.Log
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.R
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
@@ -108,7 +106,8 @@ interface DetailsStore : Store<Intent, State, Label> {
 class DetailsStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val editPetUseCase: EditPetUseCase,
-    private val application: Application
+    private val application: Application,
+    private val alarmScheduler: AlarmScheduler
 ) {
 
     fun create(pet: Pet): DetailsStore =
@@ -269,6 +268,15 @@ class DetailsStoreFactory @Inject constructor(
                                 removeIf { it.id == intent.event.id }
                             }
                             .toList()
+
+                        cancelNotification(
+                            date = intent.event.date,
+                            hours = intent.event.hours,
+                            minutes = intent.event.minutes,
+                            title = pet.name,
+                            text = getState().event.changeableLabel
+                        )
+
                         editPetUseCase(pet.copy(eventList = newEventList))
                         dispatch(Msg.UpdateEvents(newEventList))
                     }
@@ -418,37 +426,47 @@ class DetailsStoreFactory @Inject constructor(
             }
     }
 
-    private fun createNotification(
-        date: Long, hours: Int, minutes: Int,
+    private fun cancelNotification(
+        date: Long,
+        hours: Int,
+        minutes: Int,
         title: String,
         text: String
     ) {
-        val alarmManager = application.getSystemService(ALARM_SERVICE) as AlarmManager
-
         val calendar = Calendar.getInstance().apply {
-            Log.d("DetailsStoreFactory", "$hours")
             timeInMillis = date
             set(Calendar.HOUR_OF_DAY, hours)
             set(Calendar.MINUTE, minutes)
             set(Calendar.SECOND, 0)
         }
 
-        val intent = AlarmReceiver.newIntent(
-            context = application,
-            title = title,
-            text = text
+        alarmScheduler.cancel(
+            AlarmItem(
+                time = calendar.timeInMillis,
+                title = title,
+                text = text
+            )
         )
-        val pendingIntent = PendingIntent.getBroadcast(
-            application,
-            System.currentTimeMillis().toInt(),
-            intent,
-            PendingIntent.FLAG_MUTABLE
-        )
+    }
 
-        alarmManager.setExact(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            pendingIntent
+    private fun createNotification(
+        date: Long, hours: Int, minutes: Int,
+        title: String,
+        text: String
+    ) {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = date
+            set(Calendar.HOUR_OF_DAY, hours)
+            set(Calendar.MINUTE, minutes)
+            set(Calendar.SECOND, 0)
+        }
+
+        alarmScheduler.schedule(
+            AlarmItem(
+                time = calendar.timeInMillis,
+                title = title,
+                text = text
+            )
         )
     }
 

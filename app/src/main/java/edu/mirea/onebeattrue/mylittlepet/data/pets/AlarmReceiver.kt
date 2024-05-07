@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
+package edu.mirea.onebeattrue.mylittlepet.data.pets
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

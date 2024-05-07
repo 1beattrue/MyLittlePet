@@ -63,6 +63,8 @@ class AuthRepositoryImpl @Inject constructor(
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
+                Log.d("AuthRepositoryImpl", "$e")
+
                 trySend(AuthState.Failure(authExceptionMapper.mapFirebaseExceptionToAuthException(e)))
             }
 
