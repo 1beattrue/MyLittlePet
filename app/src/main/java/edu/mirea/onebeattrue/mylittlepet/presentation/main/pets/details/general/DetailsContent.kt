@@ -137,21 +137,6 @@ fun DetailsContent(
         onSetWeight = { component.setWeight() },
         mustBeClosed = state.bottomSheetMustBeClosed
     )
-
-//    EventBottomSheet(
-//        isExpanded = state.event.bottomSheetState,
-//        onCloseBottomSheet = {
-//            component.onCloseBottomSheetClick()
-//        },
-//        onAddEvent = { date, hours, minutes ->
-//            component.addEvent(date, hours, minutes)
-//        },
-//        mustBeClosed = state.bottomSheetMustBeClosed,
-//        label = state.event.changeableLabel,
-//        onChangeLabel = { label ->
-//            component.onEventChages(label)
-//        },
-//    )
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")

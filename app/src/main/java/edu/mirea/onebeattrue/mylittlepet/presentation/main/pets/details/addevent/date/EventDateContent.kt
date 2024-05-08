@@ -10,15 +10,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomNextButton
@@ -30,16 +26,7 @@ fun EventDateContent(
     modifier: Modifier = Modifier,
     component: EventDateComponent
 ) {
-    val state by component.model.collectAsState()
-
     val datePickerState = rememberDatePickerState()
-
-    LaunchedEffect(datePickerState) {
-        snapshotFlow { datePickerState }
-            .collect { date ->
-                component.onEventDateChanged(date.selectedDateMillis!!)
-            }
-    }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -47,21 +34,13 @@ fun EventDateContent(
         verticalArrangement = Arrangement.Center
     ) {
         CustomCardExtremeElevation {
-
             Text(
                 text = stringResource(id = R.string.set_event_date_title),
                 style = MaterialTheme.typography.titleLarge
             )
 
             DatePicker(
-                title = {
-                    Text(
-                        modifier = Modifier.fillMaxSize(),
-                        text = stringResource(id = R.string.event_time_title),
-                        style = MaterialTheme.typography.titleLarge,
-                        textAlign = TextAlign.Center
-                    )
-                },
+                title = {},
                 state = datePickerState
             )
 
@@ -70,7 +49,7 @@ fun EventDateContent(
             }
             CustomNextButton(
                 enabled = confirmEnabled,
-                onClick = { component.finish() }
+                onClick = { component.finish(datePickerState.selectedDateMillis!!) }
             )
         }
     }

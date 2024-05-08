@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.date
 
-import android.icu.util.Calendar
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -20,13 +19,10 @@ import javax.inject.Inject
 interface EventDateStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
-        data class ChangeDate(val date: Long) : Intent
-        data object Finish : Intent
+        data class Finish(val date: Long) : Intent
     }
 
-    data class State(
-        val date: Long
-    )
+    data class State(val nothing: Any)
 
     sealed interface Label {
         data object Finish : Label
@@ -47,9 +43,7 @@ class EventDateStoreFactory @Inject constructor(
     ): EventDateStore =
         object : EventDateStore, Store<Intent, State, Label> by storeFactory.create(
             name = "EventDateStore",
-            initialState = State(
-                date = Calendar.getInstance().timeInMillis
-            ),
+            initialState = State(Any()),
             bootstrapper = BootstrapperImpl(),
             executorFactory = {
                 ExecutorImpl(eventText, eventTimeHours, eventTimeMinutes, pet)
@@ -59,9 +53,7 @@ class EventDateStoreFactory @Inject constructor(
 
     private sealed interface Action
 
-    private sealed interface Msg {
-        data class OnDateChanged(val date: Long) : Msg
-    }
+    private sealed interface Msg
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
         override fun invoke() {
@@ -76,11 +68,7 @@ class EventDateStoreFactory @Inject constructor(
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
-                is Intent.ChangeDate -> {
-                    dispatch(Msg.OnDateChanged(intent.date))
-                }
-
-                Intent.Finish -> {
+                is Intent.Finish -> {
                     scope.launch {
                         val hours = eventTimeHours
                         val minutes = eventTimeMinutes
@@ -90,7 +78,7 @@ class EventDateStoreFactory @Inject constructor(
                                 title = pet.name,
                                 text = eventText,
                                 time = getTimeMillis(
-                                    date = getState().date,
+                                    date = intent.date,
                                     hours = hours,
                                     minutes = minutes
                                 ),
@@ -104,7 +92,7 @@ class EventDateStoreFactory @Inject constructor(
                             .apply {
                                 add(
                                     Event(
-                                        date = null,
+                                        date = intent.date,
                                         hours = hours,
                                         minutes = minutes,
                                         label = eventText,
@@ -122,10 +110,7 @@ class EventDateStoreFactory @Inject constructor(
     }
 
     private object ReducerImpl : Reducer<State, Msg> {
-        override fun State.reduce(msg: Msg): State =
-            when (msg) {
-                is Msg.OnDateChanged -> copy(date = msg.date)
-            }
+        override fun State.reduce(msg: Msg): State = copy()
     }
 
     private fun getTimeMillis(

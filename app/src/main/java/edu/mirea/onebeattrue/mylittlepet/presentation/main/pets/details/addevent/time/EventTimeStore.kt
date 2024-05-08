@@ -20,16 +20,11 @@ import javax.inject.Inject
 interface EventTimeStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
-        data class ChangeTime(val hours: Int, val minutes: Int) : Intent
         data class ChangePeriod(val isDaily: Boolean) : Intent
-        data object GoNext : Intent
+        data class GoNext(val hours: Int, val minutes: Int) : Intent
     }
 
-    data class State(
-        val hours: Int,
-        val minutes: Int,
-        val isDaily: Boolean
-    )
+    data class State(val isDaily: Boolean)
 
     sealed interface Label {
         data class GoNext(val hours: Int, val minutes: Int) : Label
@@ -50,8 +45,6 @@ class EventTimeStoreFactory @Inject constructor(
         object : EventTimeStore, Store<Intent, State, Label> by storeFactory.create(
             name = "EventTimeStore",
             initialState = State(
-                hours = 12,
-                minutes = 0,
                 isDaily = true
             ),
             bootstrapper = BootstrapperImpl(),
@@ -62,7 +55,6 @@ class EventTimeStoreFactory @Inject constructor(
     private sealed interface Action
 
     private sealed interface Msg {
-        data class OnTimeChanged(val hours: Int, val minutes: Int) : Msg
         data class OnPeriodChanged(val isDaily: Boolean) : Msg
     }
 
@@ -77,20 +69,12 @@ class EventTimeStoreFactory @Inject constructor(
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
-                is Intent.ChangeTime -> {
-                    dispatch(
-                        Msg.OnTimeChanged(
-                            hours = intent.hours,
-                            minutes = intent.minutes
-                        )
-                    )
-                }
-
-                Intent.GoNext -> {
+                is Intent.GoNext -> {
                     scope.launch {
                         val isDaily = getState().isDaily
-                        val hours = getState().hours
-                        val minutes = getState().minutes
+
+                        val hours = intent.hours
+                        val minutes = intent.minutes
 
                         if (isDaily) {
                             alarmScheduler.schedule(
@@ -139,10 +123,6 @@ class EventTimeStoreFactory @Inject constructor(
         override fun State.reduce(msg: Msg): State =
             when (msg) {
                 is Msg.OnPeriodChanged -> copy(isDaily = msg.isDaily)
-                is Msg.OnTimeChanged -> copy(
-                    hours = msg.hours,
-                    minutes = msg.minutes
-                )
             }
     }
 

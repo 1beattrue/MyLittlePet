@@ -50,12 +50,8 @@ class DefaultEventTimeComponent @AssistedInject constructor(
         store.accept(EventTimeStore.Intent.ChangePeriod(isDaily))
     }
 
-    override fun onTimeChanged(hours: Int, minutes: Int) {
-        store.accept(EventTimeStore.Intent.ChangeTime(hours, minutes))
-    }
-
-    override fun next() {
-        store.accept(EventTimeStore.Intent.GoNext)
+    override fun next(hours: Int, minutes: Int) {
+        store.accept(EventTimeStore.Intent.GoNext(hours, minutes))
     }
 
     @AssistedFactory

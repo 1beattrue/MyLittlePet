@@ -45,16 +45,8 @@ class DefaultEventDateComponent @AssistedInject constructor(
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val model: StateFlow<EventDateStore.State>
-        get() = store.stateFlow
-
-    override fun onEventDateChanged(dateMillis: Long) {
-        store.accept(EventDateStore.Intent.ChangeDate(dateMillis))
-    }
-
-    override fun finish() {
-        store.accept(EventDateStore.Intent.Finish)
+    override fun finish(dateMillis: Long) {
+        store.accept(EventDateStore.Intent.Finish(dateMillis))
     }
 
     @AssistedFactory

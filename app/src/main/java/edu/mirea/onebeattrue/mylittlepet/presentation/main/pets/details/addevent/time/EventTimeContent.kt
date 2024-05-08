@@ -3,10 +3,8 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addeven
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -66,7 +64,7 @@ fun EventTimeContent(
 
 
             CustomNextButton(
-                onClick = { component.next() }
+                onClick = { component.next(timePickerState.hour, timePickerState.minute) }
             )
         }
     }

@@ -14,6 +14,4 @@ interface AddEventComponent {
         class Time(val component: EventTimeComponent) : Child()
         class Date(val component: EventDateComponent) : Child()
     }
-
-    fun onBackClicked()
 }

@@ -80,10 +80,6 @@ class DefaultAddEventComponent @AssistedInject constructor(
         }
     }
 
-    override fun onBackClicked() {
-        onAddEventClosed()
-    }
-
     @Serializable
     sealed interface Config {
         @Serializable

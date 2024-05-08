@@ -6,6 +6,5 @@ interface EventTimeComponent {
     val model: StateFlow<EventTimeStore.State>
 
     fun onPeriodChanged(isDaily: Boolean)
-    fun onTimeChanged(hours: Int, minutes: Int)
-    fun next()
+    fun next(hours: Int, minutes: Int)
 }
