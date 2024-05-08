@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
-import android.app.Application
 import android.net.Uri
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
@@ -106,7 +105,6 @@ interface DetailsStore : Store<Intent, State, Label> {
 class DetailsStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val editPetUseCase: EditPetUseCase,
-    private val application: Application,
     private val alarmScheduler: AlarmScheduler
 ) {
 
@@ -433,16 +431,11 @@ class DetailsStoreFactory @Inject constructor(
         title: String,
         text: String
     ) {
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = date
-            set(Calendar.HOUR_OF_DAY, hours)
-            set(Calendar.MINUTE, minutes)
-            set(Calendar.SECOND, 0)
-        }
+        val time = getTimeInMillis(date, hours, minutes)
 
         alarmScheduler.cancel(
             AlarmItem(
-                time = calendar.timeInMillis,
+                time = time,
                 title = title,
                 text = text
             )
@@ -450,20 +443,17 @@ class DetailsStoreFactory @Inject constructor(
     }
 
     private fun createNotification(
-        date: Long, hours: Int, minutes: Int,
+        date: Long,
+        hours: Int,
+        minutes: Int,
         title: String,
         text: String
     ) {
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = date
-            set(Calendar.HOUR_OF_DAY, hours)
-            set(Calendar.MINUTE, minutes)
-            set(Calendar.SECOND, 0)
-        }
+        val time = getTimeInMillis(date, hours, minutes)
 
         alarmScheduler.schedule(
             AlarmItem(
-                time = calendar.timeInMillis,
+                time = time,
                 title = title,
                 text = text
             )
@@ -492,5 +482,16 @@ class DetailsStoreFactory @Inject constructor(
         } catch (_: Exception) {
             return false
         }
+    }
+
+    private fun getTimeInMillis(date: Long, hours: Int, minutes: Int): Long {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = date
+            set(Calendar.HOUR_OF_DAY, hours)
+            set(Calendar.MINUTE, minutes)
+            set(Calendar.SECOND, 0)
+        }
+
+        return calendar.timeInMillis
     }
 }
