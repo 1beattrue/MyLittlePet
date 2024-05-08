@@ -22,6 +22,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.dataStore
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.DefaultMainComponent
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_ENGLISH_MODE_KEY
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_NIGHT_MODE_KEY
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
@@ -42,6 +43,7 @@ class DefaultRootComponent @AssistedInject constructor(
 ) : RootComponent, ComponentContext by componentContext {
     private var isDarkTheme: Boolean =
         (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    private var isEnglishLanguage: Boolean = application.resources.configuration.locales.toLanguageTags() == "en"
 
     val store = instanceKeeper.getStore { storeFactory.create() }
 
@@ -50,6 +52,10 @@ class DefaultRootComponent @AssistedInject constructor(
             context.dataStore.data
                 .collect {
                     onThemeChanged(it[IS_NIGHT_MODE_KEY] ?: isDarkTheme)
+                }
+            context.dataStore.data
+                .collect {
+                    onLanguageChanged(it[IS_ENGLISH_MODE_KEY] ?: isEnglishLanguage)
                 }
         }
     }
@@ -92,6 +98,10 @@ class DefaultRootComponent @AssistedInject constructor(
 
     override fun onThemeChanged(isDarkTheme: Boolean) {
         store.accept(RootStore.Intent.ChangeTheme(isDarkTheme))
+    }
+
+    override fun onLanguageChanged(isEnglishLanguage: Boolean) {
+        store.accept(RootStore.Intent.ChangeLanguage(isEnglishLanguage))
     }
 
     @Serializable

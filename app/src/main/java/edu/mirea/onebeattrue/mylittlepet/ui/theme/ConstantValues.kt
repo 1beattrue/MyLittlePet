@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 
 
 val IS_NIGHT_MODE_KEY = booleanPreferencesKey("is_night_mode")
+val IS_ENGLISH_MODE_KEY = booleanPreferencesKey("is_english_mode")
 
 val CORNER_RADIUS_SURFACE = 32.dp
 val CORNER_RADIUS_CONTAINER = 16.dp

@@ -16,4 +16,5 @@ interface RootComponent {
     }
 
     fun onThemeChanged(isDarkTheme: Boolean)
+    fun onLanguageChanged(isEnglishLanguage: Boolean)
 }

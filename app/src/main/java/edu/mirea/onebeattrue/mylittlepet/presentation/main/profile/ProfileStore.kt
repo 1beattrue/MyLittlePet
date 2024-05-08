@@ -24,10 +24,12 @@ interface ProfileStore : Store<Intent, State, Label> {
     sealed interface Intent {
         data object SignOut : Intent
         data class ChangeTheme(val isDarkTheme: Boolean) : Intent
+        data class ChangeLanguage(val isEnglishLanguage: Boolean): Intent
     }
 
     data class State(
-        val isDarkTheme: Boolean
+        val isDarkTheme: Boolean,
+        val isEnglishLanguage: Boolean
     )
 
     sealed interface Label {
@@ -46,7 +48,8 @@ class ProfileStoreFactory @Inject constructor(
             name = "ProfileStore",
             initialState = State(
                 isDarkTheme =
-                (application.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+                (application.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES,
+                isEnglishLanguage = application.resources.configuration.locales.toLanguageTags() == "en"
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -57,6 +60,7 @@ class ProfileStoreFactory @Inject constructor(
 
     private sealed interface Msg {
         data class ChangeTheme(val isDarkTheme: Boolean) : Msg
+        data class ChangeLanguage(val isEnglishLanguage: Boolean) : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -80,6 +84,15 @@ class ProfileStoreFactory @Inject constructor(
                     }
                     dispatch(Msg.ChangeTheme(intent.isDarkTheme))
                 }
+
+                is Intent.ChangeLanguage -> {
+                    scope.launch {
+                        application.dataStore.edit { preferences ->
+                            preferences[IS_NIGHT_MODE_KEY] = intent.isEnglishLanguage
+                        }
+                    }
+                    dispatch(Msg.ChangeLanguage(intent.isEnglishLanguage))
+                }
             }
         }
     }
@@ -88,6 +101,7 @@ class ProfileStoreFactory @Inject constructor(
         override fun State.reduce(msg: Msg): State =
             when(msg) {
                 is Msg.ChangeTheme -> copy(isDarkTheme = msg.isDarkTheme)
+                is Msg.ChangeLanguage -> copy(isEnglishLanguage = msg.isEnglishLanguage)
             }
     }
 }

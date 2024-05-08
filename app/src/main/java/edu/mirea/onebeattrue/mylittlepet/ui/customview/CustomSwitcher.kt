@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
 
 @Composable
-fun CustomThemeSwitcher(
+fun CustomSwitcher(
     modifier: Modifier = Modifier,
-    isDarkTheme: Boolean,
+    booleanState: Boolean,
     size: Dp = 150.dp,
     iconSize: Dp = size / 3,
     padding: Dp = 10.dp,
@@ -39,10 +39,11 @@ fun CustomThemeSwitcher(
     parentShape: Shape = CircleShape,
     toggleShape: Shape = CircleShape,
     animationSpec: AnimationSpec<Dp> = tween(durationMillis = 300),
-    changeTheme: (Boolean) -> Unit
+    action: (Boolean) -> Unit
 ) {
+
     val offset by animateDpAsState(
-        targetValue = if (isDarkTheme) 0.dp else size,
+        targetValue = if (booleanState) 0.dp else size,
         animationSpec = animationSpec,
         label = "animation",
     )
@@ -52,7 +53,7 @@ fun CustomThemeSwitcher(
         .height(size)
         .clip(shape = parentShape)
         .clickable {
-            changeTheme(!isDarkTheme)
+            action(!booleanState)
         }
         .background(MaterialTheme.colorScheme.secondaryContainer)
     ) {
@@ -82,7 +83,7 @@ fun CustomThemeSwitcher(
                     modifier = Modifier.size(iconSize),
                     painter = painterResource(R.drawable.ic_night),
                     contentDescription = null,
-                    tint = if (isDarkTheme) MaterialTheme.colorScheme.secondaryContainer
+                    tint = if (booleanState) MaterialTheme.colorScheme.secondaryContainer
                     else MaterialTheme.colorScheme.primary
                 )
             }
@@ -94,10 +95,32 @@ fun CustomThemeSwitcher(
                     modifier = Modifier.size(iconSize),
                     painter = painterResource(R.drawable.ic_light),
                     contentDescription = null,
-                    tint = if (isDarkTheme) MaterialTheme.colorScheme.primary
+                    tint = if (booleanState) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.secondaryContainer
                 )
             }
         }
     }
+}
+
+@Composable
+fun CustomThemeSwitcher(
+    isDarkTheme: Boolean,
+    changeTheme: (Boolean) -> Unit
+) {
+    CustomSwitcher(
+        booleanState = isDarkTheme,
+        action = changeTheme
+    )
+}
+
+@Composable
+fun CustomLanguageSwitcher(
+    isEnglishLanguage: Boolean,
+    changeLanguage: (Boolean) -> Unit
+) {
+    CustomSwitcher(
+        booleanState = isEnglishLanguage,
+        action = changeLanguage
+    )
 }

@@ -14,10 +14,12 @@ interface RootStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
         data class ChangeTheme(val isDarkTheme: Boolean) : Intent
+        data class ChangeLanguage(val isEnglishLanguage: Boolean): Intent
     }
 
     data class State(
-        var isDarkTheme: Boolean?
+        var isDarkTheme: Boolean?,
+        var isEnglishLanguage: Boolean?
     )
 
     sealed interface Label {
@@ -32,7 +34,8 @@ class RootStoreFactory @Inject constructor(
         object : RootStore, Store<Intent, State, Label> by storeFactory.create(
             name = "RootStore",
             initialState = State(
-                isDarkTheme = null
+                isDarkTheme = null,
+                isEnglishLanguage = null
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -44,6 +47,7 @@ class RootStoreFactory @Inject constructor(
 
     private sealed interface Msg {
         data class ChangeTheme(val isDarkTheme: Boolean) : Msg
+        data class ChangeLanguage(val isEnglishLanguage: Boolean) : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -57,6 +61,10 @@ class RootStoreFactory @Inject constructor(
                 is Intent.ChangeTheme -> {
                     dispatch(Msg.ChangeTheme(intent.isDarkTheme))
                 }
+
+                is Intent.ChangeLanguage -> {
+                    dispatch(Msg.ChangeLanguage(intent.isEnglishLanguage))
+                }
             }
         }
     }
@@ -65,7 +73,7 @@ class RootStoreFactory @Inject constructor(
         override fun State.reduce(msg: Msg): State =
             when (msg) {
                 is Msg.ChangeTheme -> copy(isDarkTheme = msg.isDarkTheme)
+                is Msg.ChangeLanguage -> copy(isEnglishLanguage = msg.isEnglishLanguage)
             }
     }
 }
-

@@ -49,6 +49,10 @@ class DefaultProfileComponent @AssistedInject constructor(
         store.accept(ProfileStore.Intent.ChangeTheme(isDarkTheme))
     }
 
+    override fun changeLanguage(isEnglishLanguage: Boolean) {
+        store.accept(ProfileStore.Intent.ChangeLanguage(isEnglishLanguage))
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(

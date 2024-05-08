@@ -9,4 +9,5 @@ interface ProfileComponent {
     fun signOut()
 
     fun changeTheme(isDarkTheme: Boolean)
+    fun changeLanguage(isEnglishLanguage: Boolean)
 }
