@@ -13,7 +13,6 @@ interface DetailsComponent {
 
     fun onChangeWeightClick()
     fun onWeightChages(weight: String)
-    fun onEventChages(label: String)
 
     fun onAddEventClick()
     fun onAddNoteClick()
@@ -23,16 +22,10 @@ interface DetailsComponent {
 
     fun onCloseBottomSheetClick()
 
-    fun addEvent(
-        date: Long,
-        hours: Int,
-        minutes: Int,
-    )
 
     fun addNote()
     fun addMedicalData()
 
-    fun onBackClicked()
 
     fun openDatePickerDialog()
     fun closeDatePickerDialog()

@@ -18,6 +18,7 @@ class DefaultDetailsComponent @AssistedInject constructor(
     private val storeFactory: DetailsStoreFactory,
 
     @Assisted("pet") override val pet: Pet,
+    @Assisted("onAddEvent") private val onAddEvent: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : DetailsComponent, ComponentContext by componentContext {
     val store = instanceKeeper.getStore { storeFactory.create(pet) }
@@ -26,8 +27,8 @@ class DefaultDetailsComponent @AssistedInject constructor(
         componentScope.launch {
             store.labels.collect {
                 when (it) {
-                    DetailsStore.Label.ClickBack -> {
-
+                    DetailsStore.Label.AddEvent -> {
+                        onAddEvent()
                     }
                 }
             }
@@ -48,10 +49,6 @@ class DefaultDetailsComponent @AssistedInject constructor(
 
     override fun onWeightChages(weight: String) {
         store.accept(DetailsStore.Intent.OnWeightChanged(weight))
-    }
-
-    override fun onEventChages(label: String) {
-        store.accept(DetailsStore.Intent.OnEventChanged(label))
     }
 
     override fun setWeight() {
@@ -78,24 +75,12 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.CloseBottomSheet)
     }
 
-    override fun addEvent(
-        date: Long,
-        hours: Int,
-        minutes: Int,
-    ) {
-        store.accept(DetailsStore.Intent.AddEvent(date, hours, minutes))
-    }
-
     override fun addNote() {
         store.accept(DetailsStore.Intent.AddNote)
     }
 
     override fun addMedicalData() {
         store.accept(DetailsStore.Intent.AddMedicalData)
-    }
-
-    override fun onBackClicked() {
-        store.accept(DetailsStore.Intent.ClickBack)
     }
 
     override fun openDatePickerDialog() {
@@ -111,6 +96,7 @@ class DefaultDetailsComponent @AssistedInject constructor(
         fun create(
 
             @Assisted("pet") pet: Pet,
+            @Assisted("onAddEvent") onAddEvent: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultDetailsComponent
     }

@@ -75,8 +75,11 @@
     <string name="add_event_app_bar_title">Добавление события</string>
     <string name="event_list_title">События</string>
     <string name="add_event">Добавить событие</string>
-    <string name="new_event_title">Новое событие</string>
+    <string name="enter_event_title">Введите текст события</string>
+    <string name="set_event_time_title">Установите время события</string>
+    <string name="set_event_date_title">Установите дату события</string>
     <string name="new_event_hint">Ммм?</string>
+    <string name="error_event_text">Добавьте текст события</string>
     <string name="event_time_title">Когда напомнить?</string>
 
     <string name="january">января</string>

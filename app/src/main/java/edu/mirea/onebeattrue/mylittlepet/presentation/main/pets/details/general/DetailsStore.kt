@@ -25,8 +25,6 @@ import javax.inject.Inject
 interface DetailsStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
-        data object ClickBack : Intent
-
         data object OpenDatePickerDialog : Intent
         data object CloseDatePickerDialog : Intent
         data class SetAge(val dateOfBirth: Long) : Intent
@@ -36,13 +34,6 @@ interface DetailsStore : Store<Intent, State, Label> {
         data object SetWeight : Intent
 
         data object OnAddEventClick : Intent
-        data class OnEventChanged(val label: String) : Intent
-        data class AddEvent(
-            val date: Long,
-            val hours: Int,
-            val minutes: Int,
-        ) : Intent
-
         data class DeleteEvent(val event: Event) : Intent
 
         data object OnAddNoteClick : Intent
@@ -76,9 +67,7 @@ interface DetailsStore : Store<Intent, State, Label> {
         )
 
         data class EventState(
-            val list: List<Event>,
-            val changeableLabel: String,
-            val bottomSheetState: Boolean
+            val list: List<Event>
         )
 
         data class NoteState(
@@ -98,7 +87,7 @@ interface DetailsStore : Store<Intent, State, Label> {
     }
 
     sealed interface Label {
-        data object ClickBack : Label
+        data object AddEvent : Label
     }
 }
 
@@ -128,9 +117,7 @@ class DetailsStoreFactory @Inject constructor(
                     bottomSheetState = false
                 ),
                 event = State.EventState(
-                    list = pet.eventList,
-                    changeableLabel = "",
-                    bottomSheetState = false
+                    list = pet.eventList
                 ),
                 note = State.NoteState(
                     list = pet.noteList,
@@ -164,10 +151,6 @@ class DetailsStoreFactory @Inject constructor(
         data object OnIncorrectWeight : Msg
         data class SetWeight(val weight: Float) : Msg
 
-        data object OpenEventBottomSheet : Msg
-        data class OnEventChange(val label: String) : Msg
-        data class UpdateEvents(val events: List<Event>) : Msg
-
         data object OpenNoteBottomSheet : Msg
         data class UpdateNotes(val notes: List<Note>) : Msg
 
@@ -187,7 +170,6 @@ class DetailsStoreFactory @Inject constructor(
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
-                Intent.ClickBack -> publish(Label.ClickBack)
                 Intent.CloseBottomSheet -> dispatch(Msg.CloseBottomSheet)
 
 
@@ -223,40 +205,6 @@ class DetailsStoreFactory @Inject constructor(
                     }
                 }
 
-
-                Intent.OnAddEventClick -> dispatch(Msg.OpenEventBottomSheet)
-                is Intent.OnEventChanged -> dispatch(Msg.OnEventChange(intent.label))
-                is Intent.AddEvent -> {
-                    scope.launch {
-                        val oldEventList = getState().event.list
-                        val newEventList = oldEventList
-                            .toMutableList()
-                            .apply {
-                                add(
-                                    Event(
-                                        date = intent.date,
-                                        hours = intent.hours,
-                                        minutes = intent.minutes,
-                                        label = getState().event.changeableLabel,
-                                        id = generateEventId(this)
-                                    )
-                                )
-                            }
-                            .toList()
-
-                        createNotification(
-                            date = intent.date,
-                            hours = intent.hours,
-                            minutes = intent.minutes,
-                            title = pet.name,
-                            text = getState().event.changeableLabel
-                        )
-
-                        editPetUseCase(pet.copy(eventList = newEventList))
-                        dispatch(Msg.UpdateEvents(newEventList))
-                    }
-                }
-
                 is Intent.DeleteEvent -> {
                     scope.launch {
                         val oldEventList = getState().event.list
@@ -267,16 +215,15 @@ class DetailsStoreFactory @Inject constructor(
                             }
                             .toList()
 
-//                        cancelNotification(
-//                            date = intent.event.date,
-//                            hours = intent.event.hours,
-//                            minutes = intent.event.minutes,
-//                            title = pet.name,
-//                            text = getState().event.changeableLabel
-//                        )
+                        cancelNotification(
+                            date = intent.event.date,
+                            hours = intent.event.hours,
+                            minutes = intent.event.minutes,
+                            title = pet.name,
+                            text = intent.event.label
+                        )
 
                         editPetUseCase(pet.copy(eventList = newEventList))
-                        dispatch(Msg.UpdateEvents(newEventList))
                     }
                 }
 
@@ -324,6 +271,8 @@ class DetailsStoreFactory @Inject constructor(
                         dispatch(Msg.UpdateMedicalDatas(newMedicalList))
                     }
                 }
+
+                Intent.OnAddEventClick -> publish(Label.AddEvent)
             }
         }
     }
@@ -369,27 +318,6 @@ class DetailsStoreFactory @Inject constructor(
                     bottomSheetMustBeClosed = true
                 )
 
-                Msg.OpenEventBottomSheet -> copy(
-                    event = event.copy(
-                        bottomSheetState = true,
-                        changeableLabel = ""
-                    )
-                )
-
-                is Msg.OnEventChange -> copy(
-                    event = event.copy(
-                        changeableLabel = msg.label
-                    )
-                )
-
-                is Msg.UpdateEvents -> copy(
-                    event = event.copy(
-                        list = msg.events,
-                    ),
-                    bottomSheetMustBeClosed = true
-                )
-
-
                 Msg.OpenNoteBottomSheet -> copy(
                     note = note.copy(
                         bottomSheetState = true,
@@ -417,33 +345,14 @@ class DetailsStoreFactory @Inject constructor(
                 Msg.CloseBottomSheet -> copy(
                     bottomSheetMustBeClosed = false,
                     weight = weight.copy(bottomSheetState = false),
-                    event = event.copy(bottomSheetState = false),
                     note = note.copy(bottomSheetState = false),
                     medicalData = medicalData.copy(bottomSheetState = false)
                 )
             }
     }
 
-//    private fun cancelNotification(
-//        date: Long?,
-//        hours: Int,
-//        minutes: Int,
-//        title: String,
-//        text: String
-//    ) {
-//        val time = getTimeInMillis(date, hours, minutes)
-//
-//        alarmScheduler.cancel(
-//            AlarmItem(
-//                time = time,
-//                title = title,
-//                text = text
-//            )
-//        )
-//    }
-
-    private fun createNotification(
-        date: Long,
+    private fun cancelNotification(
+        date: Long?,
         hours: Int,
         minutes: Int,
         title: String,
@@ -451,7 +360,7 @@ class DetailsStoreFactory @Inject constructor(
     ) {
         val time = getTimeInMillis(date, hours, minutes)
 
-        alarmScheduler.schedule(
+        alarmScheduler.cancel(
             AlarmItem(
                 time = time,
                 title = title,
@@ -484,9 +393,9 @@ class DetailsStoreFactory @Inject constructor(
         }
     }
 
-    private fun getTimeInMillis(date: Long, hours: Int, minutes: Int): Long {
+    private fun getTimeInMillis(date: Long?, hours: Int, minutes: Int): Long {
         val calendar = Calendar.getInstance().apply {
-            timeInMillis = date
+            date?.let { timeInMillis = it }
             set(Calendar.HOUR_OF_DAY, hours)
             set(Calendar.MINUTE, minutes)
             set(Calendar.SECOND, 0)

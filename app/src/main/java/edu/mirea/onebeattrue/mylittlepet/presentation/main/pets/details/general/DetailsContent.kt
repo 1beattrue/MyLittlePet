@@ -19,25 +19,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -67,9 +62,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDate
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
-import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
@@ -86,94 +79,65 @@ fun DetailsContent(
     modifier: Modifier = Modifier,
     component: DetailsComponent
 ) {
-//    val state by component.model.collectAsState()
-//
-//    Scaffold(
-//        modifier = modifier.fillMaxSize(),
-//        topBar = {
-//            TopAppBar(
-//                colors = TopAppBarDefaults.topAppBarColors(
-//                    containerColor = MaterialTheme.colorScheme.surface,
-//                    titleContentColor = MaterialTheme.colorScheme.onSurface
-//                ),
-//                title = {
-//                    Text(
-//                        style = MaterialTheme.typography.titleLarge,
-//                        text = stringResource(R.string.pet_details_app_bar_title)
-//                    )
-//                },
-//                navigationIcon = {
-//                    IconButton(
-//                        onClick = { component.onBackClicked() },
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-//                            contentDescription = null
-//                        )
-//                    }
-//                }
-//            )
-//        },
-//    ) { paddingValues ->
-//        LazyColumn(
-//            modifier = Modifier.padding(paddingValues),
-//            contentPadding = PaddingValues(vertical = 16.dp),
-//            verticalArrangement = Arrangement.spacedBy(16.dp)
-//        ) {
-//            item {
-//                PetCard(pet = component.pet)
-//            }
-//            item {
-//                Row(
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    AgeCard(
-//                        modifier = Modifier.weight(0.5f),
-//                        age = state.age
-//                    ) {
-//                        component.openDatePickerDialog()
-//                    }
-//                    WeightCard(
-//                        modifier = Modifier.weight(0.5f),
-//                        weight = state.weight.value
-//                    ) {
-//                        component.onChangeWeightClick()
-//                    }
-//                }
-//            }
-//
-//            EventList(
-//                eventList = state.event.list,
-//                onAddEvent = {
-//                    component.onAddEventClick()
-//                },
-//                onDeleteEvent = { event ->
-//                    component.onDeleteEvent(event)
-//                },
-//            )
-//        }
-//    }
-//
-//    CustomDatePickerDialog(
-//        state = state.age.datePickerDialogState,
-//        onDismissRequest = { component.closeDatePickerDialog() },
-//        onDatePicked = { date ->
-//            component.setAge(date)
-//        }
-//    )
-//
-//    WeightBottomSheet(
-//        isExpanded = state.weight.bottomSheetState,
-//        onCloseBottomSheet = { component.onCloseBottomSheetClick() },
-//        weightInput = state.weight.changeableValue,
-//        isError = state.weight.isIncorrect,
-//        onChangeWeight = { weight ->
-//            component.onWeightChages(weight)
-//        },
-//        onSetWeight = { component.setWeight() },
-//        mustBeClosed = state.bottomSheetMustBeClosed
-//    )
-//
+    val state by component.model.collectAsState()
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        item {
+            PetCard(pet = component.pet)
+        }
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                AgeCard(
+                    modifier = Modifier.weight(0.5f),
+                    age = state.age
+                ) {
+                    component.openDatePickerDialog()
+                }
+                WeightCard(
+                    modifier = Modifier.weight(0.5f),
+                    weight = state.weight.value
+                ) {
+                    component.onChangeWeightClick()
+                }
+            }
+        }
+
+        EventList(
+            eventList = state.event.list,
+            onAddEvent = {
+                component.onAddEventClick()
+            },
+            onDeleteEvent = { event ->
+                component.onDeleteEvent(event)
+            },
+        )
+    }
+
+    CustomDatePickerDialog(
+        state = state.age.datePickerDialogState,
+        onDismissRequest = { component.closeDatePickerDialog() },
+        onDatePicked = { date ->
+            component.setAge(date)
+        }
+    )
+
+    WeightBottomSheet(
+        isExpanded = state.weight.bottomSheetState,
+        onCloseBottomSheet = { component.onCloseBottomSheetClick() },
+        weightInput = state.weight.changeableValue,
+        isError = state.weight.isIncorrect,
+        onChangeWeight = { weight ->
+            component.onWeightChages(weight)
+        },
+        onSetWeight = { component.setWeight() },
+        mustBeClosed = state.bottomSheetMustBeClosed
+    )
+
 //    EventBottomSheet(
 //        isExpanded = state.event.bottomSheetState,
 //        onCloseBottomSheet = {
@@ -307,7 +271,7 @@ private fun EventBottomSheet(
                     CustomCard(elevation = STRONG_ELEVATION) {
 
                         Text(
-                            text = stringResource(id = R.string.new_event_title),
+                            text = stringResource(id = R.string.enter_event_title),
                             style = MaterialTheme.typography.titleLarge
                         )
 

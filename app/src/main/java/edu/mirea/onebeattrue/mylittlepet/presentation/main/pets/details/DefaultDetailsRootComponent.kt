@@ -5,6 +5,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -60,6 +61,9 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
         Config.Details -> {
             val component = detailsComponentFactory.create(
                 pet = pet,
+                onAddEvent = {
+                    navigation.pushNew(Config.AddEvent)
+                },
                 componentContext = componentContext
             )
             DetailsRootComponent.Child.Details(component)
