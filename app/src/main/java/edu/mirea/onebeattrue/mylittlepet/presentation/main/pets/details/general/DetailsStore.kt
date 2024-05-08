@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
+package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general
 
 import android.net.Uri
 import com.arkivanov.mvikotlin.core.store.Reducer
@@ -15,9 +15,9 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToYearsAndMonths
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.Intent
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.Label
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsStore.State
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.Intent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.Label
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.State
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
@@ -267,13 +267,13 @@ class DetailsStoreFactory @Inject constructor(
                             }
                             .toList()
 
-                        cancelNotification(
-                            date = intent.event.date,
-                            hours = intent.event.hours,
-                            minutes = intent.event.minutes,
-                            title = pet.name,
-                            text = getState().event.changeableLabel
-                        )
+//                        cancelNotification(
+//                            date = intent.event.date,
+//                            hours = intent.event.hours,
+//                            minutes = intent.event.minutes,
+//                            title = pet.name,
+//                            text = getState().event.changeableLabel
+//                        )
 
                         editPetUseCase(pet.copy(eventList = newEventList))
                         dispatch(Msg.UpdateEvents(newEventList))
@@ -424,23 +424,23 @@ class DetailsStoreFactory @Inject constructor(
             }
     }
 
-    private fun cancelNotification(
-        date: Long,
-        hours: Int,
-        minutes: Int,
-        title: String,
-        text: String
-    ) {
-        val time = getTimeInMillis(date, hours, minutes)
-
-        alarmScheduler.cancel(
-            AlarmItem(
-                time = time,
-                title = title,
-                text = text
-            )
-        )
-    }
+//    private fun cancelNotification(
+//        date: Long?,
+//        hours: Int,
+//        minutes: Int,
+//        title: String,
+//        text: String
+//    ) {
+//        val time = getTimeInMillis(date, hours, minutes)
+//
+//        alarmScheduler.cancel(
+//            AlarmItem(
+//                time = time,
+//                title = title,
+//                text = text
+//            )
+//        )
+//    }
 
     private fun createNotification(
         date: Long,

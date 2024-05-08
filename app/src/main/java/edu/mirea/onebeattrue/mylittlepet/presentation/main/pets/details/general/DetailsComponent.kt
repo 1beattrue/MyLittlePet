@@ -1,8 +1,6 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
+package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general
 
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import kotlinx.coroutines.flow.StateFlow
 

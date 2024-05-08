@@ -21,7 +21,7 @@ class PetRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deletePet(pet: Pet) {
-        pet.eventList.forEach {  event ->
+        pet.eventList.forEach { event ->
             val time = getTimeInMillis(event.date, event.hours, event.minutes)
 
             alarmScheduler.cancel(
@@ -44,9 +44,9 @@ class PetRepositoryImpl @Inject constructor(
         mapper.mapListDbModelToListEntity(it)
     }
 
-    private fun getTimeInMillis(date: Long, hours: Int, minutes: Int): Long {
+    private fun getTimeInMillis(date: Long?, hours: Int, minutes: Int): Long {
         val calendar = Calendar.getInstance().apply {
-            timeInMillis = date
+            date?.let { timeInMillis = it }
             set(Calendar.HOUR_OF_DAY, hours)
             set(Calendar.MINUTE, minutes)
             set(Calendar.SECOND, 0)

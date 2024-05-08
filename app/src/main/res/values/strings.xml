@@ -71,6 +71,8 @@
     <string name="weight_format">%1\$s kg</string>
     <string name="enter_weight">Enter weight</string>
 
+
+    <string name="add_event_app_bar_title">Adding an event</string>
     <string name="event_list_title">Events</string>
     <string name="add_event">Add event</string>
     <string name="new_event_title">New event</string>

@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
+package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -86,108 +86,108 @@ fun DetailsContent(
     modifier: Modifier = Modifier,
     component: DetailsComponent
 ) {
-    val state by component.model.collectAsState()
-
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                title = {
-                    Text(
-                        style = MaterialTheme.typography.titleLarge,
-                        text = stringResource(R.string.pet_details_app_bar_title)
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { component.onBackClicked() },
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
-        },
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier.padding(paddingValues),
-            contentPadding = PaddingValues(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item {
-                PetCard(pet = component.pet)
-            }
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    AgeCard(
-                        modifier = Modifier.weight(0.5f),
-                        age = state.age
-                    ) {
-                        component.openDatePickerDialog()
-                    }
-                    WeightCard(
-                        modifier = Modifier.weight(0.5f),
-                        weight = state.weight.value
-                    ) {
-                        component.onChangeWeightClick()
-                    }
-                }
-            }
-
-            EventList(
-                eventList = state.event.list,
-                onAddEvent = {
-                    component.onAddEventClick()
-                },
-                onDeleteEvent = { event ->
-                    component.onDeleteEvent(event)
-                },
-            )
-        }
-    }
-
-    CustomDatePickerDialog(
-        state = state.age.datePickerDialogState,
-        onDismissRequest = { component.closeDatePickerDialog() },
-        onDatePicked = { date ->
-            component.setAge(date)
-        }
-    )
-
-    WeightBottomSheet(
-        isExpanded = state.weight.bottomSheetState,
-        onCloseBottomSheet = { component.onCloseBottomSheetClick() },
-        weightInput = state.weight.changeableValue,
-        isError = state.weight.isIncorrect,
-        onChangeWeight = { weight ->
-            component.onWeightChages(weight)
-        },
-        onSetWeight = { component.setWeight() },
-        mustBeClosed = state.bottomSheetMustBeClosed
-    )
-
-    EventBottomSheet(
-        isExpanded = state.event.bottomSheetState,
-        onCloseBottomSheet = {
-            component.onCloseBottomSheetClick()
-        },
-        onAddEvent = { date, hours, minutes ->
-            component.addEvent(date, hours, minutes)
-        },
-        mustBeClosed = state.bottomSheetMustBeClosed,
-        label = state.event.changeableLabel,
-        onChangeLabel = { label ->
-            component.onEventChages(label)
-        },
-    )
+//    val state by component.model.collectAsState()
+//
+//    Scaffold(
+//        modifier = modifier.fillMaxSize(),
+//        topBar = {
+//            TopAppBar(
+//                colors = TopAppBarDefaults.topAppBarColors(
+//                    containerColor = MaterialTheme.colorScheme.surface,
+//                    titleContentColor = MaterialTheme.colorScheme.onSurface
+//                ),
+//                title = {
+//                    Text(
+//                        style = MaterialTheme.typography.titleLarge,
+//                        text = stringResource(R.string.pet_details_app_bar_title)
+//                    )
+//                },
+//                navigationIcon = {
+//                    IconButton(
+//                        onClick = { component.onBackClicked() },
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+//                            contentDescription = null
+//                        )
+//                    }
+//                }
+//            )
+//        },
+//    ) { paddingValues ->
+//        LazyColumn(
+//            modifier = Modifier.padding(paddingValues),
+//            contentPadding = PaddingValues(vertical = 16.dp),
+//            verticalArrangement = Arrangement.spacedBy(16.dp)
+//        ) {
+//            item {
+//                PetCard(pet = component.pet)
+//            }
+//            item {
+//                Row(
+//                    modifier = Modifier.fillMaxWidth()
+//                ) {
+//                    AgeCard(
+//                        modifier = Modifier.weight(0.5f),
+//                        age = state.age
+//                    ) {
+//                        component.openDatePickerDialog()
+//                    }
+//                    WeightCard(
+//                        modifier = Modifier.weight(0.5f),
+//                        weight = state.weight.value
+//                    ) {
+//                        component.onChangeWeightClick()
+//                    }
+//                }
+//            }
+//
+//            EventList(
+//                eventList = state.event.list,
+//                onAddEvent = {
+//                    component.onAddEventClick()
+//                },
+//                onDeleteEvent = { event ->
+//                    component.onDeleteEvent(event)
+//                },
+//            )
+//        }
+//    }
+//
+//    CustomDatePickerDialog(
+//        state = state.age.datePickerDialogState,
+//        onDismissRequest = { component.closeDatePickerDialog() },
+//        onDatePicked = { date ->
+//            component.setAge(date)
+//        }
+//    )
+//
+//    WeightBottomSheet(
+//        isExpanded = state.weight.bottomSheetState,
+//        onCloseBottomSheet = { component.onCloseBottomSheetClick() },
+//        weightInput = state.weight.changeableValue,
+//        isError = state.weight.isIncorrect,
+//        onChangeWeight = { weight ->
+//            component.onWeightChages(weight)
+//        },
+//        onSetWeight = { component.setWeight() },
+//        mustBeClosed = state.bottomSheetMustBeClosed
+//    )
+//
+//    EventBottomSheet(
+//        isExpanded = state.event.bottomSheetState,
+//        onCloseBottomSheet = {
+//            component.onCloseBottomSheetClick()
+//        },
+//        onAddEvent = { date, hours, minutes ->
+//            component.addEvent(date, hours, minutes)
+//        },
+//        mustBeClosed = state.bottomSheetMustBeClosed,
+//        label = state.event.changeableLabel,
+//        onChangeLabel = { label ->
+//            component.onEventChages(label)
+//        },
+//    )
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -647,23 +647,24 @@ private fun EventCard(
             textAlign = TextAlign.Center
         )
 
-        val localDate = event.date.convertMillisToLocalDate()
-        val day = localDate.dayOfMonth
-        val month = localDate.month.getName()
-        val year = localDate.year
-
-        val formattedTime = "${
-            event.hours.toString().padStart(2, '0')
-        }:${
-            event.minutes.toString().padStart(2, '0')
-        }"
-
-        val date =
-            stringResource(R.string.date_format, day, month, year, formattedTime)
-
-        Text(
-            text = date,
-            style = MaterialTheme.typography.bodySmall,
-        )
+        // TODO: date - null ?
+//        val localDate = event.date.convertMillisToLocalDate()
+//        val day = localDate.dayOfMonth
+//        val month = localDate.month.getName()
+//        val year = localDate.year
+//
+//        val formattedTime = "${
+//            event.hours.toString().padStart(2, '0')
+//        }:${
+//            event.minutes.toString().padStart(2, '0')
+//        }"
+//
+//        val date =
+//            stringResource(R.string.date_format, day, month, year, formattedTime)
+//
+//        Text(
+//            text = date,
+//            style = MaterialTheme.typography.bodySmall,
+//        )
     }
 }

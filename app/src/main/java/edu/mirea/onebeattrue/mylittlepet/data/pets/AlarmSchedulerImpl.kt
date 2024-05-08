@@ -24,11 +24,20 @@ class AlarmSchedulerImpl @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        alarmManager.setExact(
-            AlarmManager.RTC_WAKEUP,
-            item.time,
-            pendingIntent
-        )
+        if (!item.repeatable) {
+            alarmManager.setExact(
+                AlarmManager.RTC_WAKEUP,
+                item.time,
+                pendingIntent
+            )
+        } else {
+            alarmManager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                item.time,
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+            )
+        }
     }
 
     override fun cancel(item: AlarmItem) {

@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
+package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 class DefaultDetailsComponent @AssistedInject constructor(
     private val storeFactory: DetailsStoreFactory,
 
-    @Assisted("onBackClick") private val onBackClick: () -> Unit,
     @Assisted("pet") override val pet: Pet,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : DetailsComponent, ComponentContext by componentContext {
@@ -28,7 +27,7 @@ class DefaultDetailsComponent @AssistedInject constructor(
             store.labels.collect {
                 when (it) {
                     DetailsStore.Label.ClickBack -> {
-                        onBackClick()
+
                     }
                 }
             }
@@ -112,7 +111,6 @@ class DefaultDetailsComponent @AssistedInject constructor(
         fun create(
 
             @Assisted("pet") pet: Pet,
-            @Assisted("onBackClick") onBackClick: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultDetailsComponent
     }
