@@ -78,6 +78,7 @@
     <string name="enter_event_title">Enter event text</string>
     <string name="set_event_time_title">Set the event time</string>
     <string name="set_event_date_title">Set the event date</string>
+    <string name="daily_checkbox">Repeat daily</string>
     <string name="new_event_hint">Mmm?</string>
     <string name="error_event_text">Add event text</string>
     <string name="event_time_title">When to remind?</string>

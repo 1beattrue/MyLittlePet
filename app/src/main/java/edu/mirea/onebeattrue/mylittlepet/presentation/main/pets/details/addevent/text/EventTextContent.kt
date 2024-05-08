@@ -75,7 +75,6 @@ private fun EnteredTextField(
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
-        singleLine = true,
         isError = isIncorrect,
         supportingText = {
             if (isIncorrect) {
@@ -87,5 +86,7 @@ private fun EnteredTextField(
                 Icon(imageVector = Icons.Rounded.Warning, contentDescription = null)
             }
         },
+        minLines = 3,
+        maxLines = 3
     )
 }
