@@ -44,6 +44,10 @@ class PetRepositoryImpl @Inject constructor(
         mapper.mapListDbModelToListEntity(it)
     }
 
+    override fun getPetById(petId: Int): Flow<Pet> = petListDao.getPetById(petId).map {
+        mapper.mapDbModelToEntity(it)
+    }
+
     private fun getTimeInMillis(date: Long?, hours: Int, minutes: Int): Long {
         val calendar = Calendar.getInstance().apply {
             date?.let { timeInMillis = it }

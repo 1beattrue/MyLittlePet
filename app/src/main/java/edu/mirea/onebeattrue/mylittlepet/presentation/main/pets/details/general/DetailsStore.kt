@@ -14,6 +14,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GetPetByIdUseCase
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToYearsAndMonths
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.Label
@@ -94,7 +95,8 @@ interface DetailsStore : Store<Intent, State, Label> {
 class DetailsStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val editPetUseCase: EditPetUseCase,
-    private val alarmScheduler: AlarmScheduler
+    private val alarmScheduler: AlarmScheduler,
+    private val getPetByIdUseCase: GetPetByIdUseCase
 ) {
 
     fun create(pet: Pet): DetailsStore =
@@ -134,14 +136,18 @@ class DetailsStoreFactory @Inject constructor(
                 ),
                 bottomSheetMustBeClosed = false
             ),
-            bootstrapper = BootstrapperImpl(),
+            bootstrapper = BootstrapperImpl(pet),
             executorFactory = { ExecutorImpl(pet) },
             reducer = ReducerImpl
         ) {}
 
-    private sealed interface Action
+    private sealed interface Action {
+        data class UpdateEventList(val eventList: List<Event>) : Action
+    }
 
     private sealed interface Msg {
+        data class UpdateEventList(val eventList: List<Event>) : Msg
+
         data object OpenDatePickerDialog : Msg
         data object CloseDatePickerDialog : Msg
         data class SetAge(val age: Long) : Msg
@@ -160,14 +166,28 @@ class DetailsStoreFactory @Inject constructor(
         data object CloseBottomSheet : Msg
     }
 
-    private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
+    private inner class BootstrapperImpl(
+        private val pet: Pet
+    ) : CoroutineBootstrapper<Action>() {
         override fun invoke() {
+            scope.launch {
+                getPetByIdUseCase(pet.id).collect { updatetPet ->
+                    dispatch(Action.UpdateEventList(updatetPet.eventList))
+                }
+            }
         }
     }
 
     private inner class ExecutorImpl(
         private val pet: Pet
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+
+        override fun executeAction(action: Action, getState: () -> State) {
+            when (action) {
+                is Action.UpdateEventList -> dispatch(Msg.UpdateEventList(action.eventList))
+            }
+        }
+
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 Intent.CloseBottomSheet -> dispatch(Msg.CloseBottomSheet)
@@ -348,6 +368,8 @@ class DetailsStoreFactory @Inject constructor(
                     note = note.copy(bottomSheetState = false),
                     medicalData = medicalData.copy(bottomSheetState = false)
                 )
+
+                is Msg.UpdateEventList -> copy(event = event.copy(list = msg.eventList))
             }
     }
 
