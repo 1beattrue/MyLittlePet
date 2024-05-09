@@ -18,7 +18,7 @@ class DefaultDetailsComponent @AssistedInject constructor(
     private val storeFactory: DetailsStoreFactory,
 
     @Assisted("pet") override val pet: Pet,
-    @Assisted("onAddEvent") private val onAddEvent: () -> Unit,
+    @Assisted("onAddEvent") private val onAddEvent: (List<Event>) -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : DetailsComponent, ComponentContext by componentContext {
     val store = instanceKeeper.getStore { storeFactory.create(pet) }
@@ -27,8 +27,8 @@ class DefaultDetailsComponent @AssistedInject constructor(
         componentScope.launch {
             store.labels.collect {
                 when (it) {
-                    DetailsStore.Label.AddEvent -> {
-                        onAddEvent()
+                    is DetailsStore.Label.AddEvent -> {
+                        onAddEvent(it.eventList)
                     }
                 }
             }
@@ -96,7 +96,7 @@ class DefaultDetailsComponent @AssistedInject constructor(
         fun create(
 
             @Assisted("pet") pet: Pet,
-            @Assisted("onAddEvent") onAddEvent: () -> Unit,
+            @Assisted("onAddEvent") onAddEvent: (List<Event>) -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultDetailsComponent
     }

@@ -88,7 +88,7 @@ interface DetailsStore : Store<Intent, State, Label> {
     }
 
     sealed interface Label {
-        data object AddEvent : Label
+        data class AddEvent(val eventList: List<Event>) : Label
     }
 }
 
@@ -292,7 +292,7 @@ class DetailsStoreFactory @Inject constructor(
                     }
                 }
 
-                Intent.OnAddEventClick -> publish(Label.AddEvent)
+                Intent.OnAddEventClick -> publish(Label.AddEvent(getState().event.list))
             }
         }
     }

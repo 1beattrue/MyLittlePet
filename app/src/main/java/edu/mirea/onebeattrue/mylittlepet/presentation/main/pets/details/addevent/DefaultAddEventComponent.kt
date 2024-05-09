@@ -9,6 +9,7 @@ import com.arkivanov.decompose.value.Value
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.date.DefaultEventDateComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.text.DefaultEventTextComponent
@@ -21,6 +22,7 @@ class DefaultAddEventComponent @AssistedInject constructor(
     private val dateComponentFactory: DefaultEventDateComponent.Factory,
 
     @Assisted("pet") private val pet: Pet,
+    @Assisted("eventList") private val eventList: List<Event>,
     @Assisted("onAddEventClosed") private val onAddEventClosed: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : AddEventComponent, ComponentContext by componentContext {
@@ -52,6 +54,7 @@ class DefaultAddEventComponent @AssistedInject constructor(
 
         is Config.Time -> {
             val component = timeComponentFactory.create(
+                eventList = eventList,
                 eventText = config.eventText,
                 pet = pet,
                 onNextClicked = { h, m ->
@@ -67,6 +70,7 @@ class DefaultAddEventComponent @AssistedInject constructor(
 
         is Config.Date -> {
             val component = dateComponentFactory.create(
+                eventList = eventList,
                 eventText = config.eventText,
                 eventTimeHours = config.eventTimeHours,
                 eventTimeMinutes = config.eventTimeMinutes,
@@ -99,6 +103,7 @@ class DefaultAddEventComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
+            @Assisted("eventList") eventList: List<Event>,
             @Assisted("pet") pet: Pet,
             @Assisted("onAddEventClosed") onAddEventClosed: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext

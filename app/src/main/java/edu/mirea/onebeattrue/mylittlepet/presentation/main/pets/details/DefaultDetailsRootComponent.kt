@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
+import androidx.compose.animation.expandVertically
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -10,6 +11,7 @@ import com.arkivanov.decompose.value.Value
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.DefaultAddEventComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DefaultDetailsComponent
@@ -47,8 +49,9 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
         config: Config,
         componentContext: ComponentContext
     ): DetailsRootComponent.Child = when (config) {
-        Config.AddEvent -> {
+        is Config.AddEvent -> {
             val component = addEventComponentFactory.create(
+                eventList = config.eventList,
                 pet = pet,
                 onAddEventClosed = {
                     navigation.pop()
@@ -61,8 +64,8 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
         Config.Details -> {
             val component = detailsComponentFactory.create(
                 pet = pet,
-                onAddEvent = {
-                    navigation.pushNew(Config.AddEvent)
+                onAddEvent = { eventList ->
+                    navigation.pushNew(Config.AddEvent(eventList))
                 },
                 componentContext = componentContext
             )
@@ -76,7 +79,7 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
         data object Details : Config
 
         @Serializable
-        data object AddEvent : Config
+        data class AddEvent(val eventList: List<Event>) : Config
     }
 
     @AssistedFactory

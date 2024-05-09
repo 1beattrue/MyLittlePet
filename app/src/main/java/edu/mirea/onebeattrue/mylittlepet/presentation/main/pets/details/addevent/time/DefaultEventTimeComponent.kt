@@ -7,6 +7,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 class DefaultEventTimeComponent @AssistedInject constructor(
     private val storeFactory: EventTimeStoreFactory,
 
+    @Assisted("eventList") private val eventList: List<Event>,
     @Assisted("eventText") private val eventText: String,
     @Assisted("pet") private val pet: Pet,
 
@@ -24,7 +26,13 @@ class DefaultEventTimeComponent @AssistedInject constructor(
 
     @Assisted("componentContext") componentContext: ComponentContext,
 ) : EventTimeComponent, ComponentContext by componentContext {
-    private val store = instanceKeeper.getStore { storeFactory.create(eventText, pet) }
+    private val store = instanceKeeper.getStore {
+        storeFactory.create(
+            eventText,
+            pet,
+            eventList
+        )
+    }
 
     init {
         componentScope.launch {
@@ -57,6 +65,7 @@ class DefaultEventTimeComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
+            @Assisted("eventList") eventList: List<Event>,
             @Assisted("eventText") eventText: String,
             @Assisted("pet") pet: Pet,
             @Assisted("onNextClicked") onNextClicked: (Int, Int) -> Unit,

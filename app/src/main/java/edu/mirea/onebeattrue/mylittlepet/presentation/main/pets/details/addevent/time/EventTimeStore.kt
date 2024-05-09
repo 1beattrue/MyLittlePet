@@ -40,7 +40,8 @@ class EventTimeStoreFactory @Inject constructor(
 
     fun create(
         eventText: String,
-        pet: Pet
+        pet: Pet,
+        eventList: List<Event>
     ): EventTimeStore =
         object : EventTimeStore, Store<Intent, State, Label> by storeFactory.create(
             name = "EventTimeStore",
@@ -48,7 +49,7 @@ class EventTimeStoreFactory @Inject constructor(
                 isDaily = true
             ),
             bootstrapper = BootstrapperImpl(),
-            executorFactory = { ExecutorImpl(eventText, pet) },
+            executorFactory = { ExecutorImpl(eventText, pet, eventList) },
             reducer = ReducerImpl
         ) {}
 
@@ -66,6 +67,7 @@ class EventTimeStoreFactory @Inject constructor(
     private inner class ExecutorImpl(
         private val eventText: String,
         private val pet: Pet,
+        private val eventList: List<Event>,
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
@@ -89,7 +91,7 @@ class EventTimeStoreFactory @Inject constructor(
                                 )
                             )
 
-                            val oldEventList = pet.eventList
+                            val oldEventList = eventList
                             val newEventList = oldEventList
                                 .toMutableList()
                                 .apply {

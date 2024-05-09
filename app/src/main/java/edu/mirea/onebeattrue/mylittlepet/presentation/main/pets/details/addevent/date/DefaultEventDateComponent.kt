@@ -7,6 +7,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 class DefaultEventDateComponent @AssistedInject constructor(
     private val storeFactory: EventDateStoreFactory,
 
+    @Assisted("eventList") private val eventList: List<Event>,
     @Assisted("eventText") private val eventText: String,
     @Assisted("eventTimeHours") private val eventTimeHours: Int,
     @Assisted("eventTimeMinutes") private val eventTimeMinutes: Int,
@@ -29,7 +31,8 @@ class DefaultEventDateComponent @AssistedInject constructor(
             eventText,
             eventTimeHours,
             eventTimeMinutes,
-            pet
+            pet,
+            eventList
         )
     }
 
@@ -52,7 +55,7 @@ class DefaultEventDateComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-
+            @Assisted("eventList") eventList: List<Event>,
             @Assisted("eventText") eventText: String,
             @Assisted("eventTimeHours") eventTimeHours: Int,
             @Assisted("eventTimeMinutes") eventTimeMinutes: Int,
