@@ -10,4 +10,5 @@ interface ProfileComponent {
 
     fun changeTheme(isDarkTheme: Boolean)
     fun changeLanguage(isEnglishLanguage: Boolean)
+    fun sendEmail()
 }

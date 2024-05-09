@@ -32,7 +32,7 @@ import edu.mirea.onebeattrue.mylittlepet.R
 fun CustomSwitcher(
     modifier: Modifier = Modifier,
     booleanState: Boolean,
-    size: Dp = 150.dp,
+    size: Dp = 60.dp,
     iconSize: Dp = size / 3,
     padding: Dp = 10.dp,
     borderWidth: Dp = 1.dp,
@@ -105,6 +105,7 @@ fun CustomSwitcher(
 
 @Composable
 fun CustomThemeSwitcher(
+    modifier: Modifier = Modifier,
     isDarkTheme: Boolean,
     changeTheme: (Boolean) -> Unit
 ) {
@@ -116,6 +117,7 @@ fun CustomThemeSwitcher(
 
 @Composable
 fun CustomLanguageSwitcher(
+    modifier: Modifier = Modifier,
     isEnglishLanguage: Boolean,
     changeLanguage: (Boolean) -> Unit
 ) {

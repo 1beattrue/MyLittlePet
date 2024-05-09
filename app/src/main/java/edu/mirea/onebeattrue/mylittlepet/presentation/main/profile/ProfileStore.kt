@@ -1,8 +1,12 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.profile
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.res.Configuration
+import android.net.Uri
+import android.util.Log
 import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.edit
 import com.arkivanov.mvikotlin.core.store.Reducer
@@ -10,7 +14,9 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.SignOutUseCase
+import edu.mirea.onebeattrue.mylittlepet.presentation.MainActivity
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.dataStore
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.Label
@@ -25,6 +31,7 @@ interface ProfileStore : Store<Intent, State, Label> {
         data object SignOut : Intent
         data class ChangeTheme(val isDarkTheme: Boolean) : Intent
         data class ChangeLanguage(val isEnglishLanguage: Boolean): Intent
+        data object SendEmail: Intent
     }
 
     data class State(
@@ -61,6 +68,7 @@ class ProfileStoreFactory @Inject constructor(
     private sealed interface Msg {
         data class ChangeTheme(val isDarkTheme: Boolean) : Msg
         data class ChangeLanguage(val isEnglishLanguage: Boolean) : Msg
+        data object SendEmail: Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -93,6 +101,16 @@ class ProfileStoreFactory @Inject constructor(
                     }
                     dispatch(Msg.ChangeLanguage(intent.isEnglishLanguage))
                 }
+
+                Intent.SendEmail -> {
+                    val email = "firstbadger@inbox.ru"
+                    val intent = android.content.Intent(android.content.Intent.ACTION_SENDTO).apply {
+                        data = Uri.parse("mailto:$email")
+                        putExtra(android.content.Intent.EXTRA_SUBJECT, R.string.email_subject)
+                    }
+                    intent.setFlags(FLAG_ACTIVITY_NEW_TASK)
+                    application.startActivity(intent)
+                }
             }
         }
     }
@@ -102,6 +120,7 @@ class ProfileStoreFactory @Inject constructor(
             when(msg) {
                 is Msg.ChangeTheme -> copy(isDarkTheme = msg.isDarkTheme)
                 is Msg.ChangeLanguage -> copy(isEnglishLanguage = msg.isEnglishLanguage)
+                Msg.SendEmail -> TODO()
             }
     }
 }

@@ -25,8 +25,22 @@
     <string name="code_was_resent">Код был отправлен повторно</string>
 
     <string name="navigation_item_feed">Лента</string>
+
+
     <string name="navigation_item_pets">Питомцы</string>
+
+
     <string name="navigation_item_profile">Профиль</string>
+    <string name="change_theme">Сменить тему</string>
+    <string name="change_language">Сменить язык</string>
+    <string name="contact_us">Связаться с нами</string>
+    <string name="email_subject">Мой маленький питомец</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="delete_all_data">Удалить все данные</string>
+    <string name="log_out">Выход</string>
+
+
+
 
     <string name="auth_app_bar_title">Авторизация</string>
 

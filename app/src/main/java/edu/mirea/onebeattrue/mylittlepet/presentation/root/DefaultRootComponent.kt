@@ -3,9 +3,6 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.root
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -43,7 +40,8 @@ class DefaultRootComponent @AssistedInject constructor(
 ) : RootComponent, ComponentContext by componentContext {
     private var isDarkTheme: Boolean =
         (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-    private var isEnglishLanguage: Boolean = application.resources.configuration.locales.toLanguageTags() == "en"
+    private var isEnglishLanguage: Boolean =
+        application.resources.configuration.locales.toLanguageTags() == "en"
 
     val store = instanceKeeper.getStore { storeFactory.create() }
 
@@ -52,9 +50,6 @@ class DefaultRootComponent @AssistedInject constructor(
             context.dataStore.data
                 .collect {
                     onThemeChanged(it[IS_NIGHT_MODE_KEY] ?: isDarkTheme)
-                }
-            context.dataStore.data
-                .collect {
                     onLanguageChanged(it[IS_ENGLISH_MODE_KEY] ?: isEnglishLanguage)
                 }
         }
