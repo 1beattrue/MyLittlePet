@@ -2,6 +2,7 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,12 +33,10 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -62,7 +61,9 @@ import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
+import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDate
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
+import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
@@ -73,7 +74,7 @@ import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun DetailsContent(
     modifier: Modifier = Modifier,
@@ -107,7 +108,7 @@ fun DetailsContent(
             }
         }
 
-        EventList(
+        eventList(
             eventList = state.event.list,
             onAddEvent = {
                 component.onAddEventClick()
@@ -215,101 +216,6 @@ private fun WeightBottomSheet(
             }
 
             Spacer(modifier = Modifier.height(64.dp))
-        }
-    }
-}
-
-@SuppressLint("CoroutineCreationDuringComposition", "UnrememberedMutableState")
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun EventBottomSheet(
-    modifier: Modifier = Modifier,
-    isExpanded: Boolean,
-    onCloseBottomSheet: () -> Unit,
-    label: String,
-    onChangeLabel: (String) -> Unit,
-    onAddEvent: (Long, Int, Int) -> Unit,
-    mustBeClosed: Boolean
-) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
-
-    scope.launch {
-        if (mustBeClosed) {
-            scope.launch { sheetState.hide() }.invokeOnCompletion {
-                if (!sheetState.isVisible) {
-                    onCloseBottomSheet()
-                }
-            }
-        }
-    }
-
-    if (isExpanded) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                onCloseBottomSheet()
-            },
-            sheetState = sheetState
-        ) {
-            LazyColumn {
-                item {
-                    CustomCard(elevation = STRONG_ELEVATION) {
-
-                        Text(
-                            text = stringResource(id = R.string.enter_event_title),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-
-                        OutlinedTextField(
-                            minLines = 3,
-                            modifier = modifier.fillMaxWidth(),
-                            value = label,
-                            onValueChange = {
-                                onChangeLabel(it)
-                            },
-                            shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
-                            singleLine = false,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                            placeholder = {
-                                Text(stringResource(id = R.string.new_event_hint))
-                            }
-                        )
-
-                        val datePickerState = rememberDatePickerState()
-                        val timePickerState = rememberTimePickerState()
-
-                        DatePicker(
-                            title = {
-                                Text(
-                                    modifier = Modifier.fillMaxSize(),
-                                    text = stringResource(id = R.string.event_time_title),
-                                    style = MaterialTheme.typography.titleLarge,
-                                    textAlign = TextAlign.Center
-                                )
-                            },
-                            state = datePickerState
-                        )
-                        TimePicker(state = timePickerState)
-
-                        val confirmEnabled by derivedStateOf {
-                            datePickerState.selectedDateMillis != null
-                        }
-
-                        CustomReadyButton(
-                            enabled = confirmEnabled,
-                            onClick = {
-                                onAddEvent(
-                                    datePickerState.selectedDateMillis ?: 0L,
-                                    timePickerState.hour,
-                                    timePickerState.minute
-                                )
-                            }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(64.dp))
-                }
-            }
         }
     }
 }
@@ -479,8 +385,8 @@ private fun CustomDatePickerDialog(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-private fun LazyListScope.EventList(
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+private fun LazyListScope.eventList(
     modifier: Modifier = Modifier,
     eventList: List<Event>,
     onAddEvent: () -> Unit,
@@ -545,6 +451,7 @@ private fun LazyListScope.EventList(
         }
 
         SwipeToDismissBox(
+            modifier = Modifier.animateItemPlacement(),
             state = swipeState,
             enableDismissFromStartToEnd = false,
             backgroundContent = {
@@ -596,24 +503,23 @@ private fun EventCard(
             textAlign = TextAlign.Center
         )
 
-        // TODO: date - null ?
-//        val localDate = event.date.convertMillisToLocalDate()
-//        val day = localDate.dayOfMonth
-//        val month = localDate.month.getName()
-//        val year = localDate.year
-//
-//        val formattedTime = "${
-//            event.hours.toString().padStart(2, '0')
-//        }:${
-//            event.minutes.toString().padStart(2, '0')
-//        }"
-//
-//        val date =
-//            stringResource(R.string.date_format, day, month, year, formattedTime)
-//
-//        Text(
-//            text = date,
-//            style = MaterialTheme.typography.bodySmall,
-//        )
+        var formattedTime = "${
+            event.hours.toString().padStart(2, '0')
+        }:${
+            event.minutes.toString().padStart(2, '0')
+        }"
+
+        event.date?.let {
+            val localDate = it.convertMillisToLocalDate()
+            val day = localDate.dayOfMonth
+            val month = localDate.month.getName()
+            val year = localDate.year
+            formattedTime += ", ${stringResource(R.string.date_format, day, month, year)}"
+        }
+
+        Text(
+            text = formattedTime,
+            style = MaterialTheme.typography.bodySmall,
+        )
     }
 }
