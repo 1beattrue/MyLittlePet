@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.time
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -58,6 +59,9 @@ fun EventTimeContent(
                     }
                 )
                 Text(
+                    modifier = Modifier.clickable {
+                        component.onPeriodChanged(!state.isDaily)
+                    },
                     text = stringResource(id = R.string.daily_checkbox),
                 )
             }
