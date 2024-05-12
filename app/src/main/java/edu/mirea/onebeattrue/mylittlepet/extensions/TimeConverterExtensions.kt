@@ -5,6 +5,7 @@ import androidx.compose.ui.res.stringResource
 import edu.mirea.onebeattrue.mylittlepet.R
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneId
 
@@ -14,14 +15,20 @@ fun Long.convertMillisToLocalDate(): LocalDate {
         .toLocalDate()
 }
 
+fun Long.convertMillisToLocalDateTime(): LocalDateTime {
+    return Instant.ofEpochMilli(this)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDateTime()
+}
+
 fun Long.convertMillisToYearsAndMonths(): Pair<Int, Int> {
     val birthDate = Instant.ofEpochMilli(this)
         .atZone(ZoneId.systemDefault())
         .toLocalDate()
     val currentDate = LocalDate.now()
 
-    var years = birthDate.until(currentDate).years.toInt()
-    var months = birthDate.until(currentDate).months.toInt()
+    val years = birthDate.until(currentDate).years
+    val months = birthDate.until(currentDate).months
 
     return Pair(years, months)
 }

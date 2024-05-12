@@ -56,12 +56,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDate
+import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDateTime
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
@@ -503,17 +505,20 @@ private fun EventCard(
             textAlign = TextAlign.Center
         )
 
+        val localDateTime = event.time.convertMillisToLocalDateTime()
+        val hour = localDateTime.hour
+        val minute = localDateTime.minute
+
         var formattedTime = "${
-            event.hours.toString().padStart(2, '0')
+            hour.toString().padStart(2, '0')
         }:${
-            event.minutes.toString().padStart(2, '0')
+            minute.toString().padStart(2, '0')
         }"
 
-        event.date?.let {
-            val localDate = it.convertMillisToLocalDate()
-            val day = localDate.dayOfMonth
-            val month = localDate.month.getName()
-            val year = localDate.year
+        if (!event.repeatable) {
+            val day = localDateTime.dayOfMonth
+            val month = localDateTime.month.getName()
+            val year = localDateTime.year
             formattedTime += ", ${stringResource(R.string.date_format, day, month, year)}"
         }
 

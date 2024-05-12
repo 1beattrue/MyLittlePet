@@ -4,5 +4,5 @@ data class AlarmItem(
     val time: Long,
     val title: String,
     val text: String,
-    val repeatable: Boolean = false
+    val repeatable: Boolean
 )

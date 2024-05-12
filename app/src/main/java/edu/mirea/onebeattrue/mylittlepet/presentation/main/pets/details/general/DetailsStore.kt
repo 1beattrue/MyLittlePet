@@ -74,7 +74,7 @@ interface DetailsStore : Store<Intent, State, Label> {
         data class NoteState(
             val list: List<Note>,
             val changeableText: String,
-            val changebleIcon: Int,
+            val changeableIcon: Int,
             val bottomSheetState: Boolean
         )
 
@@ -123,7 +123,7 @@ class DetailsStoreFactory @Inject constructor(
                 ),
                 note = State.NoteState(
                     list = pet.noteList,
-                    changebleIcon = R.drawable.ic_medical,
+                    changeableIcon = R.drawable.ic_medical,
                     changeableText = "",
                     bottomSheetState = false
                 ),
@@ -231,16 +231,17 @@ class DetailsStoreFactory @Inject constructor(
                         val newEventList = oldEventList
                             .toMutableList()
                             .apply {
-                                removeIf { it.id == intent.event.id }
+                                removeIf {
+                                    it.id == intent.event.id
+                                }
                             }
                             .toList()
 
                         cancelNotification(
-                            date = intent.event.date,
-                            hours = intent.event.hours,
-                            minutes = intent.event.minutes,
+                            time = intent.event.time,
                             title = pet.name,
-                            text = intent.event.label
+                            text = intent.event.label,
+                            repeatable = intent.event.repeatable
                         )
 
                         editPetUseCase(pet.copy(eventList = newEventList))
@@ -258,7 +259,7 @@ class DetailsStoreFactory @Inject constructor(
                                 add(
                                     Note(
                                         text = getState().note.changeableText,
-                                        iconResId = getState().note.changebleIcon
+                                        iconResId = getState().note.changeableIcon
                                     )
                                 )
                             }
@@ -374,30 +375,19 @@ class DetailsStoreFactory @Inject constructor(
     }
 
     private fun cancelNotification(
-        date: Long?,
-        hours: Int,
-        minutes: Int,
+        time: Long,
         title: String,
-        text: String
+        text: String,
+        repeatable: Boolean
     ) {
-        val time = getTimeInMillis(date, hours, minutes)
-
         alarmScheduler.cancel(
             AlarmItem(
                 time = time,
                 title = title,
-                text = text
+                text = text,
+                repeatable = repeatable
             )
         )
-    }
-
-    private fun generateEventId(list: List<Event>): Int {
-        if (list.isEmpty()) return 0
-        var maxId = list[0].id
-        list.forEach {
-            if (it.id > maxId) maxId = it.id
-        }
-        return maxId + 1
     }
 
     private fun formattedWeight(weight: String): String {

@@ -22,13 +22,12 @@ class PetRepositoryImpl @Inject constructor(
 
     override suspend fun deletePet(pet: Pet) {
         pet.eventList.forEach { event ->
-            val time = getTimeInMillis(event.date, event.hours, event.minutes)
-
             alarmScheduler.cancel(
                 AlarmItem(
-                    time = time,
+                    time = event.time,
                     title = pet.name,
-                    text = event.label
+                    text = event.label,
+                    repeatable = event.repeatable
                 )
             )
         }

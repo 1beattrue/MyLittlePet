@@ -79,32 +79,26 @@ class EventTimeStoreFactory @Inject constructor(
                         val minutes = intent.minutes
 
                         if (isDaily) {
+                            val newEvent = Event(
+                                time = getTimeMillis(intent.hours, intent.minutes),
+                                label = eventText,
+                                id = generateEventId(eventList),
+                                repeatable = true
+                            )
+
                             alarmScheduler.schedule(
                                 AlarmItem(
                                     title = pet.name,
-                                    text = eventText,
-                                    time = getTimeMillis(
-                                        hours = hours,
-                                        minutes = minutes
-                                    ),
-                                    repeatable = true
+                                    text = newEvent.label,
+                                    time = newEvent.time,
+                                    repeatable = newEvent.repeatable
                                 )
                             )
 
                             val oldEventList = eventList
                             val newEventList = oldEventList
                                 .toMutableList()
-                                .apply {
-                                    add(
-                                        Event(
-                                            date = null,
-                                            hours = hours,
-                                            minutes = minutes,
-                                            label = eventText,
-                                            id = generateEventId(this)
-                                        )
-                                    )
-                                }
+                                .apply { add(newEvent) }
                                 .toList()
                             editPetUseCase(pet = pet.copy(eventList = newEventList))
                             publish(Label.Finish)

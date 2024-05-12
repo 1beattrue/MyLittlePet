@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.Application
 import android.app.PendingIntent
 import android.content.Intent
+import android.util.Log
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import javax.inject.Inject
@@ -30,6 +31,7 @@ class AlarmSchedulerImpl @Inject constructor(
                 item.time,
                 pendingIntent
             )
+            Log.d("AlarmSchedulerImpl", "exact notification ${item.hashCode()}, time: ${item.time}")
         } else {
             alarmManager.setRepeating(
                 AlarmManager.RTC_WAKEUP,
@@ -37,6 +39,7 @@ class AlarmSchedulerImpl @Inject constructor(
                 AlarmManager.INTERVAL_DAY,
                 pendingIntent
             )
+            Log.d("AlarmSchedulerImpl", "set repeating notification ${item.hashCode()}, time: ${item.time}")
         }
     }
 
@@ -48,7 +51,7 @@ class AlarmSchedulerImpl @Inject constructor(
             Intent(context, AlarmReceiver::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-
+        Log.d("AlarmSchedulerImpl", "cancel notification ${item.hashCode()}, time: ${item.time}")
         alarmManager.cancel(pendingIntent)
     }
 
