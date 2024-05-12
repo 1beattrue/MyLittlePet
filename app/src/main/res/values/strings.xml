@@ -37,6 +37,8 @@
     <string name="contact_us">Contact us</string>
     <string name="email_subject">My little pet</string>
     <string name="privacy_policy">Privacy policy</string>
+    <string name="privacy_policy_content">Here is the entire Privacy policy</string>
+    <string name="privacy_policy_close">Close Privacy policy</string>
     <string name="delete_all_data">Delete all data</string>
     <string name="log_out">Log out</string>
 

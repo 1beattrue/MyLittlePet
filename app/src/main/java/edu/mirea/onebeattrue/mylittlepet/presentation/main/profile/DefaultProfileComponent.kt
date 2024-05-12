@@ -57,6 +57,7 @@ class DefaultProfileComponent @AssistedInject constructor(
         store.accept(ProfileStore.Intent.SendEmail)
     }
 
+
     @AssistedFactory
     interface Factory {
         fun create(

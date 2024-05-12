@@ -16,6 +16,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.Language
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.dataStore
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.DefaultMainComponent
@@ -41,7 +42,7 @@ class DefaultRootComponent @AssistedInject constructor(
     private var isDarkTheme: Boolean =
         (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     private var isEnglishLanguage: Boolean =
-        application.resources.configuration.locales.toLanguageTags() == "en"
+        application.resources.configuration.locales.toLanguageTags() == Language.EN.value
 
     val store = instanceKeeper.getStore { storeFactory.create() }
 

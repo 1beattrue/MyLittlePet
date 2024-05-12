@@ -36,6 +36,8 @@
     <string name="contact_us">Связаться с нами</string>
     <string name="email_subject">Мой маленький питомец</string>
     <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="privacy_policy_content">Здесь будет вся политика конфиденциальности</string>
+    <string name="privacy_policy_close">Закрыть политику конфиденциальности</string>
     <string name="delete_all_data">Удалить все данные</string>
     <string name="log_out">Выход</string>
 

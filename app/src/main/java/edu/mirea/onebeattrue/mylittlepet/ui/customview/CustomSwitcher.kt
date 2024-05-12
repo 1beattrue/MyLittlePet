@@ -39,6 +39,8 @@ fun CustomSwitcher(
     parentShape: Shape = CircleShape,
     toggleShape: Shape = CircleShape,
     animationSpec: AnimationSpec<Dp> = tween(durationMillis = 300),
+    leftIcon: Int = R.drawable.ic_night,
+    rightIcon: Int = R.drawable.ic_light,
     action: (Boolean) -> Unit
 ) {
 
@@ -81,7 +83,7 @@ fun CustomSwitcher(
             ) {
                 Icon(
                     modifier = Modifier.size(iconSize),
-                    painter = painterResource(R.drawable.ic_night),
+                    painter = painterResource(leftIcon),
                     contentDescription = null,
                     tint = if (booleanState) MaterialTheme.colorScheme.secondaryContainer
                     else MaterialTheme.colorScheme.primary
@@ -93,7 +95,7 @@ fun CustomSwitcher(
             ) {
                 Icon(
                     modifier = Modifier.size(iconSize),
-                    painter = painterResource(R.drawable.ic_light),
+                    painter = painterResource(rightIcon),
                     contentDescription = null,
                     tint = if (booleanState) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.secondaryContainer
