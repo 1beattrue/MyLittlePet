@@ -44,6 +44,8 @@ interface DetailsStore : Store<Intent, State, Label> {
         data object AddMedicalData : Intent
 
         data object CloseBottomSheet : Intent
+
+        data object ClickBack: Intent
     }
 
     data class State(
@@ -89,6 +91,7 @@ interface DetailsStore : Store<Intent, State, Label> {
 
     sealed interface Label {
         data class AddEvent(val eventList: List<Event>) : Label
+        data object ClickBack: Label
     }
 }
 
@@ -161,7 +164,7 @@ class DetailsStoreFactory @Inject constructor(
         data class UpdateNotes(val notes: List<Note>) : Msg
 
         data object OpenMedicalDataBottomSheet : Msg
-        data class UpdateMedicalDatas(val medicalDatas: List<MedicalData>) : Msg
+        data class UpdateMedicalData(val medicalData: List<MedicalData>) : Msg
 
         data object CloseBottomSheet : Msg
     }
@@ -171,8 +174,8 @@ class DetailsStoreFactory @Inject constructor(
     ) : CoroutineBootstrapper<Action>() {
         override fun invoke() {
             scope.launch {
-                getPetByIdUseCase(pet.id).collect { updatetPet ->
-                    dispatch(Action.UpdateEventList(updatetPet.eventList))
+                getPetByIdUseCase(pet.id).collect { updatedPet ->
+                    dispatch(Action.UpdateEventList(updatedPet.eventList))
                 }
             }
         }
@@ -289,11 +292,12 @@ class DetailsStoreFactory @Inject constructor(
                             }
                             .toList()
                         editPetUseCase(pet.copy(medicalDataList = newMedicalList))
-                        dispatch(Msg.UpdateMedicalDatas(newMedicalList))
+                        dispatch(Msg.UpdateMedicalData(newMedicalList))
                     }
                 }
 
                 Intent.OnAddEventClick -> publish(Label.AddEvent(getState().event.list))
+                Intent.ClickBack -> publish(Label.ClickBack)
             }
         }
     }
@@ -358,7 +362,7 @@ class DetailsStoreFactory @Inject constructor(
                     )
                 )
 
-                is Msg.UpdateMedicalDatas -> copy(
+                is Msg.UpdateMedicalData -> copy(
                     // TODO(),
                     bottomSheetMustBeClosed = true
                 )

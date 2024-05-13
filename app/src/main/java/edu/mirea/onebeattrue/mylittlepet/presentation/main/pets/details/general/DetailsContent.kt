@@ -20,19 +20,24 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -75,48 +80,78 @@ import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsContent(
     modifier: Modifier = Modifier,
     component: DetailsComponent
 ) {
     val state by component.model.collectAsState()
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = PaddingValues(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            PetCard(pet = component.pet)
-        }
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                AgeCard(
-                    modifier = Modifier.weight(0.5f),
-                    age = state.age
-                ) {
-                    component.openDatePickerDialog()
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                title = {
+                    Text(
+                        style = MaterialTheme.typography.titleLarge,
+                        text = stringResource(R.string.pet_details_app_bar_title)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { component.onBackClicked() },
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
                 }
-                WeightCard(
-                    modifier = Modifier.weight(0.5f),
-                    weight = state.weight.value
+            )
+        },
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier.padding(paddingValues),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                PetCard(pet = component.pet)
+            }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    component.onChangeWeightClick()
+                    AgeCard(
+                        modifier = Modifier.weight(0.5f),
+                        age = state.age
+                    ) {
+                        component.openDatePickerDialog()
+                    }
+                    WeightCard(
+                        modifier = Modifier.weight(0.5f),
+                        weight = state.weight.value
+                    ) {
+                        component.onChangeWeightClick()
+                    }
                 }
             }
-        }
 
-        eventList(
-            eventList = state.event.list,
-            onAddEvent = {
-                component.onAddEventClick()
-            },
-            onDeleteEvent = { event ->
-                component.onDeleteEvent(event)
-            },
-        )
+            eventList(
+                eventList = state.event.list,
+                onAddEvent = {
+                    component.onAddEventClick()
+                },
+                onDeleteEvent = { event ->
+                    component.onDeleteEvent(event)
+                },
+            )
+        }
     }
 
     CustomDatePickerDialog(
@@ -133,11 +168,12 @@ fun DetailsContent(
         weightInput = state.weight.changeableValue,
         isError = state.weight.isIncorrect,
         onChangeWeight = { weight ->
-            component.onWeightChages(weight)
+            component.onWeightChanges(weight)
         },
         onSetWeight = { component.setWeight() },
         mustBeClosed = state.bottomSheetMustBeClosed
     )
+
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")

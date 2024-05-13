@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
-import androidx.compose.animation.expandVertically
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -19,7 +18,6 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.
 import kotlinx.serialization.Serializable
 
 class DefaultDetailsRootComponent @AssistedInject constructor(
-    private val storeFactory: DetailsStoreFactory,
     private val detailsComponentFactory: DefaultDetailsComponent.Factory,
     private val addEventComponentFactory: DefaultAddEventComponent.Factory,
 
@@ -66,6 +64,9 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
                 pet = pet,
                 onAddEvent = { eventList ->
                     navigation.pushNew(Config.AddEvent(eventList))
+                },
+                onClickBack = {
+                    onBackClick()
                 },
                 componentContext = componentContext
             )

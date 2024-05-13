@@ -12,7 +12,7 @@ interface DetailsComponent {
     fun setWeight()
 
     fun onChangeWeightClick()
-    fun onWeightChages(weight: String)
+    fun onWeightChanges(weight: String)
 
     fun onAddEventClick()
     fun onAddNoteClick()
@@ -26,6 +26,7 @@ interface DetailsComponent {
     fun addNote()
     fun addMedicalData()
 
+    fun onBackClicked()
 
     fun openDatePickerDialog()
     fun closeDatePickerDialog()

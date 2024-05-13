@@ -19,6 +19,7 @@ class DefaultDetailsComponent @AssistedInject constructor(
 
     @Assisted("pet") override val pet: Pet,
     @Assisted("onAddEvent") private val onAddEvent: (List<Event>) -> Unit,
+    @Assisted("onClickBack") private val onClickBack: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : DetailsComponent, ComponentContext by componentContext {
     val store = instanceKeeper.getStore { storeFactory.create(pet) }
@@ -29,6 +30,10 @@ class DefaultDetailsComponent @AssistedInject constructor(
                 when (it) {
                     is DetailsStore.Label.AddEvent -> {
                         onAddEvent(it.eventList)
+                    }
+
+                    DetailsStore.Label.ClickBack -> {
+                        onClickBack()
                     }
                 }
             }
@@ -47,7 +52,7 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.OnChangeWeightClick)
     }
 
-    override fun onWeightChages(weight: String) {
+    override fun onWeightChanges(weight: String) {
         store.accept(DetailsStore.Intent.OnWeightChanged(weight))
     }
 
@@ -83,6 +88,10 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.AddMedicalData)
     }
 
+    override fun onBackClicked() {
+        store.accept(DetailsStore.Intent.ClickBack)
+    }
+
     override fun openDatePickerDialog() {
         store.accept(DetailsStore.Intent.OpenDatePickerDialog)
     }
@@ -97,6 +106,7 @@ class DefaultDetailsComponent @AssistedInject constructor(
 
             @Assisted("pet") pet: Pet,
             @Assisted("onAddEvent") onAddEvent: (List<Event>) -> Unit,
+            @Assisted("onClickBack") onClickBack: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultDetailsComponent
     }
