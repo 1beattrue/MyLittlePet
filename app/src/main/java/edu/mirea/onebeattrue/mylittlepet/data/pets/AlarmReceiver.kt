@@ -30,7 +30,8 @@ class AlarmReceiver : BroadcastReceiver() {
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .build()
 
-            notificationManager.notify(NOTIFICATION_ID, notification)
+            val notificationId = System.currentTimeMillis().toInt()
+            notificationManager.notify(notificationId, notification)
         }
     }
 
@@ -46,7 +47,6 @@ class AlarmReceiver : BroadcastReceiver() {
     companion object {
         private const val CHANNEL_ID = "channel_69"
         private const val CHANNEL_NAME = "channel_pet_events"
-        private const val NOTIFICATION_ID = 228
 
         private const val EXTRA_TITLE_KEY = "title_key"
         private const val EXTRA_TEXT_KEY = "text_key"

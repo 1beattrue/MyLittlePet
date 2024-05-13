@@ -22,7 +22,9 @@ class AlarmSchedulerImpl @Inject constructor(
             context,
             item.hashCode(),
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or
+                    PendingIntent.FLAG_IMMUTABLE or
+                    PendingIntent.FLAG_ONE_SHOT
         )
 
         if (!item.repeatable) {
@@ -49,8 +51,11 @@ class AlarmSchedulerImpl @Inject constructor(
             context,
             item.hashCode(),
             Intent(context, AlarmReceiver::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or
+                    PendingIntent.FLAG_IMMUTABLE or
+                    PendingIntent.FLAG_ONE_SHOT
         )
+
         Log.d("AlarmSchedulerImpl", "cancel notification ${item.hashCode()}, time: ${item.time}")
         alarmManager.cancel(pendingIntent)
     }
