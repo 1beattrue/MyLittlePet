@@ -40,10 +40,47 @@ import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 
-private fun Float.formattedPadding(): Float = if (this < 0) 0f else this
 
 @Composable
 fun CustomCard(
+    modifier: Modifier = Modifier,
+    elevation: Dp,
+    paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp),
+    content: @Composable () -> Unit,
+) {
+    MaterialTheme(
+        colorScheme = MaterialTheme.colorScheme.copy(surfaceTint = Color(0x00FFFFFF))
+    ) {
+        Card(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(paddingValues),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            ),
+            shape = RoundedCornerShape(CORNER_RADIUS_SURFACE),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = elevation,
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                content()
+            }
+        }
+    }
+}
+
+private fun Float.formattedPadding(): Float = if (this < 0) 0f else this
+
+@Composable
+fun ClickableCustomCard(
     modifier: Modifier = Modifier,
     elevation: Dp,
     paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp),
@@ -102,31 +139,6 @@ fun CustomCard(
 }
 
 @Composable
-fun CustomCardDefaultElevation(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    CustomCard(
-        modifier = modifier,
-        content = { content() },
-        elevation = DEFAULT_ELEVATION
-    )
-
-}
-
-@Composable
-fun CustomCardStrongElevation(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    CustomCard(
-        modifier = modifier,
-        content = { content() },
-        elevation = STRONG_ELEVATION
-    )
-}
-
-@Composable
 fun CustomCardExtremeElevation(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
@@ -141,17 +153,13 @@ fun CustomCardExtremeElevation(
 @Composable
 fun CustomCardWithAddButton(
     modifier: Modifier = Modifier,
-    elevation: Dp,
+    elevation: Dp = EXTREME_ELEVATION,
     paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp),
     onAddClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
-        colorScheme = if (isSystemInDarkTheme()) {
-            darkColorScheme()
-        } else {
-            lightColorScheme(surface = Color.White, surfaceTint = Color.White)
-        }
+        colorScheme = MaterialTheme.colorScheme.copy(surfaceTint = Color(0x00FFFFFF))
     ) {
         Card(
             modifier = modifier

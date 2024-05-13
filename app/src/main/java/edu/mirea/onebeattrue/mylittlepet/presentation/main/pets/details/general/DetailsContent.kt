@@ -69,8 +69,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDateTime
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
@@ -209,7 +208,7 @@ private fun WeightBottomSheet(
             },
             sheetState = sheetState
         ) {
-            CustomCard(elevation = STRONG_ELEVATION) {
+            ClickableCustomCard(elevation = STRONG_ELEVATION) {
                 Text(
                     text = stringResource(id = R.string.enter_weight),
                     style = MaterialTheme.typography.titleLarge
@@ -262,7 +261,10 @@ private fun PetCard(
     modifier: Modifier = Modifier,
     pet: Pet
 ) {
-    CustomCardExtremeElevation {
+    ClickableCustomCard(
+        modifier = modifier,
+        elevation = EXTREME_ELEVATION
+    ) {
         Text(
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleLarge,
@@ -300,7 +302,7 @@ private fun AgeCard(
     Box(
         modifier = modifier
     ) {
-        CustomCard(
+        ClickableCustomCard(
             elevation = EXTREME_ELEVATION,
             paddingValues = PaddingValues(start = 16.dp, end = 8.dp),
             onClick = { onAgeClicked() }
@@ -350,7 +352,7 @@ private fun WeightCard(
     Box(
         modifier = modifier
     ) {
-        CustomCard(
+        ClickableCustomCard(
             elevation = EXTREME_ELEVATION,
             paddingValues = PaddingValues(start = 8.dp, end = 16.dp),
             onClick = { onWeightClicked() }
@@ -515,7 +517,6 @@ private fun LazyListScope.eventList(
     }
     item {
         CustomCardWithAddButton(
-            elevation = 0.dp,
             onAddClick = { onAddEvent() }
         ) {
             Text(
@@ -532,8 +533,8 @@ private fun EventCard(
     modifier: Modifier = Modifier,
     event: Event
 ) {
-    CustomCard(
-        elevation = 0.dp
+    ClickableCustomCard(
+        elevation = EXTREME_ELEVATION
     ) {
         Text(
             text = event.label,
