@@ -56,13 +56,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDate
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDateTime
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
@@ -356,33 +354,35 @@ private fun CustomDatePickerDialog(
         val datePickerState = rememberDatePickerState()
         val confirmEnabled by derivedStateOf { datePickerState.selectedDateMillis != null }
 
-        DatePickerDialog(
-            onDismissRequest = { onDismissRequest() },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDatePicked(datePickerState.selectedDateMillis ?: 0)
-                    },
-                    enabled = confirmEnabled
-                ) {
-                    Text(text = stringResource(id = R.string.ok))
+        MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(surfaceTint = Color.White)) {
+            DatePickerDialog(
+                onDismissRequest = { onDismissRequest() },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onDatePicked(datePickerState.selectedDateMillis ?: 0)
+                        },
+                        enabled = confirmEnabled
+                    ) {
+                        Text(text = stringResource(id = R.string.ok))
+                    }
                 }
+            ) {
+                DatePicker(
+                    title = {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.titleMedium,
+                            text = stringResource(R.string.date_picker_title),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    state = datePickerState
+                )
             }
-        ) {
-            DatePicker(
-                title = {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleMedium,
-                        text = stringResource(R.string.date_picker_title),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                },
-                state = datePickerState
-            )
         }
     }
 }
