@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,6 +24,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,13 +73,16 @@ import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDateTime
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_SURFACE
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -284,6 +290,9 @@ private fun PetCard(
                 )
             } else {
                 GlideImage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
                     model = pet.imageUri,
                     contentDescription = null
                 )
@@ -443,7 +452,7 @@ private fun LazyListScope.eventList(
     }
     items(
         items = eventList,
-        key = { it.id }
+        key = { it.id },
     ) { event ->
         val swipeState = rememberSwipeToDismissBoxState()
 
@@ -528,13 +537,39 @@ private fun LazyListScope.eventList(
     }
 }
 
+private fun isEventRelevant(event: Event): Boolean {
+    val currentTimeMillis = Calendar.getInstance().timeInMillis
+    return event.time > currentTimeMillis
+}
+
+@Composable
+private fun getEventCardColors(isRelevant: Boolean): CardColors {
+    if (isRelevant) {
+        return CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
+    }
+    return CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground
+    )
+}
+
 @Composable
 private fun EventCard(
     modifier: Modifier = Modifier,
     event: Event
 ) {
-    ClickableCustomCard(
-        elevation = EXTREME_ELEVATION
+    val isRelevant = event.repeatable || isEventRelevant(event)
+    val cardColors = getEventCardColors(isRelevant = isRelevant)
+
+    CustomCard(
+        elevation = if (isRelevant) EXTREME_ELEVATION else DEFAULT_ELEVATION,
+        modifier = modifier.padding(
+            if (isRelevant) 0.dp else 4.dp
+        ),
+        cardColors = cardColors
     ) {
         Text(
             text = event.label,

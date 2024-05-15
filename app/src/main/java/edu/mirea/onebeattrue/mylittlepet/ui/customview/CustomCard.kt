@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -46,6 +47,10 @@ fun CustomCard(
     modifier: Modifier = Modifier,
     elevation: Dp,
     paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp),
+    cardColors: CardColors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface
+    ),
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
@@ -55,10 +60,7 @@ fun CustomCard(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(paddingValues),
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            ),
+            colors = cardColors,
             shape = RoundedCornerShape(CORNER_RADIUS_SURFACE),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = elevation,
@@ -84,6 +86,10 @@ fun ClickableCustomCard(
     modifier: Modifier = Modifier,
     elevation: Dp,
     paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp),
+    cardColors: CardColors = CardDefaults.elevatedCardColors(
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface
+    ),
     onClick: () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
@@ -111,10 +117,7 @@ fun ClickableCustomCard(
                 .fillMaxWidth()
                 .padding(paddingValues)
                 .padding(pressedPadding.value.formattedPadding().dp),
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            ),
+            colors = cardColors,
             shape = RoundedCornerShape(CORNER_RADIUS_SURFACE),
             elevation = CardDefaults.elevatedCardElevation(
                 defaultElevation = elevation,
@@ -158,6 +161,7 @@ fun CustomCardWithAddButton(
     onAddClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
+
     MaterialTheme(
         colorScheme = MaterialTheme.colorScheme.copy(surfaceTint = Color(0x00FFFFFF))
     ) {
