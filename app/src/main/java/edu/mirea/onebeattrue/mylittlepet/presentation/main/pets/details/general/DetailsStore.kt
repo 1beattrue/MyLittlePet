@@ -45,7 +45,7 @@ interface DetailsStore : Store<Intent, State, Label> {
 
         data object CloseBottomSheet : Intent
 
-        data object ClickBack: Intent
+        data object ClickBack : Intent
     }
 
     data class State(
@@ -91,7 +91,7 @@ interface DetailsStore : Store<Intent, State, Label> {
 
     sealed interface Label {
         data class AddEvent(val eventList: List<Event>) : Label
-        data object ClickBack: Label
+        data object ClickBack : Label
     }
 }
 
@@ -374,8 +374,22 @@ class DetailsStoreFactory @Inject constructor(
                     medicalData = medicalData.copy(bottomSheetState = false)
                 )
 
-                is Msg.UpdateEventList -> copy(event = event.copy(list = msg.eventList))
+                is Msg.UpdateEventList -> {
+                    val sortedEvents = msg.eventList
+                        .sortedWith(
+                            compareByDescending<Event> { it.repeatable }
+                                .thenByDescending {
+                                    if (it.repeatable) getTimeInHoursAndMinutes(it.time) else it.time
+                                }
+                        )
+                    copy(event = event.copy(list = sortedEvents))
+                }
             }
+
+        private fun getTimeInHoursAndMinutes(time: Long): Int {
+            val calendar = Calendar.getInstance().apply { timeInMillis = time }
+            return calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE)
+        }
     }
 
     private fun cancelNotification(
@@ -407,16 +421,5 @@ class DetailsStoreFactory @Inject constructor(
         } catch (_: Exception) {
             return false
         }
-    }
-
-    private fun getTimeInMillis(date: Long?, hours: Int, minutes: Int): Long {
-        val calendar = Calendar.getInstance().apply {
-            date?.let { timeInMillis = it }
-            set(Calendar.HOUR_OF_DAY, hours)
-            set(Calendar.MINUTE, minutes)
-            set(Calendar.SECOND, 0)
-        }
-
-        return calendar.timeInMillis
     }
 }
