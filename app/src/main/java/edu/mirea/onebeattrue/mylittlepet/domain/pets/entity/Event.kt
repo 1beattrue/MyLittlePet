@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Event(
+    val id: Int,
     val time: Long,
     val label: String,
-    val id: Int,
     val repeatable: Boolean
 )

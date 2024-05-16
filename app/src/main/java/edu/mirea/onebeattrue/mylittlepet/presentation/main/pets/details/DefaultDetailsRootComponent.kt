@@ -15,12 +15,14 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.DefaultAddEventComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.DefaultEventListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DefaultDetailsComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.DefaultNoteListComponent
 import kotlinx.serialization.Serializable
 
 class DefaultDetailsRootComponent @AssistedInject constructor(
     private val detailsComponentFactory: DefaultDetailsComponent.Factory,
     private val addEventComponentFactory: DefaultAddEventComponent.Factory,
     private val eventListComponentFactory: DefaultEventListComponent.Factory,
+    private val noteListComponentFactory: DefaultNoteListComponent.Factory,
 
     @Assisted("onBackClick") private val onBackClick: () -> Unit,
     @Assisted("pet") private val pet: Pet,
@@ -69,6 +71,12 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
                 onClickOpenEventList = {
                     navigation.pushNew(Config.EventList)
                 },
+                onClickOpenNoteList = {
+                    navigation.pushNew(Config.NoteList)
+                },
+                onClickOpenMedicalDataList = {
+
+                },
                 componentContext = componentContext
             )
             DetailsRootComponent.Child.Details(component)
@@ -87,6 +95,20 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
             )
             DetailsRootComponent.Child.EventList(component)
         }
+
+        Config.NoteList -> {
+            val component = noteListComponentFactory.create(
+                pet = pet,
+                onAddNote = { noteList ->
+                    //navigation.pushNew(Config.AddNote(noteList))
+                },
+                onClickBack = {
+                    navigation.pop()
+                },
+                componentContext = componentContext
+            )
+            DetailsRootComponent.Child.NoteList(component)
+        }
     }
 
     @Serializable
@@ -99,6 +121,9 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
 
         @Serializable
         data object EventList : Config
+
+        @Serializable
+        data object NoteList : Config
     }
 
     @AssistedFactory

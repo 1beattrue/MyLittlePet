@@ -19,6 +19,8 @@ class DefaultDetailsComponent @AssistedInject constructor(
     @Assisted("pet") override val pet: Pet,
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
     @Assisted("onClickOpenEventList") private val onClickOpenEventList: () -> Unit,
+    @Assisted("onClickOpenNoteList") private val onClickOpenNoteList: () -> Unit,
+    @Assisted("onClickOpenMedicalDataList") private val onClickOpenMedicalDataList: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : DetailsComponent, ComponentContext by componentContext {
     val store = instanceKeeper.getStore { storeFactory.create(pet) }
@@ -36,11 +38,11 @@ class DefaultDetailsComponent @AssistedInject constructor(
                     }
 
                     DetailsStore.Label.OpenMedicalDataList -> {
-
+                        onClickOpenMedicalDataList()
                     }
 
                     DetailsStore.Label.OpenNoteList -> {
-
+                        onClickOpenNoteList()
                     }
                 }
             }
@@ -102,6 +104,8 @@ class DefaultDetailsComponent @AssistedInject constructor(
             @Assisted("pet") pet: Pet,
             @Assisted("onClickBack") onClickBack: () -> Unit,
             @Assisted("onClickOpenEventList") onClickOpenEventList: () -> Unit,
+            @Assisted("onClickOpenNoteList") onClickOpenNoteList: () -> Unit,
+            @Assisted("onClickOpenMedicalDataList") onClickOpenMedicalDataList: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultDetailsComponent
     }
