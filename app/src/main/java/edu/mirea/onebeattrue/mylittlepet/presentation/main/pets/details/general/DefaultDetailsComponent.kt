@@ -1,6 +1,10 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.value.Value
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
@@ -10,16 +14,18 @@ import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.DefaultEventListComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
 class DefaultDetailsComponent @AssistedInject constructor(
     private val storeFactory: DetailsStoreFactory,
 
     @Assisted("pet") override val pet: Pet,
-    @Assisted("onAddEvent") private val onAddEvent: (List<Event>) -> Unit,
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
+    @Assisted("onClickOpenEventList") private val onClickOpenEventList: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : DetailsComponent, ComponentContext by componentContext {
     val store = instanceKeeper.getStore { storeFactory.create(pet) }
@@ -28,12 +34,12 @@ class DefaultDetailsComponent @AssistedInject constructor(
         componentScope.launch {
             store.labels.collect {
                 when (it) {
-                    is DetailsStore.Label.AddEvent -> {
-                        onAddEvent(it.eventList)
-                    }
-
                     DetailsStore.Label.ClickBack -> {
                         onClickBack()
+                    }
+
+                    DetailsStore.Label.OpenEventList -> {
+                        onClickOpenEventList()
                     }
                 }
             }
@@ -60,32 +66,8 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.SetWeight)
     }
 
-    override fun onAddEventClick() {
-        store.accept(DetailsStore.Intent.OnAddEventClick)
-    }
-
-    override fun onAddNoteClick() {
-        store.accept(DetailsStore.Intent.OnAddNoteClick)
-    }
-
-    override fun onAddMedicalDataClick() {
-        store.accept(DetailsStore.Intent.OnAddMedicalDataClick)
-    }
-
-    override fun onDeleteEvent(event: Event) {
-        store.accept(DetailsStore.Intent.DeleteEvent(event))
-    }
-
     override fun onCloseBottomSheetClick() {
         store.accept(DetailsStore.Intent.CloseBottomSheet)
-    }
-
-    override fun addNote() {
-        store.accept(DetailsStore.Intent.AddNote)
-    }
-
-    override fun addMedicalData() {
-        store.accept(DetailsStore.Intent.AddMedicalData)
     }
 
     override fun onBackClicked() {
@@ -100,13 +82,17 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.CloseDatePickerDialog)
     }
 
+    override fun onClickEventList() {
+        store.accept(DetailsStore.Intent.OpenEventList)
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(
 
             @Assisted("pet") pet: Pet,
-            @Assisted("onAddEvent") onAddEvent: (List<Event>) -> Unit,
             @Assisted("onClickBack") onClickBack: () -> Unit,
+            @Assisted("onClickOpenEventList") onClickOpenEventList: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultDetailsComponent
     }

@@ -13,13 +13,14 @@ import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.DefaultAddEventComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.DefaultEventListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DefaultDetailsComponent
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStoreFactory
 import kotlinx.serialization.Serializable
 
 class DefaultDetailsRootComponent @AssistedInject constructor(
     private val detailsComponentFactory: DefaultDetailsComponent.Factory,
     private val addEventComponentFactory: DefaultAddEventComponent.Factory,
+    private val eventListComponentFactory: DefaultEventListComponent.Factory,
 
     @Assisted("onBackClick") private val onBackClick: () -> Unit,
     @Assisted("pet") private val pet: Pet,
@@ -62,15 +63,29 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
         Config.Details -> {
             val component = detailsComponentFactory.create(
                 pet = pet,
-                onAddEvent = { eventList ->
-                    navigation.pushNew(Config.AddEvent(eventList))
-                },
                 onClickBack = {
                     onBackClick()
+                },
+                onClickOpenEventList = {
+                    navigation.pushNew(Config.EventList)
                 },
                 componentContext = componentContext
             )
             DetailsRootComponent.Child.Details(component)
+        }
+
+        Config.EventList -> {
+            val component = eventListComponentFactory.create(
+                pet = pet,
+                onAddEvent = { eventList ->
+                    navigation.pushNew(Config.AddEvent(eventList))
+                },
+                onClickBack = {
+                    navigation.pop()
+                },
+                componentContext = componentContext
+            )
+            DetailsRootComponent.Child.EventList(component)
         }
     }
 
@@ -81,6 +96,9 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
 
         @Serializable
         data class AddEvent(val eventList: List<Event>) : Config
+
+        @Serializable
+        data object EventList : Config
     }
 
     @AssistedFactory

@@ -73,6 +73,7 @@
     <string name="enter_weight">Введите вес</string>
 
     <string name="add_event_app_bar_title">Добавление события</string>
+    <string name="event_list_app_bar_title">События</string>
     <string name="event_list_title">События</string>
     <string name="add_event">Добавить событие</string>
     <string name="enter_event_title">Введите текст события</string>
