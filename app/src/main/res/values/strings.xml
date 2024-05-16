@@ -84,6 +84,12 @@
     <string name="error_event_text">Add event text</string>
     <string name="event_time_title">When to remind?</string>
 
+    <string name="note_list_app_bar_title">Note list</string>
+    <string name="add_note">Add note</string>
+
+    <string name="medical_data_list_app_bar_title">Medical data list</string>
+    <string name="add_medical_data">Add medical data</string>
+
     <string name="january">January</string>
     <string name="february">February</string>
     <string name="march">March</string>

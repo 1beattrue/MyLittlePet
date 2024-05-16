@@ -1,11 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general
 
-import com.arkivanov.decompose.router.stack.ChildStack
-import com.arkivanov.decompose.value.Value
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.AddEventComponent
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListComponent
 import kotlinx.coroutines.flow.StateFlow
 
 interface DetailsComponent {
@@ -22,4 +17,6 @@ interface DetailsComponent {
     fun closeDatePickerDialog()
 
     fun onClickEventList()
+    fun onClickNoteList()
+    fun onClickMedicalDataList()
 }

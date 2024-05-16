@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -182,6 +183,16 @@ fun EventListContent(
                         )
                     }
                 }
+                item {
+                    CustomCardWithAddButton(
+                        onAddClick = { component.onAddEvent() }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.add_event),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                    }
+                }
             }
         }
     }
@@ -203,9 +214,10 @@ private fun EventCard(
         cardColors = cardColors
     ) {
         Text(
+            modifier = Modifier.fillMaxWidth(),
             text = event.label,
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Start
         )
 
         val localDateTime = event.time.convertMillisToLocalDateTime()
@@ -226,8 +238,10 @@ private fun EventCard(
         }
 
         Text(
+            modifier = Modifier.fillMaxWidth(),
             text = formattedTime,
             style = MaterialTheme.typography.bodySmall,
+            textAlign = TextAlign.End
         )
     }
 }

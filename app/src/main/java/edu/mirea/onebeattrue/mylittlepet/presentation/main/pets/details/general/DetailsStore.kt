@@ -38,6 +38,8 @@ interface DetailsStore : Store<Intent, State, Label> {
 
         data object ClickBack : Intent
         data object OpenEventList : Intent
+        data object OpenNoteList : Intent
+        data object OpenMedicalDataList : Intent
     }
 
     data class State(
@@ -62,6 +64,8 @@ interface DetailsStore : Store<Intent, State, Label> {
     sealed interface Label {
         data object ClickBack : Label
         data object OpenEventList : Label
+        data object OpenNoteList : Label
+        data object OpenMedicalDataList : Label
     }
 }
 
@@ -158,6 +162,8 @@ class DetailsStoreFactory @Inject constructor(
 
                 Intent.ClickBack -> publish(Label.ClickBack)
                 Intent.OpenEventList -> publish(Label.OpenEventList)
+                Intent.OpenNoteList -> publish(Label.OpenNoteList)
+                Intent.OpenMedicalDataList -> publish(Label.OpenMedicalDataList)
             }
         }
     }

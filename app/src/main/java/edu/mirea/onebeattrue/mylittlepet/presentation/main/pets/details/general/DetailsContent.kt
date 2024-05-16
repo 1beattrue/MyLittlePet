@@ -102,7 +102,10 @@ fun DetailsContent(
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier.padding(paddingValues),
-            contentPadding = PaddingValues(vertical = 16.dp),
+            contentPadding = PaddingValues(
+                top = 16.dp,
+                bottom = 32.dp
+            ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
@@ -129,6 +132,16 @@ fun DetailsContent(
             item {
                 EventListCard {
                     component.onClickEventList()
+                }
+            }
+            item {
+                NoteListCard {
+                    component.onClickNoteList()
+                }
+            }
+            item {
+                MedicalDataListCard {
+                    component.onClickMedicalDataList()
                 }
             }
         }
@@ -173,6 +186,62 @@ private fun EventListCard(
         ) {
             Text(
                 text = stringResource(R.string.event_list_app_bar_title),
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center
+            )
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Composable
+private fun NoteListCard(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    ClickableCustomCard(
+        modifier = modifier,
+        elevation = EXTREME_ELEVATION,
+        onClick = { onClick() }
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(R.string.note_list_app_bar_title),
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center
+            )
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Composable
+private fun MedicalDataListCard(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    ClickableCustomCard(
+        modifier = modifier,
+        elevation = EXTREME_ELEVATION,
+        onClick = { onClick() }
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(R.string.medical_data_list_app_bar_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center
             )

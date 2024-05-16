@@ -84,6 +84,12 @@
     <string name="error_event_text">Добавьте текст события</string>
     <string name="event_time_title">Когда напомнить?</string>
 
+    <string name="note_list_app_bar_title">Заметки</string>
+    <string name="add_note">Добавить заметку</string>
+
+    <string name="medical_data_list_app_bar_title">Медицинские данные</string>
+    <string name="add_medical_data">Добавить медицицинские данные</string>
+
     <string name="january">января</string>
     <string name="february">февраля</string>
     <string name="march">марта</string>
