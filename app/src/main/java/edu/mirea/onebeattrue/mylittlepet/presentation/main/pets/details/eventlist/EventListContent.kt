@@ -216,7 +216,7 @@ private fun EventCard(
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = event.label,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Start
         )
 

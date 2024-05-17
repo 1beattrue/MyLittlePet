@@ -100,6 +100,7 @@ dependencies {
 
     val material3Version = "1.2.1"
     implementation("androidx.compose.material3:material3:$material3Version")
+    implementation("androidx.compose.material:material-icons-extended")
 
     implementation("androidx.compose.runtime:runtime-livedata:1.6.6")
 

@@ -58,6 +58,7 @@ import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
@@ -286,7 +287,7 @@ private fun WeightBottomSheet(
             },
             sheetState = sheetState
         ) {
-            ClickableCustomCard(elevation = STRONG_ELEVATION) {
+            CustomCard(elevation = STRONG_ELEVATION) {
                 Text(
                     text = stringResource(id = R.string.enter_weight),
                     style = MaterialTheme.typography.titleLarge

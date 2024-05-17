@@ -11,8 +11,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.DefaultAddEventComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.DefaultAddNoteComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.DefaultEventListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DefaultDetailsComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.DefaultNoteListComponent
@@ -23,6 +25,7 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
     private val addEventComponentFactory: DefaultAddEventComponent.Factory,
     private val eventListComponentFactory: DefaultEventListComponent.Factory,
     private val noteListComponentFactory: DefaultNoteListComponent.Factory,
+    private val addNoteComponentFactory: DefaultAddNoteComponent.Factory,
 
     @Assisted("onBackClick") private val onBackClick: () -> Unit,
     @Assisted("pet") private val pet: Pet,
@@ -99,8 +102,8 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
         Config.NoteList -> {
             val component = noteListComponentFactory.create(
                 pet = pet,
-                onAddNote = { noteList ->
-                    //navigation.pushNew(Config.AddNote(noteList))
+                onAddNoteClicked = { noteList ->
+                    navigation.pushNew(Config.AddNote(noteList))
                 },
                 onClickBack = {
                     navigation.pop()
@@ -108,6 +111,18 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
                 componentContext = componentContext
             )
             DetailsRootComponent.Child.NoteList(component)
+        }
+
+        is Config.AddNote -> {
+            val component = addNoteComponentFactory.create(
+                pet = pet,
+                notes = config.noteList,
+                onAddNoteClosed = {
+                    navigation.pop()
+                },
+                componentContext = componentContext
+            )
+            DetailsRootComponent.Child.AddNote(component)
         }
     }
 
@@ -124,6 +139,9 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
 
         @Serializable
         data object NoteList : Config
+
+        @Serializable
+        data class AddNote(val noteList: List<Note>) : Config
     }
 
     @AssistedFactory

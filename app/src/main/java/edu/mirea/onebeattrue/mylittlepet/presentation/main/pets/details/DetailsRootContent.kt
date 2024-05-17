@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
@@ -25,6 +26,7 @@ fun DetailsRootContent(
             is DetailsRootComponent.Child.Details -> DetailsContent(component = instance.component)
             is DetailsRootComponent.Child.EventList -> EventListContent(component = instance.component)
             is DetailsRootComponent.Child.NoteList -> NoteListContent(component = instance.component)
+            is DetailsRootComponent.Child.AddNote -> Text("AddNote")
         }
     }
 }
