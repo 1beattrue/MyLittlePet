@@ -89,6 +89,10 @@
 
     <string name="medical_data_list_app_bar_title">Медицинские данные</string>
     <string name="add_medical_data">Добавить медицицинские данные</string>
+    <string name="add_note_app_bar_title">Добавление заметки</string>
+    <string name="select_note_icon">Выберите иконку заметки</string>
+    <string name="enter_note_text">Введите текст</string>
+    <string name="error_note_text">Добавьте текст заметки</string>
 
     <string name="january">января</string>
     <string name="february">февраля</string>

@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomNextButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,7 +67,7 @@ fun EventTimeContent(
             }
 
 
-            CustomNextButton(
+            CustomReadyButton(
                 onClick = { component.next(timePickerState.hour, timePickerState.minute) }
             )
         }
