@@ -17,6 +17,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.DefaultAddNoteComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.DefaultEventListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DefaultDetailsComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist.DefaultMedicalDataListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.DefaultNoteListComponent
 import kotlinx.serialization.Serializable
 
@@ -26,6 +27,7 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
     private val eventListComponentFactory: DefaultEventListComponent.Factory,
     private val noteListComponentFactory: DefaultNoteListComponent.Factory,
     private val addNoteComponentFactory: DefaultAddNoteComponent.Factory,
+    private val medicalDataListComponentFactory: DefaultMedicalDataListComponent.Factory,
 
     @Assisted("onBackClick") private val onBackClick: () -> Unit,
     @Assisted("pet") private val pet: Pet,
@@ -78,7 +80,7 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
                     navigation.pushNew(Config.NoteList)
                 },
                 onClickOpenMedicalDataList = {
-
+                    navigation.pushNew(Config.MedicalDataList)
                 },
                 componentContext = componentContext
             )
@@ -124,6 +126,20 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
             )
             DetailsRootComponent.Child.AddNote(component)
         }
+
+        is Config.MedicalDataList -> {
+            val component = medicalDataListComponentFactory.create(
+                pet = pet,
+                onAddMedicalDataClicked = { medicalDataList ->
+//                    navigation.pushNew(Config.AddNote(medicalDataList))
+                },
+                onClickBack = {
+                    navigation.pop()
+                },
+                componentContext = componentContext
+            )
+            DetailsRootComponent.Child.MedicalDataList(component)
+        }
     }
 
     @Serializable
@@ -132,16 +148,19 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
         data object Details : Config
 
         @Serializable
-        data class AddEvent(val eventList: List<Event>) : Config
+        data object EventList : Config
 
         @Serializable
-        data object EventList : Config
+        data class AddEvent(val eventList: List<Event>) : Config
 
         @Serializable
         data object NoteList : Config
 
         @Serializable
         data class AddNote(val noteList: List<Note>) : Config
+
+        @Serializable
+        data object MedicalDataList : Config
     }
 
     @AssistedFactory

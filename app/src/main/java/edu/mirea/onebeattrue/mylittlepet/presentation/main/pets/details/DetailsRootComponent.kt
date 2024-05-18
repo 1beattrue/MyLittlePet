@@ -6,6 +6,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.AddNoteComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist.MedicalDataListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.NoteListComponent
 
 interface DetailsRootComponent {
@@ -13,10 +14,11 @@ interface DetailsRootComponent {
 
     sealed class Child {
         class Details(val component: DetailsComponent) : Child()
-        class AddEvent(val component: AddEventComponent) : Child()
         class EventList(val component: EventListComponent) : Child()
+        class AddEvent(val component: AddEventComponent) : Child()
         class NoteList(val component: NoteListComponent) : Child()
         class AddNote(val component: AddNoteComponent) : Child()
+        class MedicalDataList(val component: MedicalDataListComponent) : Child()
     }
 
     fun onBackClicked()
