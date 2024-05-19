@@ -15,10 +15,7 @@ import kotlinx.coroutines.launch
 
 class DefaultProfileComponent @AssistedInject constructor(
     private val storeFactory: ProfileStoreFactory,
-
-    private val application: Application,
-
-    @Assisted("onChangedBottomMenuVisibility") private val onChangedBottomMenuVisibility: (Boolean) -> Unit,
+    @Assisted("onChangedBottomMenuVisibility") private val onChangedBottomMenuVisibility: (Boolean) -> Unit, //TODO
     @Assisted("onSignOutClicked") private val onSignOutClicked: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : ProfileComponent, ComponentContext by componentContext {
@@ -55,6 +52,14 @@ class DefaultProfileComponent @AssistedInject constructor(
 
     override fun sendEmail() {
         store.accept(ProfileStore.Intent.SendEmail)
+    }
+
+    override fun openBottomSheet() {
+        store.accept(ProfileStore.Intent.OpenBottomSheet)
+    }
+
+    override fun closeBottomSheet() {
+        store.accept(ProfileStore.Intent.CloseBottomSheet)
     }
 
 

@@ -3,6 +3,7 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.root
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
+import android.util.Log
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -52,6 +53,7 @@ class DefaultRootComponent @AssistedInject constructor(
                 .collect {
                     onThemeChanged(it[IS_NIGHT_MODE_KEY] ?: isDarkTheme)
                     onLanguageChanged(it[IS_ENGLISH_MODE_KEY] ?: isEnglishLanguage)
+                    Log.d("DefaultRootComponent", "${it[IS_ENGLISH_MODE_KEY]}")
                 }
         }
     }

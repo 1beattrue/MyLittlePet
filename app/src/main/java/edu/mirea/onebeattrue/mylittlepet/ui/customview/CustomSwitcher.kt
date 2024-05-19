@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
+import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.Language
 
 @Composable
 fun CustomSwitcher(
@@ -106,25 +108,74 @@ fun CustomSwitcher(
 }
 
 @Composable
-fun CustomThemeSwitcher(
-    modifier: Modifier = Modifier,
-    isDarkTheme: Boolean,
-    changeTheme: (Boolean) -> Unit
-) {
-    CustomSwitcher(
-        booleanState = isDarkTheme,
-        action = changeTheme
-    )
-}
-
-@Composable
 fun CustomLanguageSwitcher(
     modifier: Modifier = Modifier,
-    isEnglishLanguage: Boolean,
-    changeLanguage: (Boolean) -> Unit
+    booleanState: Boolean,
+    size: Dp = 60.dp,
+    iconSize: Dp = size / 3,
+    padding: Dp = 10.dp,
+    borderWidth: Dp = 1.dp,
+    parentShape: Shape = CircleShape,
+    toggleShape: Shape = CircleShape,
+    animationSpec: AnimationSpec<Dp> = tween(durationMillis = 300),
+    action: (Boolean) -> Unit
 ) {
-    CustomSwitcher(
-        booleanState = isEnglishLanguage,
-        action = changeLanguage
+
+    val offset by animateDpAsState(
+        targetValue = if (booleanState) 0.dp else size,
+        animationSpec = animationSpec,
+        label = "animation",
     )
+
+    Box(modifier = Modifier
+        .width(size * 2)
+        .height(size)
+        .clip(shape = parentShape)
+        .clickable {
+            action(!booleanState)
+        }
+        .background(MaterialTheme.colorScheme.secondaryContainer)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(size)
+                .offset(x = offset)
+                .padding(all = padding)
+                .clip(shape = toggleShape)
+                .background(MaterialTheme.colorScheme.primary)
+        ) {}
+        Row(
+            modifier = Modifier
+                .border(
+                    border = BorderStroke(
+                        width = borderWidth,
+                        color = MaterialTheme.colorScheme.primary
+                    ),
+                    shape = parentShape
+                )
+        ) {
+            Box(
+                modifier = Modifier.size(size),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier.size(iconSize),
+                    text = Language.RU.value,
+                    color = if (booleanState) MaterialTheme.colorScheme.secondaryContainer
+                    else MaterialTheme.colorScheme.primary
+                )
+            }
+            Box(
+                modifier = Modifier.size(size),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier.size(iconSize),
+                    text = Language.EN.value,
+                    color = if (booleanState) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.secondaryContainer
+                )
+            }
+        }
+    }
 }
