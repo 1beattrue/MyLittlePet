@@ -126,6 +126,7 @@
     <string name="error_medical_text">Добавьте текст медицинских данных</string>
     <string name="add_medical_photo">Добавьте фото медицинских данных</string>
     <string name="add_medical_app_bar_title">Добавление медицинских данных</string>
+    <string name="medical_details_app_bar_title">Детали</string>
 
     <plurals name="years_format">
         <item quantity="one">%1$d год</item>

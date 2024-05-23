@@ -20,6 +20,7 @@ class DefaultMedicalDataListComponent @AssistedInject constructor(
     @Assisted("pet") private val pet: Pet,
     @Assisted("onAddMedicalDataClicked") private val onAddMedicalDataClicked: (List<MedicalData>) -> Unit,
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
+    @Assisted("onPhotoOpened") private val onPhotoOpened: (MedicalData) -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : MedicalDataListComponent, ComponentContext by componentContext {
     private val store = instanceKeeper.getStore { storeFactory.create(pet) }
@@ -34,6 +35,10 @@ class DefaultMedicalDataListComponent @AssistedInject constructor(
 
                     MedicalDataListStore.Label.OnClickBack -> {
                         onClickBack()
+                    }
+
+                    is MedicalDataListStore.Label.OnOpenPhoto -> {
+                        onPhotoOpened(it.medicalData)
                     }
                 }
             }
@@ -52,6 +57,10 @@ class DefaultMedicalDataListComponent @AssistedInject constructor(
         store.accept(MedicalDataListStore.Intent.DeleteMedicalData(medicalData))
     }
 
+    override fun onOpenPhoto(medicalData: MedicalData) {
+        store.accept(MedicalDataListStore.Intent.OnOpenPhoto(medicalData))
+    }
+
 
     override fun onBackClicked() {
         store.accept(MedicalDataListStore.Intent.OnClickBack)
@@ -63,6 +72,7 @@ class DefaultMedicalDataListComponent @AssistedInject constructor(
             @Assisted("pet") pet: Pet,
             @Assisted("onAddMedicalDataClicked") onAddMedicalDataClicked: (List<MedicalData>) -> Unit,
             @Assisted("onClickBack") onClickBack: () -> Unit,
+            @Assisted("onPhotoOpened") onPhotoOpened: (MedicalData) -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultMedicalDataListComponent
     }

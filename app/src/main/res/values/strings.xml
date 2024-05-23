@@ -126,6 +126,7 @@
     <string name="error_medical_text">Add medical data text</string>
     <string name="add_medical_photo">Add a photo</string>
     <string name="add_medical_app_bar_title">Adding medical data</string>
+    <string name="medical_details_app_bar_title">Details</string>
 
     <plurals name="years_format">
         <item quantity="one">%1$d year</item>

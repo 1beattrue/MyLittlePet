@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist
 
+import android.net.Uri
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -21,6 +22,7 @@ interface MedicalDataListStore : Store<Intent, State, Label> {
         data object AddMedicalData : Intent
         data class DeleteMedicalData(val medicalData: MedicalData) : Intent
         data object OnClickBack : Intent
+        data class OnOpenPhoto(val medicalData: MedicalData) : Intent
     }
 
     data class State(
@@ -30,6 +32,7 @@ interface MedicalDataListStore : Store<Intent, State, Label> {
     sealed interface Label {
         data class OnAddMedicalDataClick(val medicalDataList: List<MedicalData>) : Label
         data object OnClickBack : Label
+        data class OnOpenPhoto(val medicalData: MedicalData) : Label
     }
 }
 
@@ -107,6 +110,12 @@ class MedicalDataListStoreFactory @Inject constructor(
                 }
 
                 Intent.OnClickBack -> publish(Label.OnClickBack)
+                is Intent.OnOpenPhoto -> {
+                    val photo = intent.medicalData.imageUri
+                    if (photo != Uri.EMPTY) {
+                        publish(Label.OnOpenPhoto(intent.medicalData))
+                    }
+                }
             }
         }
     }

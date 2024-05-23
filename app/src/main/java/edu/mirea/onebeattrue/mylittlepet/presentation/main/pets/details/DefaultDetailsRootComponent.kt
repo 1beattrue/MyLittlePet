@@ -20,6 +20,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.DefaultEventListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DefaultDetailsComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist.DefaultMedicalDataListComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldataphoto.DefaultMedicalDataDetailsComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.DefaultNoteListComponent
 import kotlinx.serialization.Serializable
 
@@ -31,6 +32,7 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
     private val addNoteComponentFactory: DefaultAddNoteComponent.Factory,
     private val medicalDataListComponentFactory: DefaultMedicalDataListComponent.Factory,
     private val addMedicalDataComponentFactory: DefaultAddMedicalDataComponent.Factory,
+    private val medicalDataDetailsComponentFactory: DefaultMedicalDataDetailsComponent.Factory,
 
     @Assisted("onBackClick") private val onBackClick: () -> Unit,
     @Assisted("pet") private val pet: Pet,
@@ -139,6 +141,9 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
                 onClickBack = {
                     navigation.pop()
                 },
+                onPhotoOpened = { medicalData ->
+                    navigation.pushNew(Config.MedicalDataDetails(medicalData))
+                },
                 componentContext = componentContext
             )
             DetailsRootComponent.Child.MedicalDataList(component)
@@ -154,6 +159,17 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
                 componentContext = componentContext
             )
             DetailsRootComponent.Child.AddMedicalData(component)
+        }
+
+        is Config.MedicalDataDetails -> {
+            val component = medicalDataDetailsComponentFactory.create(
+                medicalData = config.medicalData,
+                onBackClicked = {
+                    navigation.pop()
+                },
+                componentContext = componentContext
+            )
+            DetailsRootComponent.Child.MedicalDataDetails(component)
         }
     }
 
@@ -179,6 +195,9 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
 
         @Serializable
         data class AddMedicalData(val medicalDataList: List<MedicalData>) : Config
+
+        @Serializable
+        data class MedicalDataDetails(val medicalData: MedicalData) : Config
     }
 
     @AssistedFactory

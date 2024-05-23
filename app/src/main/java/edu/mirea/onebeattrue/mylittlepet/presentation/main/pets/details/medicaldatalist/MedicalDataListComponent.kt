@@ -10,5 +10,7 @@ interface MedicalDataListComponent {
 
     fun onDeleteMedicalData(medicalData: MedicalData)
 
+    fun onOpenPhoto(medicalData: MedicalData)
+
     fun onBackClicked()
 }

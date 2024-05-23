@@ -11,6 +11,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist.MedicalDataListContent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldataphoto.MedicalDataDetailsContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.NoteListContent
 
 @Composable
@@ -31,6 +32,7 @@ fun DetailsRootContent(
             is DetailsRootComponent.Child.AddNote -> AddNoteContent(component = instance.component)
             is DetailsRootComponent.Child.MedicalDataList -> MedicalDataListContent(component = instance.component)
             is DetailsRootComponent.Child.AddMedicalData -> AddMedicalDataContent(component = instance.component)
+            is DetailsRootComponent.Child.MedicalDataDetails -> MedicalDataDetailsContent(component = instance.component)
         }
     }
 }
