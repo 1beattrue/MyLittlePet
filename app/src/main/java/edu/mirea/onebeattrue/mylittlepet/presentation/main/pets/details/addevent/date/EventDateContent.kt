@@ -3,10 +3,12 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addeven
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,27 +31,30 @@ fun EventDateContent(
 ) {
     val datePickerState = rememberDatePickerState()
 
-    Column(
+    LazyColumn(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        contentPadding = PaddingValues(vertical = 16.dp)
     ) {
-        DatePicker(
-            modifier = Modifier.fillMaxWidth(),
-            title = {},
-            state = datePickerState,
-            colors = DatePickerDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.surface
+        item {
+            DatePicker(
+                modifier = Modifier.fillMaxWidth(),
+                title = {},
+                state = datePickerState,
+                colors = DatePickerDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             )
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        val confirmEnabled by derivedStateOf {
-            datePickerState.selectedDateMillis != null
+            Spacer(modifier = Modifier.height(16.dp))
+            val confirmEnabled by derivedStateOf {
+                datePickerState.selectedDateMillis != null
+            }
+            CustomNextButton(
+                modifier = Modifier.padding(end = 16.dp),
+                enabled = confirmEnabled,
+                onClick = { component.finish(datePickerState.selectedDateMillis!!) }
+            )
         }
-        CustomNextButton(
-            modifier = Modifier.padding(end = 16.dp),
-            enabled = confirmEnabled,
-            onClick = { component.finish(datePickerState.selectedDateMillis!!) }
-        )
     }
 }

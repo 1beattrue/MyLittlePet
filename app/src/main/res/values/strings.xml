@@ -128,6 +128,8 @@
     <string name="add_medical_app_bar_title">Adding medical data</string>
     <string name="medical_details_app_bar_title">Details</string>
 
+    <string name="share">Share</string>
+
     <plurals name="years_format">
         <item quantity="one">%1$d year</item>
         <item quantity="few">%1$d years</item>

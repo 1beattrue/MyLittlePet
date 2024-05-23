@@ -128,6 +128,8 @@
     <string name="add_medical_app_bar_title">Добавление медицинских данных</string>
     <string name="medical_details_app_bar_title">Детали</string>
 
+    <string name="share">Поделиться</string>
+
     <plurals name="years_format">
         <item quantity="one">%1$d год</item>
         <item quantity="few">%1$d года</item>

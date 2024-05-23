@@ -3,9 +3,12 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addeven
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,45 +39,47 @@ fun EventTimeContent(
 
     val timePickerState = rememberTimePickerState()
 
-    Column(
+    LazyColumn(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        contentPadding = PaddingValues(vertical = 16.dp)
     ) {
-        CustomCardExtremeElevation {
-
-            Text(
-                text = stringResource(id = R.string.set_event_time_title),
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            TimePicker(state = timePickerState)
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
-                    .clickable {
-                        component.onPeriodChanged(!state.isDaily)
-                    },
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = state.isDaily,
-                    onCheckedChange = {
-                        component.onPeriodChanged(it)
-                    }
-                )
+        item {
+            CustomCardExtremeElevation {
                 Text(
-                    text = stringResource(id = R.string.daily_checkbox),
+                    text = stringResource(id = R.string.set_event_time_title),
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                TimePicker(state = timePickerState)
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
+                        .clickable {
+                            component.onPeriodChanged(!state.isDaily)
+                        },
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = state.isDaily,
+                        onCheckedChange = {
+                            component.onPeriodChanged(it)
+                        }
+                    )
+                    Text(
+                        text = stringResource(id = R.string.daily_checkbox),
+                    )
+                }
+
+
+                CustomReadyButton(
+                    onClick = { component.next(timePickerState.hour, timePickerState.minute) }
                 )
             }
-
-
-            CustomReadyButton(
-                onClick = { component.next(timePickerState.hour, timePickerState.minute) }
-            )
         }
     }
 }

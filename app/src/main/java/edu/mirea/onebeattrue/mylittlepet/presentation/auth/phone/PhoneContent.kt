@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
@@ -115,7 +116,11 @@ fun PhoneContent(
                         Text(stringResource(id = R.string.phone_number_prefix))
                     },
                     placeholder = {
-                        Text(stringResource(id = R.string.phone_number_hint))
+                        Text(
+                            text = stringResource(id = R.string.phone_number_hint),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
                     },
                 )
 
