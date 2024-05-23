@@ -67,7 +67,7 @@
     <string name="age_title">Возраст</string>
     <string name="weight_title">Вес</string>
     <string name="error_weight">Неверный формат</string>
-    <string name="weight_hint">2.28</string>
+    <string name="weight_hint">Вес питомца</string>
     <string name="weight_suffix">кг</string>
     <string name="weight_format">%1\$s кг</string>
     <string name="enter_weight">Введите вес</string>
@@ -111,6 +111,21 @@
 
     <string name="notification_title">Мой Маленький Питомец</string>
     <string name="notification_text">Новое событие!</string>
+
+    <string name="vaccination">Вакцинация</string>
+    <string name="analysis">Анализы</string>
+    <string name="allergy">Аллергия</string>
+    <string name="treatment">Лечение</string>
+    <string name="other">Другое</string>
+
+    <string name="select_medical_type">Выберите тип медицинских данных</string>
+    <string name="initial_medical_type">Тип медицинских данных</string>
+    <string name="error_medical_type">Не выбран тип медицинских данных</string>
+    <string name="enter_medical_title">Введите информацию о медицинских данных</string>
+    <string name="new_medical_hint">Ммм?</string>
+    <string name="error_medical_text">Добавьте текст медицинских данных</string>
+    <string name="add_medical_photo">Добавьте фото медицинских данных</string>
+    <string name="add_medical_app_bar_title">Добавление медицинских данных</string>
 
     <plurals name="years_format">
         <item quantity="one">%1$d год</item>

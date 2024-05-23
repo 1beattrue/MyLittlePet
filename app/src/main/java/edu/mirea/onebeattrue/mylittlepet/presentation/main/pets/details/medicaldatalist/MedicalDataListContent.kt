@@ -192,6 +192,6 @@ private fun MedicalDataCard(
     CustomCardExtremeElevation(
         modifier = modifier,
     ) {
-        // TODO: отрисовать ui
+
     }
 }

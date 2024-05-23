@@ -50,9 +50,9 @@
     <string name="pet_type_turtle">Turtle</string>
 
     <string name="error_pet_type">Animal type not selected</string>
-    <string name="enter_pet_name">Enter pet name</string>
-    <string name="error_pet_name">Invalid pet name</string>
-    <string name="pet_name_hint">Pet name</string>
+    <string name="enter_pet_name">Enter pet\'s name</string>
+    <string name="error_pet_name">Invalid pet\'s name</string>
+    <string name="pet_name_hint">Pet\'s name</string>
     <string name="add_pet_photo">Add a photo</string>
 
     <string name="delete">Delete</string>
@@ -66,7 +66,7 @@
     <string name="age_title">Age</string>
     <string name="weight_title">Weight</string>
     <string name="error_weight">Incorrect format</string>
-    <string name="weight_hint">2.28</string>
+    <string name="weight_hint">Pet\'s weight</string>
     <string name="weight_suffix">kg</string>
     <string name="weight_format">%1\$s kg</string>
     <string name="enter_weight">Enter weight</string>
@@ -111,6 +111,21 @@
 
     <string name="notification_title">My Little Pet</string>
     <string name="notification_text">New event!</string>
+
+    <string name="vaccination">Vaccination</string>
+    <string name="analysis">Analysis</string>
+    <string name="allergy">Allergy</string>
+    <string name="treatment">Treatment</string>
+    <string name="other">Other</string>
+
+    <string name="select_medical_type">Select medical data type</string>
+    <string name="initial_medical_type">Medical data type</string>
+    <string name="error_medical_type">Medical data type not selected</string>
+    <string name="enter_medical_title">Enter medical data text</string>
+    <string name="new_medical_hint">Mmm?</string>
+    <string name="error_medical_text">Add medical data text</string>
+    <string name="add_medical_photo">Add a photo</string>
+    <string name="add_medical_app_bar_title">Adding medical data</string>
 
     <plurals name="years_format">
         <item quantity="one">%1$d year</item>

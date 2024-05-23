@@ -7,10 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MedicalData(
     val id: Int,
-    val name: String,
-    val date: Long,
-    val time: Long,
-    @Contextual
-    val imageUri: Uri,
-    val note: String
+    val type: MedicalDataType,
+    @Contextual val imageUri: Uri,
+    val text: String
 )

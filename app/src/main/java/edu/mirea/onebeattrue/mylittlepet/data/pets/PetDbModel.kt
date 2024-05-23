@@ -5,7 +5,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
@@ -29,6 +33,11 @@ data class PetDbModel(
 )
 
 class Converters {
+
+    private val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(Uri::class.java, UriTypeAdapter())
+        .create()
+
     @TypeConverter
     fun fromUri(uri: Uri): String {
         return uri.toString()
@@ -41,34 +50,44 @@ class Converters {
 
     @TypeConverter
     fun fromEventList(eventList: List<Event>): String {
-        return Gson().toJson(eventList)
+        return gson.toJson(eventList)
     }
 
     @TypeConverter
     fun toEventList(eventListString: String): List<Event> {
         val listType = object : TypeToken<List<Event>>() {}.type
-        return Gson().fromJson(eventListString, listType)
+        return gson.fromJson(eventListString, listType)
     }
 
     @TypeConverter
     fun fromNoteList(noteList: List<Note>): String {
-        return Gson().toJson(noteList)
+        return gson.toJson(noteList)
     }
 
     @TypeConverter
     fun toNoteList(noteListString: String): List<Note> {
         val listType = object : TypeToken<List<Note>>() {}.type
-        return Gson().fromJson(noteListString, listType)
+        return gson.fromJson(noteListString, listType)
     }
 
     @TypeConverter
     fun fromMedicalDataList(medicalDataList: List<MedicalData>): String {
-        return Gson().toJson(medicalDataList)
+        return gson.toJson(medicalDataList)
     }
 
     @TypeConverter
     fun toMedicalDataList(medicalDataListString: String): List<MedicalData> {
         val listType = object : TypeToken<List<MedicalData>>() {}.type
-        return Gson().fromJson(medicalDataListString, listType)
+        return gson.fromJson(medicalDataListString, listType)
+    }
+}
+
+class UriTypeAdapter : TypeAdapter<Uri>() {
+    override fun write(out: JsonWriter, value: Uri) {
+        out.value(value.toString())
+    }
+
+    override fun read(`in`: JsonReader): Uri {
+        return Uri.parse(`in`.nextString())
     }
 }

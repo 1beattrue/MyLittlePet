@@ -11,9 +11,11 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.DefaultAddEventComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedicaldata.DefaultAddMedicalDataComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.DefaultAddNoteComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.DefaultEventListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DefaultDetailsComponent
@@ -28,6 +30,7 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
     private val noteListComponentFactory: DefaultNoteListComponent.Factory,
     private val addNoteComponentFactory: DefaultAddNoteComponent.Factory,
     private val medicalDataListComponentFactory: DefaultMedicalDataListComponent.Factory,
+    private val addMedicalDataComponentFactory: DefaultAddMedicalDataComponent.Factory,
 
     @Assisted("onBackClick") private val onBackClick: () -> Unit,
     @Assisted("pet") private val pet: Pet,
@@ -131,7 +134,7 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
             val component = medicalDataListComponentFactory.create(
                 pet = pet,
                 onAddMedicalDataClicked = { medicalDataList ->
-//                    navigation.pushNew(Config.AddNote(medicalDataList))
+                    navigation.pushNew(Config.AddMedicalData(medicalDataList))
                 },
                 onClickBack = {
                     navigation.pop()
@@ -139,6 +142,18 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
                 componentContext = componentContext
             )
             DetailsRootComponent.Child.MedicalDataList(component)
+        }
+
+        is Config.AddMedicalData -> {
+            val component = addMedicalDataComponentFactory.create(
+                pet = pet,
+                medicalDataList = config.medicalDataList,
+                onAddMedicalDataClosed = {
+                    navigation.pop()
+                },
+                componentContext = componentContext
+            )
+            DetailsRootComponent.Child.AddMedicalData(component)
         }
     }
 
@@ -161,6 +176,9 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
 
         @Serializable
         data object MedicalDataList : Config
+
+        @Serializable
+        data class AddMedicalData(val medicalDataList: List<MedicalData>) : Config
     }
 
     @AssistedFactory
