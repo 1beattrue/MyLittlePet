@@ -8,7 +8,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist.MedicalDataListComponent
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldataphoto.MedicalDataDetailsComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatadetails.MedicalDataDetailsComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.NoteListComponent
 
 interface DetailsRootComponent {

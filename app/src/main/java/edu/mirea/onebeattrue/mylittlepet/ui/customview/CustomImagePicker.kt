@@ -64,12 +64,13 @@ fun CustomImagePicker(
                             ActivityResultContracts.PickVisualMedia.ImageOnly
                         )
                     )
-                }
+                },
         ) {
             if (uri == Uri.EMPTY) {
                 placeholder()
             } else {
                 GlideImage(
+                    modifier = Modifier.align(Alignment.Center),
                     model = uri,
                     contentDescription = null
                 )

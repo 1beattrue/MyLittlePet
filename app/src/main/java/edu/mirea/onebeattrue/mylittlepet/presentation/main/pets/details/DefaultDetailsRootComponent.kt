@@ -20,7 +20,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.DefaultEventListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DefaultDetailsComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist.DefaultMedicalDataListComponent
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldataphoto.DefaultMedicalDataDetailsComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatadetails.DefaultMedicalDataDetailsComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.DefaultNoteListComponent
 import kotlinx.serialization.Serializable
 

@@ -1,5 +1,8 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldataphoto
+package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatadetails
 
+import android.content.Context
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.rememberTransformableState
@@ -7,7 +10,9 @@ import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -21,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,9 +36,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import edu.mirea.onebeattrue.mylittlepet.R
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
@@ -41,7 +51,15 @@ fun MedicalDataDetailsContent(
     modifier: Modifier = Modifier,
     component: MedicalDataDetailsComponent
 ) {
-    Log.d("MedicalDataDetailsContent", "${component.medicalData.imageUri}")
+    var aspectRatio by remember { mutableStateOf(1f) }
+
+    val context = LocalContext.current
+    LaunchedEffect(component.medicalData.imageUri) {
+        val sizeRetriever = GlideSizeRetriever(context)
+        sizeRetriever.getImageSize(component.medicalData.imageUri) { width, height ->
+            aspectRatio = if (height != 0) width.toFloat() / height.toFloat() else 1f
+        }
+    }
 
     Scaffold(
         modifier = modifier,
@@ -104,7 +122,8 @@ fun MedicalDataDetailsContent(
 
             BoxWithConstraints(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .aspectRatio(aspectRatio)
                     .background(Color.Black)
             ) {
                 val state =
@@ -113,18 +132,15 @@ fun MedicalDataDetailsContent(
 
                         //rotation += rotationChange
 
-                        val maxWidth = constraints.maxWidth.toFloat()
-                        val maxHeight = constraints.maxHeight.toFloat()
+                        val extraWidth = (scale - 1) * constraints.maxWidth
+                        val extraHeight = (scale - 1) * constraints.maxHeight
 
-                        val imageWidth = maxWidth * scale
-                        val imageHeight = maxHeight * scale
-
-                        val maxX = (imageWidth - maxWidth) / 2
-                        val maxY = (imageHeight - maxHeight) / 2
+                        val maxX = extraWidth / 2
+                        val maxY = extraHeight / 2
 
                         offset = Offset(
-                            x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
-                            y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY)
+                            x = (offset.x + panChange.x * scale).coerceIn(-maxX, maxX),
+                            y = (offset.y + panChange.y * scale).coerceIn(-maxY, maxY)
                         )
                     }
 
@@ -144,5 +160,23 @@ fun MedicalDataDetailsContent(
                 )
             }
         }
+    }
+}
+
+class GlideSizeRetriever(private val context: Context) {
+    fun getImageSize(imageUri: Uri, onSizeReady: (Int, Int) -> Unit) {
+        Glide.with(context)
+            .load(imageUri)
+            .into(object : CustomTarget<Drawable>() {
+                override fun onResourceReady(
+                    resource: Drawable,
+                    transition: Transition<in Drawable>?
+                ) {
+                    onSizeReady(resource.intrinsicWidth, resource.intrinsicHeight)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                }
+            })
     }
 }

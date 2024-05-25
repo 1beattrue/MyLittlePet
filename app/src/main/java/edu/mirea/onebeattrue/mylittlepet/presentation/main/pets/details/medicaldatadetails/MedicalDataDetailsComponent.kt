@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldataphoto
+package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatadetails
 
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 

@@ -11,7 +11,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist.MedicalDataListContent
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldataphoto.MedicalDataDetailsContent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatadetails.MedicalDataDetailsContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.NoteListContent
 
 @Composable
