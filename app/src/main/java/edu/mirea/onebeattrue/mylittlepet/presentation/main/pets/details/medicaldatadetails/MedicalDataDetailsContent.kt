@@ -3,7 +3,6 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medical
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -122,7 +120,7 @@ fun MedicalDataDetailsContent(
 
             BoxWithConstraints(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    //.fillMaxWidth()
                     .aspectRatio(aspectRatio)
                     .background(Color.Black)
             ) {
