@@ -129,6 +129,7 @@
     <string name="medical_details_app_bar_title">Детали</string>
 
     <string name="share">Поделиться</string>
+    <string name="image_picker_label">Нажмите для выбора фотографии</string>
 
     <plurals name="years_format">
         <item quantity="one">%1$d год</item>
