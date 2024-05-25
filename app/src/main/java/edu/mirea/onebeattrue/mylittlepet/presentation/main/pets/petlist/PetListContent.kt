@@ -1,6 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -123,6 +124,8 @@ private fun PetCard(
     openDetails: () -> Unit
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+
+    Log.d("PetCard", "${pet.imageUri}")
 
     Box(
         modifier = modifier

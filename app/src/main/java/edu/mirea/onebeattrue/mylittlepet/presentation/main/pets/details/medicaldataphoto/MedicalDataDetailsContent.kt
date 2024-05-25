@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldataphoto
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -40,6 +41,8 @@ fun MedicalDataDetailsContent(
     modifier: Modifier = Modifier,
     component: MedicalDataDetailsComponent
 ) {
+    Log.d("MedicalDataDetailsContent", "${component.medicalData.imageUri}")
+
     Scaffold(
         modifier = modifier,
         topBar = {

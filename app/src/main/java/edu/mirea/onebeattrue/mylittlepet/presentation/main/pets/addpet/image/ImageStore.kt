@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image
 
+import android.app.Application
 import android.net.Uri
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
@@ -10,6 +11,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddPetUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
+import edu.mirea.onebeattrue.mylittlepet.extensions.saveImageToInternalStorage
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.State
@@ -37,6 +39,7 @@ class ImageStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val addPetUseCase: AddPetUseCase,
     private val editPetUseCase: EditPetUseCase,
+    private val application: Application,
 ) {
 
     fun create(
@@ -76,20 +79,21 @@ class ImageStoreFactory @Inject constructor(
                 Intent.AddPet -> {
                     scope.launch {
                         val imageUri = getState().imageUri
+                        val localUri = saveImageToInternalStorage(application, imageUri)
 
                         if (pet == null) {
                             addPetUseCase(
                                 Pet(
                                     type = petType,
                                     name = petName,
-                                    imageUri = imageUri
+                                    imageUri = localUri
                                 )
                             )
                         } else {
                             editPetUseCase(
                                 pet.copy(
                                     name = petName,
-                                    imageUri = imageUri
+                                    imageUri = localUri
                                 )
                             )
                         }

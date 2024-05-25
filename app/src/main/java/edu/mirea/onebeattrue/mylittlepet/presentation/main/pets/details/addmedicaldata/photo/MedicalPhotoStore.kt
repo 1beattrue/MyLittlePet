@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedicaldata.photo
 
+import android.app.Application
 import android.net.Uri
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
@@ -10,6 +11,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalDataType
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
+import edu.mirea.onebeattrue.mylittlepet.extensions.saveImageToInternalStorage
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedicaldata.photo.MedicalPhotoStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedicaldata.photo.MedicalPhotoStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedicaldata.photo.MedicalPhotoStore.State
@@ -36,6 +38,7 @@ interface MedicalPhotoStore : Store<Intent, State, Label> {
 class MedicalPhotoStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val editPetUseCase: EditPetUseCase,
+    private val application: Application,
 ) {
 
     fun create(
@@ -84,10 +87,12 @@ class MedicalPhotoStoreFactory @Inject constructor(
                 Intent.AddMedicalData -> {
                     scope.launch {
                         val imageUri = getState().imageUri
+                        val localUri = saveImageToInternalStorage(application, imageUri)
+
                         val newMedicalData = MedicalData(
                             id = generateMedicalDataId(medicalList),
                             type = type,
-                            imageUri = imageUri,
+                            imageUri = localUri,
                             text = text
                         )
 
