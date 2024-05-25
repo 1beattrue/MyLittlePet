@@ -13,6 +13,7 @@
     <string name="next">Далее</string>
     <string name="back">Назад</string>
     <string name="confirm">Подтвердить</string>
+    <string name="cancel">Отменить</string>
     <string name="add">Добавить</string>
     <string name="ready">Готово</string>
     <string name="ok">OK</string>
@@ -130,6 +131,9 @@
 
     <string name="share">Поделиться</string>
     <string name="image_picker_label">Нажмите для выбора фотографии</string>
+    <string name="delete_dialog_title">Удалить?</string>
+    <string name="delete_dialog_text">Вы уверены, что хотите удалить питомца? Отменить это действие невозможно</string>
+
 
     <plurals name="years_format">
         <item quantity="one">%1$d год</item>

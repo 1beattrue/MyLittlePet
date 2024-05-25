@@ -26,6 +26,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,7 +50,7 @@ fun MedicalDataDetailsContent(
     modifier: Modifier = Modifier,
     component: MedicalDataDetailsComponent
 ) {
-    var aspectRatio by remember { mutableStateOf(1f) }
+    var aspectRatio by remember { mutableFloatStateOf(1f) }
 
     val context = LocalContext.current
     LaunchedEffect(component.medicalData.imageUri) {
@@ -84,16 +85,16 @@ fun MedicalDataDetailsContent(
                     }
                 },
                 actions = {
-                    IconButton(
-                        onClick = {
-                            // component.downloadPhoto()
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Download,
-                            contentDescription = null
-                        )
-                    }
+//                    IconButton(
+//                        onClick = {
+//                            component.downloadPhoto()
+//                        },
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Rounded.Download,
+//                            contentDescription = null
+//                        )
+//                    }
                 }
             )
         },
@@ -107,7 +108,7 @@ fun MedicalDataDetailsContent(
         ) {
 
             var scale by remember {
-                mutableStateOf(1f)
+                mutableFloatStateOf(1f)
             }
 
 //            var rotation by remember {

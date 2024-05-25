@@ -1,7 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +19,8 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -124,8 +126,7 @@ private fun PetCard(
     openDetails: () -> Unit
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
-
-    Log.d("PetCard", "${pet.imageUri}")
+    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
 
     Box(
         modifier = modifier
@@ -246,11 +247,67 @@ private fun PetCard(
                         ),
                         onClick = {
                             expanded = false
-                            deletePet()
+                            showDeleteDialog = true
                         }
                     )
                 }
             }
         }
     }
+
+    if (showDeleteDialog) {
+        DeletePetDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            onConfirmation = {
+                showDeleteDialog = false
+                deletePet()
+            }
+        )
+    }
+}
+
+@Composable
+private fun DeletePetDialog(
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = { onDismissRequest() },
+        icon = {
+            Icon(
+                imageVector = Icons.Rounded.Warning,
+                contentDescription = null,
+                tint = Color.Red
+            )
+        },
+        title = {
+            Text(text = stringResource(R.string.delete_dialog_title))
+        },
+        text = {
+            Text(text = stringResource(R.string.delete_dialog_text))
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmation()
+                }
+            ) {
+                Text(
+                    text = stringResource(R.string.delete),
+                    color = Color.Red
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(text = stringResource(R.string.cancel))
+            }
+        }
+    )
 }
