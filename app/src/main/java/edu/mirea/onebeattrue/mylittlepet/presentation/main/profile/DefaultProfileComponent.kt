@@ -7,7 +7,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.componentScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -44,8 +44,16 @@ class DefaultProfileComponent @AssistedInject constructor(
         store.accept(ProfileStore.Intent.ChangeTheme(isDarkTheme))
     }
 
+    override fun changeUseSystemTheme(useSystemTheme: Boolean) {
+        store.accept(ProfileStore.Intent.ChangeUsingSystemTheme(useSystemTheme))
+    }
+
     override fun changeLanguage(isEnglishLanguage: Boolean) {
-        //store.accept(ProfileStore.Intent.ChangeLanguage(isEnglishLanguage))
+        store.accept(ProfileStore.Intent.ChangeLanguage(isEnglishLanguage))
+    }
+
+    override fun changeUseSystemLang(useSystemLang: Boolean) {
+        store.accept(ProfileStore.Intent.ChangeUsingSystemLang(useSystemLang))
     }
 
     override fun sendEmail() {
@@ -58,10 +66,6 @@ class DefaultProfileComponent @AssistedInject constructor(
 
     override fun closeBottomSheet() {
         store.accept(ProfileStore.Intent.CloseBottomSheet)
-    }
-
-    override fun changeUseSystemTheme(useSystemTheme: Boolean) {
-        store.accept(ProfileStore.Intent.ChangeUsingSystemTheme(useSystemTheme))
     }
 
 

@@ -11,6 +11,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.MainContent
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.LocaleUtils
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 
 @Composable
@@ -20,8 +21,7 @@ fun RootContent(
 ) {
     val state by component.model.collectAsState()
     val context = LocalContext.current
-
-    //LocaleUtils.setLocale(context, state.isEnglishLanguage)
+    LocaleUtils.setLocale(context, state.isEnglishLanguage)
 
     MyLittlePetTheme(
         darkTheme = state.isDarkTheme ?: isSystemInDarkTheme()

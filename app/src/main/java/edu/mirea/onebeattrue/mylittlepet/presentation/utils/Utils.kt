@@ -1,9 +1,8 @@
-package edu.mirea.onebeattrue.mylittlepet.presentation.extensions
+package edu.mirea.onebeattrue.mylittlepet.presentation.utils
 
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -34,8 +33,12 @@ enum class Language(val value: String) {
 }
 
 object LocaleUtils {
+    fun isEnglishLanguage(): Boolean {
+        val currentLocale = Locale.getDefault()
+        return currentLocale.language == Locale.ENGLISH.language
+    }
+
     fun setLocale(context: Context, isEnglish: Boolean?) {
-        Log.d("LocaleUtils", "isEnglish $isEnglish")
         val language = if (isEnglish == null || isEnglish) Language.EN.value else Language.RU.value
         updateResources(context, language)
     }
@@ -54,9 +57,6 @@ object LocaleUtils {
 }
 
 object UiUtils {
-
-    var isAppInDarkTheme: Boolean? = null
-
     fun isSystemInDarkTheme(context: Context): Boolean {
         val uiMode = context.resources.configuration.uiMode
         val nightModeFlags = uiMode and Configuration.UI_MODE_NIGHT_MASK

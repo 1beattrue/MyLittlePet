@@ -14,11 +14,14 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.UiUtils
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.dataStore
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.DefaultMainComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.LocaleUtils
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.UiUtils
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.componentScope
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.dataStore
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_ENGLISH_MODE_KEY
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_NIGHT_MODE_KEY
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.USE_SYSTEM_LANG
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.USE_SYSTEM_THEME
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
@@ -35,13 +38,17 @@ class DefaultRootComponent @AssistedInject constructor(
     private val application: Application,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : RootComponent, ComponentContext by componentContext {
-    private val darkTheme: Boolean
+    private val isDarkTheme: Boolean
         get() = UiUtils.isSystemInDarkTheme(application)
-//    private var isEnglishLanguage: Boolean =
-//        application.resources.configuration.locales.toLanguageTags() == Language.EN.value
+    private val isEnglishLanguage: Boolean
+        get() = LocaleUtils.isEnglishLanguage()
+    //get() = application.resources.configuration.locales.toLanguageTags() == Language.EN.value
 
     val store = instanceKeeper.getStore {
-        storeFactory.create(isDarkTheme = darkTheme)
+        storeFactory.create(
+            isDarkTheme = isDarkTheme,
+            isEnglishLanguage = isEnglishLanguage
+        )
     }
 
     init {
@@ -50,15 +57,21 @@ class DefaultRootComponent @AssistedInject constructor(
                 .collect { preferences ->
                     preferences[IS_NIGHT_MODE_KEY].let {
                         val useSystemTheme = preferences[USE_SYSTEM_THEME] ?: true
-                        if (!useSystemTheme){
-                            onThemeChanged(it ?: darkTheme)
-                            UiUtils.isAppInDarkTheme = darkTheme
+                        if (!useSystemTheme) {
+                            onThemeChanged(it ?: isDarkTheme)
                         } else {
                             onThemeChanged(null)
                         }
                     }
 
-                    //onLanguageChanged(it[IS_ENGLISH_MODE_KEY] ?: isEnglishLanguage)
+                    preferences[IS_ENGLISH_MODE_KEY].let {
+                        val useSystemLang = preferences[USE_SYSTEM_LANG] ?: true
+                        if (!useSystemLang) {
+                            onLanguageChanged(it ?: isEnglishLanguage)
+                        } else {
+                            onLanguageChanged(null)
+                        }
+                    }
                 }
         }
     }
@@ -103,7 +116,7 @@ class DefaultRootComponent @AssistedInject constructor(
         store.accept(RootStore.Intent.ChangeTheme(isDarkTheme))
     }
 
-    private fun onLanguageChanged(isEnglishLanguage: Boolean) {
+    private fun onLanguageChanged(isEnglishLanguage: Boolean?) {
         store.accept(RootStore.Intent.ChangeLanguage(isEnglishLanguage))
     }
 

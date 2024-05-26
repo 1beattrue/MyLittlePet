@@ -14,7 +14,7 @@ interface RootStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
         data class ChangeTheme(val isDarkTheme: Boolean?) : Intent
-        data class ChangeLanguage(val isEnglishLanguage: Boolean) : Intent
+        data class ChangeLanguage(val isEnglishLanguage: Boolean?) : Intent
     }
 
     data class State(
@@ -31,13 +31,14 @@ class RootStoreFactory @Inject constructor(
 ) {
 
     fun create(
-        isDarkTheme: Boolean?
+        isDarkTheme: Boolean?,
+        isEnglishLanguage: Boolean?,
     ): RootStore =
         object : RootStore, Store<Intent, State, Label> by storeFactory.create(
             name = STORE_NAME,
             initialState = State(
                 isDarkTheme = isDarkTheme,
-                isEnglishLanguage = null
+                isEnglishLanguage = isEnglishLanguage
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -49,7 +50,7 @@ class RootStoreFactory @Inject constructor(
 
     private sealed interface Msg {
         data class ChangeTheme(val isDarkTheme: Boolean?) : Msg
-        data class ChangeLanguage(val isEnglishLanguage: Boolean) : Msg
+        data class ChangeLanguage(val isEnglishLanguage: Boolean?) : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {

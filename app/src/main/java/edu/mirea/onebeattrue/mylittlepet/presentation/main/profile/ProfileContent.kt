@@ -35,10 +35,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.Language
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 
@@ -93,6 +95,18 @@ fun ProfileContent(
                     useSystemTheme = state.useSystemTheme,
                     onUsingSystemThemeChanged = {
                         component.changeUseSystemTheme(it)
+                    }
+                )
+            }
+            item {
+                ChangeLanguageCard(
+                    isEnglish = state.isEnglishLanguage,
+                    onLanguageChanged = { isEnglish ->
+                        component.changeLanguage(isEnglish)
+                    },
+                    useSystemLanguage = state.useSystemLang,
+                    onUsingSystemLanguageChanged = {
+                        component.changeUseSystemLang(it)
                     }
                 )
             }
@@ -192,6 +206,72 @@ fun ProfileContent(
 }
 
 @Composable
+fun ChangeLanguageCard(
+    modifier: Modifier = Modifier,
+    isEnglish: Boolean,
+    onLanguageChanged: (Boolean) -> Unit,
+    useSystemLanguage: Boolean,
+    onUsingSystemLanguageChanged: (Boolean) -> Unit
+) {
+    CustomCardExtremeElevation(modifier = modifier) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.lang_title),
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.titleLarge
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
+                .clickable {
+                    onUsingSystemLanguageChanged(!useSystemLanguage)
+                },
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = useSystemLanguage,
+                onCheckedChange = {
+                    onUsingSystemLanguageChanged(it)
+                }
+            )
+            Text(
+                text = stringResource(R.string.use_system_lang),
+            )
+        }
+        AnimatedVisibility(
+            visible = !useSystemLanguage
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    modifier = Modifier.weight(0.7f),
+                    overflow = TextOverflow.Ellipsis,
+                    text = stringResource(R.string.change_language),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Start,
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(text = Language.RU.value, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(8.dp))
+                Switch(
+                    checked = isEnglish,
+                    onCheckedChange = { english ->
+                        onLanguageChanged(english)
+                    }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = Language.EN.value, fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
+
+@Composable
 fun ChangeThemeCard(
     modifier: Modifier = Modifier,
     isDarkTheme: Boolean,
@@ -200,6 +280,12 @@ fun ChangeThemeCard(
     onUsingSystemThemeChanged: (Boolean) -> Unit
 ) {
     CustomCardExtremeElevation(modifier = modifier) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.theme_title),
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.titleLarge
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()

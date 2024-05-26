@@ -158,6 +158,9 @@
 
     <string name="profile_app_bar_title">Профиль</string>
     <string name="use_system_theme">Использовать тему системы</string>
+    <string name="use_system_lang">Использовать язык системы</string>
+    <string name="theme_title">Тема</string>
+    <string name="lang_title">Язык</string>
 
     <plurals name="years_format">
         <item quantity="one">%1$d год</item>
