@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.extensions
 
+import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
 import android.util.Log
@@ -8,11 +9,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnDestroy
+import edu.mirea.onebeattrue.mylittlepet.presentation.MyLittlePetApplication
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.DATA_STORE_SETTINGS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import java.util.Locale
 
 val ComponentContext.componentScope
@@ -60,3 +64,12 @@ object UiUtils {
     }
 }
 
+object DataStoreUtils {
+    fun getLastSavedBoolean(application: Application, key: Preferences.Key<Boolean>): Boolean? {
+        val dataStore = (application as MyLittlePetApplication).dataStore
+        return runBlocking {
+            val preferences = dataStore.data.first()
+            preferences[key]
+        }
+    }
+}

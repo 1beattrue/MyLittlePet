@@ -19,6 +19,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.dataStore
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.DefaultMainComponent
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_NIGHT_MODE_KEY
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.USE_SYSTEM_THEME
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -48,8 +49,13 @@ class DefaultRootComponent @AssistedInject constructor(
             application.dataStore.data
                 .collect { preferences ->
                     preferences[IS_NIGHT_MODE_KEY].let {
-                        onThemeChanged(it ?: darkTheme)
-                        UiUtils.isAppInDarkTheme = darkTheme
+                        val useSystemTheme = preferences[USE_SYSTEM_THEME] ?: true
+                        if (!useSystemTheme){
+                            onThemeChanged(it ?: darkTheme)
+                            UiUtils.isAppInDarkTheme = darkTheme
+                        } else {
+                            onThemeChanged(null)
+                        }
                     }
 
                     //onLanguageChanged(it[IS_ENGLISH_MODE_KEY] ?: isEnglishLanguage)
@@ -93,7 +99,7 @@ class DefaultRootComponent @AssistedInject constructor(
         }
     }
 
-    private fun onThemeChanged(isDarkTheme: Boolean) {
+    private fun onThemeChanged(isDarkTheme: Boolean?) {
         store.accept(RootStore.Intent.ChangeTheme(isDarkTheme))
     }
 

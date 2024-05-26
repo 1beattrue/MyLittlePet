@@ -157,6 +157,7 @@
     <string name="notification_permission_denied">Permission to send notifications is denied. Open Settings</string>
 
     <string name="profile_app_bar_title">Profile</string>
+    <string name="use_system_theme">Use system theme</string>
 
     <plurals name="years_format">
         <item quantity="one">%1$d year</item>

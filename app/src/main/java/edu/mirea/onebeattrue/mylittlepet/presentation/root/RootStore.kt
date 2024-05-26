@@ -13,7 +13,7 @@ import javax.inject.Inject
 interface RootStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
-        data class ChangeTheme(val isDarkTheme: Boolean) : Intent
+        data class ChangeTheme(val isDarkTheme: Boolean?) : Intent
         data class ChangeLanguage(val isEnglishLanguage: Boolean) : Intent
     }
 
@@ -48,7 +48,7 @@ class RootStoreFactory @Inject constructor(
     }
 
     private sealed interface Msg {
-        data class ChangeTheme(val isDarkTheme: Boolean) : Msg
+        data class ChangeTheme(val isDarkTheme: Boolean?) : Msg
         data class ChangeLanguage(val isEnglishLanguage: Boolean) : Msg
     }
 

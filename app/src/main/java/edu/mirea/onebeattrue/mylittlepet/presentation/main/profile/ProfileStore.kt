@@ -11,6 +11,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.SignOutUseCase
+import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.DataStoreUtils
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.UiUtils
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.dataStore
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.Intent
@@ -18,6 +19,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.State
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_NIGHT_MODE_KEY
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.SUPPORT_EMAIL
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.USE_SYSTEM_THEME
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,7 +27,9 @@ interface ProfileStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
         data object SignOut : Intent
+        data class ChangeUsingSystemTheme(val useSystemTheme: Boolean) : Intent
         data class ChangeTheme(val isDarkTheme: Boolean) : Intent
+
         //data class ChangeLanguage(val isEnglishLanguage: Boolean) : Intent
         data object SendEmail : Intent
         data object OpenBottomSheet : Intent
@@ -34,6 +38,7 @@ interface ProfileStore : Store<Intent, State, Label> {
 
     data class State(
         val isDarkTheme: Boolean?,
+        val useSystemTheme: Boolean,
         //val isEnglishLanguage: Boolean,
         val bottomSheetState: Boolean
     )
@@ -53,7 +58,11 @@ class ProfileStoreFactory @Inject constructor(
         object : ProfileStore, Store<Intent, State, Label> by storeFactory.create(
             name = "ProfileStore",
             initialState = State(
-                isDarkTheme = UiUtils.isAppInDarkTheme,
+                useSystemTheme = DataStoreUtils.getLastSavedBoolean(application, USE_SYSTEM_THEME)
+                    ?: true,
+                isDarkTheme = DataStoreUtils
+                    .getLastSavedBoolean(application, IS_NIGHT_MODE_KEY)
+                    ?: UiUtils.isSystemInDarkTheme(application),
                 //isEnglishLanguage = application.resources.configuration.locales.toLanguageTags() == Language.EN.value,
                 bottomSheetState = false
             ),
@@ -66,6 +75,8 @@ class ProfileStoreFactory @Inject constructor(
 
     private sealed interface Msg {
         data class ChangeTheme(val isDarkTheme: Boolean) : Msg
+        data class ChangeUsingSystemTheme(val useSystemTheme: Boolean) : Msg
+
         //data class ChangeLanguage(val isEnglishLanguage: Boolean) : Msg
         data object SendEmail : Msg
         data class BottomSheetState(val bottomSheetState: Boolean) : Msg
@@ -120,6 +131,16 @@ class ProfileStoreFactory @Inject constructor(
                 Intent.CloseBottomSheet -> {
                     dispatch(Msg.BottomSheetState(false))
                 }
+
+                is Intent.ChangeUsingSystemTheme -> {
+                    scope.launch {
+                        val usingSystemTheme = intent.useSystemTheme
+                        application.dataStore.edit { preferences ->
+                            preferences[USE_SYSTEM_THEME] = usingSystemTheme
+                        }
+                        dispatch(Msg.ChangeUsingSystemTheme(usingSystemTheme))
+                    }
+                }
             }
         }
     }
@@ -130,6 +151,7 @@ class ProfileStoreFactory @Inject constructor(
                 is Msg.ChangeTheme -> copy(isDarkTheme = msg.isDarkTheme)
                 Msg.SendEmail -> TODO()
                 is Msg.BottomSheetState -> copy(bottomSheetState = msg.bottomSheetState)
+                is Msg.ChangeUsingSystemTheme -> copy(useSystemTheme = msg.useSystemTheme)
             }
     }
 }

@@ -13,4 +13,5 @@ interface ProfileComponent {
     fun sendEmail()
     fun openBottomSheet()
     fun closeBottomSheet()
+    fun changeUseSystemTheme(useSystemTheme: Boolean)
 }

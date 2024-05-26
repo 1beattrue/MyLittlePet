@@ -60,6 +60,10 @@ class DefaultProfileComponent @AssistedInject constructor(
         store.accept(ProfileStore.Intent.CloseBottomSheet)
     }
 
+    override fun changeUseSystemTheme(useSystemTheme: Boolean) {
+        store.accept(ProfileStore.Intent.ChangeUsingSystemTheme(useSystemTheme))
+    }
+
 
     @AssistedFactory
     interface Factory {
