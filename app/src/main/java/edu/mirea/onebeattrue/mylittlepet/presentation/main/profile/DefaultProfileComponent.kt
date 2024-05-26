@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.profile
 
+import android.app.Application
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
@@ -14,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class DefaultProfileComponent @AssistedInject constructor(
     private val storeFactory: ProfileStoreFactory,
-    @Assisted("onChangedBottomMenuVisibility") private val onChangedBottomMenuVisibility: (Boolean) -> Unit,
+    @Assisted("onChangedBottomMenuVisibility") private val onChangedBottomMenuVisibility: (Boolean) -> Unit, //TODO
     @Assisted("onSignOutClicked") private val onSignOutClicked: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : ProfileComponent, ComponentContext by componentContext {
@@ -40,6 +41,27 @@ class DefaultProfileComponent @AssistedInject constructor(
     override fun signOut() {
         store.accept(ProfileStore.Intent.SignOut)
     }
+
+    override fun changeTheme(isDarkTheme: Boolean) {
+        store.accept(ProfileStore.Intent.ChangeTheme(isDarkTheme))
+    }
+
+    override fun changeLanguage(isEnglishLanguage: Boolean) {
+        store.accept(ProfileStore.Intent.ChangeLanguage(isEnglishLanguage))
+    }
+
+    override fun sendEmail() {
+        store.accept(ProfileStore.Intent.SendEmail)
+    }
+
+    override fun openBottomSheet() {
+        store.accept(ProfileStore.Intent.OpenBottomSheet)
+    }
+
+    override fun closeBottomSheet() {
+        store.accept(ProfileStore.Intent.CloseBottomSheet)
+    }
+
 
     @AssistedFactory
     interface Factory {

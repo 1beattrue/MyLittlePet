@@ -1,5 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.ui.customview
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -68,6 +70,9 @@ fun CustomCard(
         ) {
             Column(
                 modifier = Modifier
+                    .clickable {
+                        onClick()
+                    }
                     .fillMaxWidth()
                     .padding(32.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -161,7 +166,6 @@ fun CustomCardWithAddButton(
     onAddClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
-
     MaterialTheme(
         colorScheme = MaterialTheme.colorScheme.copy(surfaceTint = Color(0x00FFFFFF))
     ) {

@@ -26,10 +26,28 @@
     <string name="code_was_resent">The code has been resent</string>
 
     <string name="navigation_item_feed">Feed</string>
+
+
+
     <string name="navigation_item_pets">Pets</string>
+
+
+
     <string name="navigation_item_profile">Profile</string>
+    <string name="change_theme">Change theme</string>
+    <string name="change_language">Change language</string>
+    <string name="contact_us">Contact us</string>
+    <string name="email_subject">My little pet</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="privacy_policy_content">Here is the entire Privacy policy</string>
+    <string name="privacy_policy_close">Close Privacy policy</string>
+    <string name="delete_all_data">Delete all data</string>
+    <string name="log_out">Log out</string>
+
 
     <string name="auth_app_bar_title">Authorization</string>
+
+    <string name="settings_app_bar_title">Settings</string>
 
     <string name="pets_app_bar_title">Pets</string>
     <string name="add_pet_app_bar_title">Adding a pet</string>

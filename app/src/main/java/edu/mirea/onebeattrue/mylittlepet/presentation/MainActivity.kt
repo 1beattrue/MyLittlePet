@@ -22,7 +22,10 @@ class MainActivity : ComponentActivity() {
         (application as MyLittlePetApplication).component.inject(this)
         super.onCreate(savedInstanceState)
 
-        val component = rootComponentFactory.create(defaultComponentContext())
+        val component = rootComponentFactory.create(
+            componentContext =  defaultComponentContext(),
+            context = application
+        )
 
         setContent {
             MyLittlePetTheme {
@@ -35,4 +38,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }

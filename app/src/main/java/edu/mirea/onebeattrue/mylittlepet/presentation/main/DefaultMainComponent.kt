@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main
 
+import android.util.Log
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation

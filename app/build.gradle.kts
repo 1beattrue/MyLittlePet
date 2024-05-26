@@ -54,6 +54,9 @@ android {
 }
 
 dependencies {
+    val dataStoreVersion = "1.1.1"
+    implementation("androidx.datastore:datastore-preferences:$dataStoreVersion")
+    
     val accompanistVersion = "0.35.1-alpha"
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
 
