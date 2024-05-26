@@ -134,6 +134,10 @@
     <string name="delete_dialog_title">Delete it?</string>
     <string name="delete_dialog_text">Are you sure you want to remove the pet? It is not possible to cancel this action</string>
 
+    <string name="notification_permission_granted">Permission to send notifications received</string>
+    <string name="notification_permission_required">Permission is required to send notifications</string>
+    <string name="notification_permission_denied">Permission to send notifications is denied. Open Settings</string>
+
     <plurals name="years_format">
         <item quantity="one">%1$d year</item>
         <item quantity="few">%1$d years</item>

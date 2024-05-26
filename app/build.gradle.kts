@@ -54,6 +54,9 @@ android {
 }
 
 dependencies {
+    val accompanistVersion = "0.35.1-alpha"
+    implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
+
     val gsonVersion = "2.10.1"
     implementation("com.google.code.gson:gson:$gsonVersion")
 

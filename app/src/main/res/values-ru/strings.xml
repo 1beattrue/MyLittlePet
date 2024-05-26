@@ -134,6 +134,9 @@
     <string name="delete_dialog_title">Удалить?</string>
     <string name="delete_dialog_text">Вы уверены, что хотите удалить питомца? Отменить это действие невозможно</string>
 
+    <string name="notification_permission_granted">Разрешение на отправку уведомлений получено</string>
+    <string name="notification_permission_required">Для отправки уведомлений требуется разрешение</string>
+    <string name="notification_permission_denied">Разрешение на отправку уведомлений отклонено. Откройте настройки</string>
 
     <plurals name="years_format">
         <item quantity="one">%1$d год</item>

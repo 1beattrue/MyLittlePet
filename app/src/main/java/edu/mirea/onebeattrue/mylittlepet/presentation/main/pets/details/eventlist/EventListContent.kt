@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist
 
+import android.Manifest
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.NotificationImportant
+import androidx.compose.material.icons.rounded.NotificationsActive
+import androidx.compose.material.icons.rounded.NotificationsOff
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,24 +46,40 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDateTime
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import java.util.Calendar
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+    ExperimentalPermissionsApi::class
+)
 @Composable
 fun EventListContent(
     modifier: Modifier = Modifier,
     component: EventListComponent
 ) {
     val state by component.model.collectAsState()
+
+    val permissionState =
+        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+
+    LaunchedEffect(key1 = Unit) {
+        permissionState.launchPermissionRequest()
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -104,6 +124,9 @@ fun EventListContent(
                 contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                item {
+                    NotificationPermissionCard(permissionState = permissionState)
+                }
                 items(
                     items = state.events,
                     key = { it.id },
@@ -193,6 +216,34 @@ fun EventListContent(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun NotificationPermissionCard(
+    modifier: Modifier = Modifier,
+    permissionState: PermissionState
+) {
+    CustomCardExtremeElevation(
+        modifier = modifier
+    ) {
+        val (icon, text) = if (permissionState.status.isGranted) {
+            Icons.Rounded.NotificationsActive to stringResource(R.string.notification_permission_granted)
+        } else {
+            if (permissionState.status.shouldShowRationale) {
+                Icons.Rounded.NotificationImportant to stringResource(R.string.notification_permission_required)
+            } else {
+                Icons.Rounded.NotificationsOff to stringResource(R.string.notification_permission_denied)
+            }
+        }
+
+        Icon(imageVector = icon, contentDescription = null)
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = text,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
