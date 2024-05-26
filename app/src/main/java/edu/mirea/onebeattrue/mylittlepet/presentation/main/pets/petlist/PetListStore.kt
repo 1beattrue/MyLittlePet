@@ -20,6 +20,7 @@ interface PetListStore : Store<Intent, State, Label> {
         data object AddPet : Intent
         data class EditPet(val pet: Pet) : Intent
         data class DeletePet(val pet: Pet) : Intent
+        data class OpenDetails(val pet: Pet) : Intent
     }
 
     data class State(
@@ -29,6 +30,7 @@ interface PetListStore : Store<Intent, State, Label> {
     sealed interface Label {
         data object AddPet : Label
         data class EditPet(val pet: Pet) : Label
+        data class OpenDetails(val pet: Pet) : Label
     }
 }
 
@@ -82,6 +84,10 @@ class PetListStoreFactory @Inject constructor(
 
                 is Intent.EditPet -> {
                     publish(Label.EditPet(intent.pet))
+                }
+
+                is Intent.OpenDetails -> {
+                    publish(Label.OpenDetails(intent.pet))
                 }
             }
         }

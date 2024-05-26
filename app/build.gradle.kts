@@ -54,6 +54,12 @@ android {
 }
 
 dependencies {
+    val accompanistVersion = "0.35.1-alpha"
+    implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
+
+    val gsonVersion = "2.10.1"
+    implementation("com.google.code.gson:gson:$gsonVersion")
+
     val coilVersion = "2.6.0"
     implementation("io.coil-kt:coil-compose:$coilVersion")
 
@@ -97,6 +103,7 @@ dependencies {
 
     val material3Version = "1.2.1"
     implementation("androidx.compose.material3:material3:$material3Version")
+    implementation("androidx.compose.material:material-icons-extended")
 
     implementation("androidx.compose.runtime:runtime-livedata:1.6.6")
 

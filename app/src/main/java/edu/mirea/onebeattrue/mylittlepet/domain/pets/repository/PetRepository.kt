@@ -8,4 +8,6 @@ interface PetRepository {
     suspend fun deletePet(pet: Pet)
     suspend fun editPet(pet: Pet)
     fun getPetList(): Flow<List<Pet>>
+
+    fun getPetById(petId: Int): Flow<Pet>
 }

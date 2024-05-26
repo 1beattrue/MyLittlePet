@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -16,7 +17,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -41,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -48,8 +54,9 @@ import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MENU_ITEM_PADDING
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -93,11 +100,15 @@ fun PetListContent(
         ) {
             items(items = state.petList, key = { it.id }) { pet ->
                 PetCard(
-                    modifier = Modifier.animateItemPlacement(),
+                    modifier = Modifier
+                        .animateItemPlacement(),
                     pet = pet,
                     deletePet = { component.deletePet(pet) },
                     editPet = {
                         component.editPet(pet)
+                    },
+                    openDetails = {
+                        component.openDetails(pet)
                     }
                 )
             }
@@ -112,22 +123,28 @@ private fun PetCard(
     pet: Pet,
     deletePet: () -> Unit,
     editPet: () -> Unit,
+    openDetails: () -> Unit
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
 
     Box(
         modifier = modifier
     ) {
-        CustomCardExtremeElevation {
+        ClickableCustomCard(
+            elevation = EXTREME_ELEVATION,
+            onClick = { openDetails() }
+        ) {
             Text(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
                 text = pet.name,
+                fontWeight = FontWeight.Bold,
             )
             Box(
                 modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
             ) {
-                if (pet.imageUri == Uri.EMPTY) {
+                if (Uri.parse(pet.imageUri) == Uri.EMPTY) {
                     Image(
                         modifier = Modifier.fillMaxWidth(),
                         contentScale = ContentScale.Crop,
@@ -136,6 +153,9 @@ private fun PetCard(
                     )
                 } else {
                     GlideImage(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f),
                         model = pet.imageUri,
                         contentDescription = null
                     )
@@ -184,6 +204,28 @@ private fun PetCard(
                             editPet()
                         }
                     )
+
+                    DropdownMenuItem(
+                        modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER)),
+                        contentPadding = MENU_ITEM_PADDING,
+                        text = {
+                            Text(
+                                text = stringResource(id = R.string.details),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Rounded.Info,
+                                contentDescription = null
+                            )
+                        },
+                        onClick = {
+                            expanded = false
+                            openDetails()
+                        }
+                    )
+
                     DropdownMenuItem(
                         modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER)),
                         contentPadding = MENU_ITEM_PADDING,
@@ -205,11 +247,70 @@ private fun PetCard(
                         ),
                         onClick = {
                             expanded = false
-                            deletePet()
+                            showDeleteDialog = true
                         }
                     )
                 }
             }
         }
     }
+
+    if (showDeleteDialog) {
+        DeletePetDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            onConfirmation = {
+                showDeleteDialog = false
+                deletePet()
+            }
+        )
+    }
+}
+
+@Composable
+private fun DeletePetDialog(
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = { onDismissRequest() },
+        icon = {
+            Icon(
+                imageVector = Icons.Rounded.Warning,
+                contentDescription = null,
+                tint = Color.Red
+            )
+        },
+        title = {
+            Text(text = stringResource(R.string.delete_dialog_title))
+        },
+        text = {
+            Text(
+                text = stringResource(R.string.delete_dialog_text),
+                textAlign = TextAlign.Center
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmation()
+                }
+            ) {
+                Text(
+                    text = stringResource(R.string.delete),
+                    color = Color.Red
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(text = stringResource(R.string.cancel))
+            }
+        }
+    )
 }

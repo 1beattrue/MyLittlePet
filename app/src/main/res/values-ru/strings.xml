@@ -13,8 +13,10 @@
     <string name="next">Далее</string>
     <string name="back">Назад</string>
     <string name="confirm">Подтвердить</string>
+    <string name="cancel">Отменить</string>
     <string name="add">Добавить</string>
     <string name="ready">Готово</string>
+    <string name="ok">OK</string>
 
     <string name="resend_code">Отправить повторно</string>
     <string name="resend_code_exception">Повторная отправка кода будет доступна через %s секунд</string>
@@ -33,6 +35,9 @@
     <string name="pets_app_bar_title">Питомцы</string>
     <string name="add_pet_app_bar_title">Добавление питомца</string>
     <string name="edit_pet_app_bar_title">Изменение питомца</string>
+    <string name="pet_details_app_bar_title">Детали</string>
+
+    <string name="date_picker_title">Дата рождения</string>
 
     <string name="select_pet_type">Выберите тип животного</string>
     <string name="initial_pet_type">Тип животного</string>
@@ -54,5 +59,96 @@
 
     <string name="delete">Удалить</string>
     <string name="edit">Редактировать</string>
+    <string name="details">Детали</string>
+
     <string name="select_image">Выберите изображение</string>
+
+    <string name="unknown_age">Указать</string>
+    <string name="unknown_weight">Указать</string>
+    <string name="age_title">Возраст</string>
+    <string name="weight_title">Вес</string>
+    <string name="error_weight">Неверный формат</string>
+    <string name="weight_hint">Вес питомца</string>
+    <string name="weight_suffix">кг</string>
+    <string name="weight_format">%1\$s кг</string>
+    <string name="enter_weight">Введите вес</string>
+
+    <string name="add_event_app_bar_title">Добавление события</string>
+    <string name="event_list_app_bar_title">События</string>
+    <string name="event_list_title">События</string>
+    <string name="add_event">Добавить событие</string>
+    <string name="enter_event_title">Введите текст события</string>
+    <string name="set_event_time_title">Установите время события</string>
+    <string name="set_event_date_title">Установите дату события</string>
+    <string name="daily_checkbox">Повторять ежедневно</string>
+    <string name="new_event_hint">Ммм?</string>
+    <string name="error_event_text">Добавьте текст события</string>
+    <string name="event_time_title">Когда напомнить?</string>
+
+    <string name="note_list_app_bar_title">Заметки</string>
+    <string name="add_note">Добавить заметку</string>
+
+    <string name="medical_data_list_app_bar_title">Медицинские данные</string>
+    <string name="add_medical_data">Добавить медицицинские данные</string>
+    <string name="add_note_app_bar_title">Добавление заметки</string>
+    <string name="select_note_icon">Выберите иконку заметки</string>
+    <string name="enter_note_text">Введите текст</string>
+    <string name="error_note_text">Добавьте текст заметки</string>
+
+    <string name="january">января</string>
+    <string name="february">февраля</string>
+    <string name="march">марта</string>
+    <string name="april">апреля</string>
+    <string name="may">мая</string>
+    <string name="june">июня</string>
+    <string name="july">июля</string>
+    <string name="august">августа</string>
+    <string name="september">сентября</string>
+    <string name="october">октября</string>
+    <string name="november">ноября</string>
+    <string name="december">декабря</string>
+
+    <string name="date_format">%1$d %2$s %3$d</string>
+
+    <string name="notification_title">Мой Маленький Питомец</string>
+    <string name="notification_text">Новое событие!</string>
+
+    <string name="vaccination">Вакцинация</string>
+    <string name="analysis">Анализы</string>
+    <string name="allergy">Аллергия</string>
+    <string name="treatment">Лечение</string>
+    <string name="other">Другое</string>
+
+    <string name="select_medical_type">Выберите тип медицинских данных</string>
+    <string name="initial_medical_type">Тип медицинских данных</string>
+    <string name="error_medical_type">Не выбран тип медицинских данных</string>
+    <string name="enter_medical_title">Введите информацию о медицинских данных</string>
+    <string name="new_medical_hint">Ммм?</string>
+    <string name="error_medical_text">Добавьте текст медицинских данных</string>
+    <string name="add_medical_photo">Добавьте фото медицинских данных</string>
+    <string name="add_medical_app_bar_title">Добавление медицинских данных</string>
+    <string name="medical_details_app_bar_title">Детали</string>
+
+    <string name="share">Поделиться</string>
+    <string name="image_picker_label">Нажмите для выбора фотографии</string>
+    <string name="delete_dialog_title">Удалить?</string>
+    <string name="delete_dialog_text">Вы уверены, что хотите удалить питомца? Отменить это действие невозможно</string>
+
+    <string name="notification_permission_granted">Разрешение на отправку уведомлений получено</string>
+    <string name="notification_permission_required">Для отправки уведомлений требуется разрешение</string>
+    <string name="notification_permission_denied">Разрешение на отправку уведомлений отклонено. Откройте настройки</string>
+
+    <plurals name="years_format">
+        <item quantity="one">%1$d год</item>
+        <item quantity="few">%1$d года</item>
+        <item quantity="many">%1$d лет</item>
+        <item quantity="other">%1$d года</item>
+    </plurals>
+
+    <plurals name="months_format">
+        <item quantity="one">%1$d месяц</item>
+        <item quantity="few">%1$d месяца</item>
+        <item quantity="many">%1$d месяцев</item>
+        <item quantity="other">%1$d месяца</item>
+    </plurals>
 </resources>

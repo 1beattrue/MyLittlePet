@@ -5,6 +5,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -43,7 +44,7 @@ class DefaultAddPetComponent @AssistedInject constructor(
         Config.Type -> {
             val component = typeComponentFactory.create(
                 onNextClicked = { petType ->
-                    navigation.push(Config.Name(petType))
+                    navigation.pushNew(Config.Name(petType))
                 },
                 componentContext = componentContext
             )
@@ -54,7 +55,7 @@ class DefaultAddPetComponent @AssistedInject constructor(
             val component = nameComponentFactory.create(
                 petType = config.petType,
                 onNextClicked = { petType, petName ->
-                    navigation.push(Config.Image(petType, petName))
+                    navigation.pushNew(Config.Image(petType, petName))
                 },
                 componentContext = componentContext
             )
