@@ -1,14 +1,11 @@
 package edu.mirea.onebeattrue.mylittlepet.ui.customview
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,8 +22,6 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,9 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_SURFACE
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 
 
 @Composable
@@ -70,9 +63,6 @@ fun CustomCard(
         ) {
             Column(
                 modifier = Modifier
-                    .clickable {
-                        onClick()
-                    }
                     .fillMaxWidth()
                     .padding(32.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -166,6 +156,7 @@ fun CustomCardWithAddButton(
     onAddClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
+
     MaterialTheme(
         colorScheme = MaterialTheme.colorScheme.copy(surfaceTint = Color(0x00FFFFFF))
     ) {

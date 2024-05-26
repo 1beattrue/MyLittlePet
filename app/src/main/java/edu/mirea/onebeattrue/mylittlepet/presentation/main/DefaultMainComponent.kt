@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main
 
-import android.util.Log
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -95,9 +94,6 @@ class DefaultMainComponent @AssistedInject constructor(
             val component = profileComponentFactory.create(
                 componentContext = componentContext,
                 onSignOutClicked = { onSignOutClicked() },
-                onChangedBottomMenuVisibility = {
-                    changeBottomMenuVisibility(it)
-                }
             )
             MainComponent.Child.Profile(component)
         }

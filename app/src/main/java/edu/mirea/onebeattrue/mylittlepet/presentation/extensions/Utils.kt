@@ -48,3 +48,15 @@ object LocaleUtils {
         }
     }
 }
+
+object UiUtils {
+
+    var isAppInDarkTheme: Boolean? = null
+
+    fun isSystemInDarkTheme(context: Context): Boolean {
+        val uiMode = context.resources.configuration.uiMode
+        val nightModeFlags = uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+    }
+}
+

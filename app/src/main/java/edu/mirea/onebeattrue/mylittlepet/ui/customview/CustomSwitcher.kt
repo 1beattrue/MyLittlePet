@@ -45,14 +45,13 @@ fun CustomSwitcher(
     rightIcon: Int = R.drawable.ic_light,
     action: (Boolean) -> Unit
 ) {
-
     val offset by animateDpAsState(
         targetValue = if (booleanState) 0.dp else size,
         animationSpec = animationSpec,
         label = "animation",
     )
 
-    Box(modifier = Modifier
+    Box(modifier = modifier
         .width(size * 2)
         .height(size)
         .clip(shape = parentShape)

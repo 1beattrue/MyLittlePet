@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.profile
 
-import android.app.Application
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
@@ -15,7 +14,6 @@ import kotlinx.coroutines.launch
 
 class DefaultProfileComponent @AssistedInject constructor(
     private val storeFactory: ProfileStoreFactory,
-    @Assisted("onChangedBottomMenuVisibility") private val onChangedBottomMenuVisibility: (Boolean) -> Unit, //TODO
     @Assisted("onSignOutClicked") private val onSignOutClicked: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : ProfileComponent, ComponentContext by componentContext {
@@ -47,7 +45,7 @@ class DefaultProfileComponent @AssistedInject constructor(
     }
 
     override fun changeLanguage(isEnglishLanguage: Boolean) {
-        store.accept(ProfileStore.Intent.ChangeLanguage(isEnglishLanguage))
+        //store.accept(ProfileStore.Intent.ChangeLanguage(isEnglishLanguage))
     }
 
     override fun sendEmail() {
@@ -66,7 +64,6 @@ class DefaultProfileComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("onChangedBottomMenuVisibility") onChangedBottomMenuVisibility: (Boolean) -> Unit,
             @Assisted("onSignOutClicked") onSignOutClicked: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultProfileComponent

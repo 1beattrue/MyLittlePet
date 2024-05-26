@@ -2,7 +2,6 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.profile
 
 import android.app.Application
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.content.res.Configuration
 import android.net.Uri
 import androidx.datastore.preferences.core.edit
 import com.arkivanov.mvikotlin.core.store.Reducer
@@ -12,14 +11,13 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.SignOutUseCase
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.Language
+import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.UiUtils
 import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.dataStore
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileStore.State
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.SUPPORT_EMAIL
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_ENGLISH_MODE_KEY
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_NIGHT_MODE_KEY
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.SUPPORT_EMAIL
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,15 +26,15 @@ interface ProfileStore : Store<Intent, State, Label> {
     sealed interface Intent {
         data object SignOut : Intent
         data class ChangeTheme(val isDarkTheme: Boolean) : Intent
-        data class ChangeLanguage(val isEnglishLanguage: Boolean) : Intent
+        //data class ChangeLanguage(val isEnglishLanguage: Boolean) : Intent
         data object SendEmail : Intent
-        data object OpenBottomSheet: Intent
-        data object CloseBottomSheet: Intent
+        data object OpenBottomSheet : Intent
+        data object CloseBottomSheet : Intent
     }
 
     data class State(
-        val isDarkTheme: Boolean,
-        val isEnglishLanguage: Boolean,
+        val isDarkTheme: Boolean?,
+        //val isEnglishLanguage: Boolean,
         val bottomSheetState: Boolean
     )
 
@@ -55,8 +53,8 @@ class ProfileStoreFactory @Inject constructor(
         object : ProfileStore, Store<Intent, State, Label> by storeFactory.create(
             name = "ProfileStore",
             initialState = State(
-                isDarkTheme = (application.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES,
-                isEnglishLanguage = application.resources.configuration.locales.toLanguageTags() == Language.EN.value,
+                isDarkTheme = UiUtils.isAppInDarkTheme,
+                //isEnglishLanguage = application.resources.configuration.locales.toLanguageTags() == Language.EN.value,
                 bottomSheetState = false
             ),
             bootstrapper = BootstrapperImpl(),
@@ -68,7 +66,7 @@ class ProfileStoreFactory @Inject constructor(
 
     private sealed interface Msg {
         data class ChangeTheme(val isDarkTheme: Boolean) : Msg
-        data class ChangeLanguage(val isEnglishLanguage: Boolean) : Msg
+        //data class ChangeLanguage(val isEnglishLanguage: Boolean) : Msg
         data object SendEmail : Msg
         data class BottomSheetState(val bottomSheetState: Boolean) : Msg
     }
@@ -95,14 +93,14 @@ class ProfileStoreFactory @Inject constructor(
                     dispatch(Msg.ChangeTheme(intent.isDarkTheme))
                 }
 
-                is Intent.ChangeLanguage -> {
-                    scope.launch {
-                        application.dataStore.edit { preferences ->
-                            preferences[IS_ENGLISH_MODE_KEY] = intent.isEnglishLanguage
-                        }
-                    }
-                    dispatch(Msg.ChangeLanguage(intent.isEnglishLanguage))
-                }
+//                is Intent.ChangeLanguage -> {
+//                    scope.launch {
+//                        application.dataStore.edit { preferences ->
+//                            preferences[IS_ENGLISH_MODE_KEY] = intent.isEnglishLanguage
+//                        }
+//                    }
+//                    dispatch(Msg.ChangeLanguage(intent.isEnglishLanguage))
+//                }
 
                 Intent.SendEmail -> {
                     val email = SUPPORT_EMAIL
@@ -130,7 +128,6 @@ class ProfileStoreFactory @Inject constructor(
         override fun State.reduce(msg: Msg): State =
             when (msg) {
                 is Msg.ChangeTheme -> copy(isDarkTheme = msg.isDarkTheme)
-                is Msg.ChangeLanguage -> copy(isEnglishLanguage = msg.isEnglishLanguage)
                 Msg.SendEmail -> TODO()
                 is Msg.BottomSheetState -> copy(bottomSheetState = msg.bottomSheetState)
             }

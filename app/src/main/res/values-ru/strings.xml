@@ -156,6 +156,8 @@
     <string name="notification_permission_required">Для отправки уведомлений требуется разрешение</string>
     <string name="notification_permission_denied">Разрешение на отправку уведомлений отклонено. Откройте настройки</string>
 
+    <string name="profile_app_bar_title">Профиль</string>
+
     <plurals name="years_format">
         <item quantity="one">%1$d год</item>
         <item quantity="few">%1$d года</item>

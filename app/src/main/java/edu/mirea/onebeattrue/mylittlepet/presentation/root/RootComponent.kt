@@ -14,7 +14,4 @@ interface RootComponent {
         class Auth(val component: AuthComponent) : Child()
         class Main(val component: MainComponent) : Child()
     }
-
-    fun onThemeChanged(isDarkTheme: Boolean)
-    fun onLanguageChanged(isEnglishLanguage: Boolean)
 }

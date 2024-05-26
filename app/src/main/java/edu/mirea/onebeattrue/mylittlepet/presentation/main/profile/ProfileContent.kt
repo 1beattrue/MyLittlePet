@@ -1,36 +1,40 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.profile
 
-import android.util.Log
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardDefaultElevation
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardStrongElevation
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomLanguageSwitcher
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomSwitcher
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,90 +44,181 @@ fun ProfileContent(
 ) {
     val state by component.model.collectAsState()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(4.dp)
-    ) {
-        Text(
-            modifier = modifier,
-            text = stringResource(id = R.string.navigation_item_profile)
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        CustomCardDefaultElevation {
-            Row {
-                Text(text = stringResource(id = R.string.change_theme))
-                CustomSwitcher(
-                    modifier = modifier,
-                    booleanState = state.isDarkTheme,
-                    action = {
-                        component.changeTheme(it)
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                title = {
+                    Text(
+                        style = MaterialTheme.typography.titleLarge,
+                        text = stringResource(R.string.profile_app_bar_title)
+                    )
+                },
+                actions = {
+                    IconButton(
+                        onClick = { component.signOut() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.Logout,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+        },
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier.padding(paddingValues),
+            contentPadding = PaddingValues(
+                vertical = 16.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                ChangeThemeCard(
+                    isDarkTheme = state.isDarkTheme ?: isSystemInDarkTheme(),
+                    onThemeChanged = { isDarkTheme ->
+                        component.changeTheme(isDarkTheme)
                     }
                 )
             }
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-        CustomCardDefaultElevation {
-            Row {
-                Text(text = stringResource(id = R.string.change_language))
-                CustomLanguageSwitcher(
-                    modifier = modifier,
-                    booleanState = state.isEnglishLanguage,
-                    action = {
-                        component.changeLanguage(!state.isEnglishLanguage)
-                    }
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-        CustomCard(
-            elevation = DEFAULT_ELEVATION,
-            onClick = {
-                component.sendEmail()
-            }
-        ) {
-            Row {
-                Text(text = stringResource(id = R.string.contact_us))
-                Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Icon")
-            }
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-        CustomCard(
-            elevation = DEFAULT_ELEVATION,
-            onClick = {
-                component.openBottomSheet()
-            }
-        ) {
-            Row {
-                Text(text = stringResource(id = R.string.privacy_policy))
-                Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Icon")
-            }
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-
-
-
-        Button(
-            modifier = modifier.fillMaxWidth(),
-            onClick = {
-                Log.d("ProfileContent", "${state.bottomSheetState}")
-            /* TODO() */
-            }
-        ) {
-            Text(text = stringResource(id = R.string.delete_all_data))
-        }
-        Button(
-            modifier = modifier.fillMaxWidth(),
-            onClick = { component.signOut() }
-        ) {
-            Text(text = stringResource(id = R.string.log_out))
         }
     }
 
-    PrivacyPolicyBottomSheet(
-        isExpanded = state.bottomSheetState,
-        closeBottomSheet = { component.closeBottomSheet() }
-    )
+//    Column(
+//        modifier = modifier
+//            .fillMaxSize()
+//            .padding(4.dp)
+//    ) {
+//        Text(
+//            modifier = modifier,
+//            text = stringResource(id = R.string.navigation_item_profile)
+//        )
+//        Spacer(modifier = Modifier.height(4.dp))
+//        CustomCardExtremeElevation {
+//            Row {
+//                Text(text = stringResource(id = R.string.change_theme))
+//                CustomSwitcher(
+//                    modifier = modifier,
+//                    booleanState = state.isDarkTheme,
+//                    action = {
+//                        component.changeTheme(it)
+//                    }
+//                )
+//            }
+//        }
+//        Spacer(modifier = Modifier.height(4.dp))
+//        CustomCardExtremeElevation {
+//            Row {
+//                Text(text = stringResource(id = R.string.change_language))
+//                CustomLanguageSwitcher(
+//                    modifier = modifier,
+//                    booleanState = state.isEnglishLanguage,
+//                    action = {
+//                        component.changeLanguage(!state.isEnglishLanguage)
+//                    }
+//                )
+//            }
+//        }
+//        Spacer(modifier = Modifier.height(4.dp))
+//        ClickableCustomCard(
+//            elevation = DEFAULT_ELEVATION,
+//            onClick = {
+//                component.sendEmail()
+//            }
+//        ) {
+//            Row {
+//                Text(text = stringResource(id = R.string.contact_us))
+//                Icon(
+//                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+//                    contentDescription = "Icon"
+//                )
+//            }
+//        }
+//        Spacer(modifier = Modifier.height(4.dp))
+//        ClickableCustomCard(
+//            elevation = DEFAULT_ELEVATION,
+//            onClick = {
+//                component.openBottomSheet()
+//            }
+//        ) {
+//            Row {
+//                Text(text = stringResource(id = R.string.privacy_policy))
+//                Icon(
+//                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+//                    contentDescription = "Icon"
+//                )
+//            }
+//        }
+//        Spacer(modifier = Modifier.height(4.dp))
+//
+//
+//
+//        Button(
+//            modifier = modifier.fillMaxWidth(),
+//            onClick = {
+//                Log.d("ProfileContent", "${state.bottomSheetState}")
+//                /* TODO() */
+//            }
+//        ) {
+//            Text(text = stringResource(id = R.string.delete_all_data))
+//        }
+//        Button(
+//            modifier = modifier.fillMaxWidth(),
+//            onClick = { component.signOut() }
+//        ) {
+//            Text(text = stringResource(id = R.string.log_out))
+//        }
+//    }
+//
+//    PrivacyPolicyBottomSheet(
+//        isExpanded = state.bottomSheetState,
+//        closeBottomSheet = { component.closeBottomSheet() }
+//    )
+}
+
+@Composable
+fun ChangeThemeCard(
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean,
+    onThemeChanged: (Boolean) -> Unit,
+) {
+    CustomCardExtremeElevation(modifier = modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier.weight(0.7f),
+                overflow = TextOverflow.Ellipsis,
+                text = stringResource(R.string.change_theme),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Start,
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Icon(
+                painter = painterResource(id = R.drawable.ic_lite_theme),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Switch(
+                checked = isDarkTheme,
+                onCheckedChange = { darkTheme ->
+                    onThemeChanged(darkTheme)
+                }
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(
+                painter = painterResource(id = R.drawable.ic_dark_theme),
+                contentDescription = null
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -137,10 +232,11 @@ private fun PrivacyPolicyBottomSheet(
 
     if (isExpanded) {
         ModalBottomSheet(
+            modifier = modifier,
             onDismissRequest = { closeBottomSheet() },
             sheetState = sheetState
         ) {
-            CustomCardStrongElevation {
+            CustomCardExtremeElevation {
                 Text(text = stringResource(id = R.string.privacy_policy))
                 Text(text = stringResource(id = R.string.privacy_policy_content))
             }

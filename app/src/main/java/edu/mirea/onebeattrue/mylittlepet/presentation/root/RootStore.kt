@@ -14,7 +14,7 @@ interface RootStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
         data class ChangeTheme(val isDarkTheme: Boolean) : Intent
-        data class ChangeLanguage(val isEnglishLanguage: Boolean): Intent
+        data class ChangeLanguage(val isEnglishLanguage: Boolean) : Intent
     }
 
     data class State(
@@ -30,11 +30,13 @@ class RootStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory
 ) {
 
-    fun create(): RootStore =
+    fun create(
+        isDarkTheme: Boolean?
+    ): RootStore =
         object : RootStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "RootStore",
+            name = STORE_NAME,
             initialState = State(
-                isDarkTheme = null,
+                isDarkTheme = isDarkTheme,
                 isEnglishLanguage = null
             ),
             bootstrapper = BootstrapperImpl(),
@@ -75,5 +77,9 @@ class RootStoreFactory @Inject constructor(
                 is Msg.ChangeTheme -> copy(isDarkTheme = msg.isDarkTheme)
                 is Msg.ChangeLanguage -> copy(isEnglishLanguage = msg.isEnglishLanguage)
             }
+    }
+
+    companion object {
+        const val STORE_NAME = "RootStore"
     }
 }

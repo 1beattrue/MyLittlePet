@@ -156,6 +156,8 @@
     <string name="notification_permission_required">Permission is required to send notifications</string>
     <string name="notification_permission_denied">Permission to send notifications is denied. Open Settings</string>
 
+    <string name="profile_app_bar_title">Profile</string>
+
     <plurals name="years_format">
         <item quantity="one">%1$d year</item>
         <item quantity="few">%1$d years</item>
