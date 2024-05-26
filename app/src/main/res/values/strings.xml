@@ -12,8 +12,10 @@
     <string name="next">Next</string>
     <string name="back">Back</string>
     <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
     <string name="add">Add</string>
     <string name="ready">Ready</string>
+    <string name="ok">OK</string>
 
     <string name="resend_code">Resend code</string>
     <string name="resend_code_exception">Resending the code will be available in %s seconds</string>
@@ -50,6 +52,9 @@
     <string name="pets_app_bar_title">Pets</string>
     <string name="add_pet_app_bar_title">Adding a pet</string>
     <string name="edit_pet_app_bar_title">Editing a pet</string>
+    <string name="pet_details_app_bar_title">Details</string>
+
+    <string name="date_picker_title">Date of Birth</string>
 
     <string name="select_pet_type">Select pet type</string>
     <string name="initial_pet_type">Pet type</string>
@@ -64,12 +69,104 @@
     <string name="pet_type_turtle">Turtle</string>
 
     <string name="error_pet_type">Animal type not selected</string>
-    <string name="enter_pet_name">Enter pet name</string>
-    <string name="error_pet_name">Invalid pet name</string>
-    <string name="pet_name_hint">Pet name</string>
+    <string name="enter_pet_name">Enter pet\'s name</string>
+    <string name="error_pet_name">Invalid pet\'s name</string>
+    <string name="pet_name_hint">Pet\'s name</string>
     <string name="add_pet_photo">Add a photo</string>
 
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
+    <string name="details">Details</string>
+
     <string name="select_image">Select image</string>
+
+    <string name="unknown_age">Enter</string>
+    <string name="unknown_weight">Enter</string>
+    <string name="age_title">Age</string>
+    <string name="weight_title">Weight</string>
+    <string name="error_weight">Incorrect format</string>
+    <string name="weight_hint">Pet\'s weight</string>
+    <string name="weight_suffix">kg</string>
+    <string name="weight_format">%1\$s kg</string>
+    <string name="enter_weight">Enter weight</string>
+
+
+    <string name="add_event_app_bar_title">Adding an event</string>
+    <string name="event_list_app_bar_title">Event list</string>
+    <string name="event_list_title">Events</string>
+    <string name="add_event">Add event</string>
+    <string name="enter_event_title">Enter event text</string>
+    <string name="set_event_time_title">Set the event time</string>
+    <string name="set_event_date_title">Set the event date</string>
+    <string name="daily_checkbox">Repeat daily</string>
+    <string name="new_event_hint">Mmm?</string>
+    <string name="error_event_text">Add event text</string>
+    <string name="event_time_title">When to remind?</string>
+
+    <string name="note_list_app_bar_title">Note list</string>
+    <string name="add_note">Add note</string>
+    <string name="add_note_app_bar_title">Adding a note</string>
+    <string name="select_note_icon">Select note icon</string>
+    <string name="enter_note_text">Enter note text</string>
+    <string name="error_note_text">Add note text</string>
+
+    <string name="medical_data_list_app_bar_title">Medical data list</string>
+    <string name="add_medical_data">Add medical data</string>
+
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+
+    <string name="date_format">%1$d %2$s %3$d</string>
+
+    <string name="notification_title">My Little Pet</string>
+    <string name="notification_text">New event!</string>
+
+    <string name="vaccination">Vaccination</string>
+    <string name="analysis">Analysis</string>
+    <string name="allergy">Allergy</string>
+    <string name="treatment">Treatment</string>
+    <string name="other">Other</string>
+
+    <string name="select_medical_type">Select medical data type</string>
+    <string name="initial_medical_type">Medical data type</string>
+    <string name="error_medical_type">Medical data type not selected</string>
+    <string name="enter_medical_title">Enter medical data text</string>
+    <string name="new_medical_hint">Mmm?</string>
+    <string name="error_medical_text">Add medical data text</string>
+    <string name="add_medical_photo">Add a photo</string>
+    <string name="add_medical_app_bar_title">Adding medical data</string>
+    <string name="medical_details_app_bar_title">Details</string>
+
+    <string name="share">Share</string>
+    <string name="image_picker_label">Tap to select a photo</string>
+    <string name="delete_dialog_title">Delete it?</string>
+    <string name="delete_dialog_text">Are you sure you want to remove the pet? It is not possible to cancel this action</string>
+
+    <string name="notification_permission_granted">Permission to send notifications received</string>
+    <string name="notification_permission_required">Permission is required to send notifications</string>
+    <string name="notification_permission_denied">Permission to send notifications is denied. Open Settings</string>
+
+    <plurals name="years_format">
+        <item quantity="one">%1$d year</item>
+        <item quantity="few">%1$d years</item>
+        <item quantity="many">%1$d years</item>
+        <item quantity="other">%1$d years</item>
+    </plurals>
+
+    <plurals name="months_format">
+        <item quantity="one">%1$d month</item>
+        <item quantity="few">%1$d months</item>
+        <item quantity="many">%1$d months</item>
+        <item quantity="other">%1$d months</item>
+    </plurals>
 </resources>

@@ -9,4 +9,5 @@ interface PetListComponent {
     fun addPet()
     fun editPet(pet: Pet)
     fun deletePet(pet: Pet)
+    fun openDetails(pet: Pet)
 }

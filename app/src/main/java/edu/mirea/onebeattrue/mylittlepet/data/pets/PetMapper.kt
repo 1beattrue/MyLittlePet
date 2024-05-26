@@ -8,14 +8,26 @@ class PetMapper @Inject constructor() {
         type = entity.type,
         name = entity.name,
         imageUri = entity.imageUri,
-        id = entity.id
+        id = entity.id,
+
+        dateOfBirth = entity.dateOfBirth,
+        weight = entity.weight,
+        eventList = entity.eventList,
+        noteList = entity.noteList,
+        medicalDataList = entity.medicalDataList
     )
 
     fun mapDbModelToEntity(dbModel: PetDbModel): Pet = Pet(
         type = dbModel.type,
         name = dbModel.name,
         imageUri = dbModel.imageUri,
-        id = dbModel.id
+        id = dbModel.id,
+
+        dateOfBirth = dbModel.dateOfBirth,
+        weight = dbModel.weight,
+        eventList = dbModel.eventList,
+        noteList = dbModel.noteList,
+        medicalDataList = dbModel.medicalDataList
     )
 
     fun mapListDbModelToListEntity(

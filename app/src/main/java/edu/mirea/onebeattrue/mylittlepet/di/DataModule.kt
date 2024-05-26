@@ -7,9 +7,11 @@ import dagger.Module
 import dagger.Provides
 import edu.mirea.onebeattrue.mylittlepet.data.auth.AuthRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.data.database.AppDatabase
+import edu.mirea.onebeattrue.mylittlepet.data.pets.AlarmSchedulerImpl
 import edu.mirea.onebeattrue.mylittlepet.data.pets.PetListDao
 import edu.mirea.onebeattrue.mylittlepet.data.pets.PetRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.repository.PetRepository
 
 @Module
@@ -33,5 +35,11 @@ interface DataModule {
         fun providePetListDao(
             application: Application
         ): PetListDao = AppDatabase.getInstance(application).petListDao()
+
+        @ApplicationScope
+        @Provides
+        fun provideAlarmScheduler(
+            application: Application
+        ): AlarmScheduler = AlarmSchedulerImpl(application)
     }
 }

@@ -1,13 +1,13 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.AddPetContent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DetailsRootContent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.editpet.EditPetContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListContent
 
@@ -29,7 +29,7 @@ fun PetsContent(
             }
 
             is PetsComponent.Child.Details -> {
-                Text(text = "details")
+                DetailsRootContent(component = instance.component)
             }
 
             is PetsComponent.Child.EditPet -> {

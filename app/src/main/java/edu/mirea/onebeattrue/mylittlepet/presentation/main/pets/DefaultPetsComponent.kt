@@ -5,14 +5,15 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.DefaultAddPetComponent
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DefaultDetailsComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.DefaultDetailsRootComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DefaultDetailsComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.editpet.DefaultEditPetComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.DefaultPetListComponent
 import kotlinx.serialization.Serializable
@@ -21,7 +22,7 @@ class DefaultPetsComponent @AssistedInject constructor(
     private val petListComponentFactory: DefaultPetListComponent.Factory,
     private val addPetComponentFactory: DefaultAddPetComponent.Factory,
     private val editPetComponentFactory: DefaultEditPetComponent.Factory,
-    private val detailsComponentFactory: DefaultDetailsComponent.Factory,
+    private val detailsRootComponentFactory: DefaultDetailsRootComponent.Factory,
 
     @Assisted("onChangedBottomMenuVisibility") private val onChangedBottomMenuVisibility: (Boolean) -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
@@ -61,9 +62,13 @@ class DefaultPetsComponent @AssistedInject constructor(
             PetsComponent.Child.AddPet(component)
         }
 
-        Config.Details -> {
-            val component = detailsComponentFactory.create(
-                componentContext = componentContext
+        is Config.Details -> {
+            val component = detailsRootComponentFactory.create(
+                componentContext = componentContext,
+                pet = config.pet,
+                onBackClick = {
+                    navigation.pop()
+                }
             )
             PetsComponent.Child.Details(component)
         }
@@ -82,10 +87,13 @@ class DefaultPetsComponent @AssistedInject constructor(
         Config.PetList -> {
             val component = petListComponentFactory.create(
                 onAddPetClicked = {
-                    navigation.push(Config.AddPet)
+                    navigation.pushNew(Config.AddPet)
                 },
                 onEditPetClicked = { pet ->
-                    navigation.push(Config.EditPet(pet))
+                    navigation.pushNew(Config.EditPet(pet))
+                },
+                onOpenDetails = { pet ->
+                    navigation.pushNew(Config.Details(pet))
                 },
                 componentContext = componentContext
             )
@@ -105,7 +113,7 @@ class DefaultPetsComponent @AssistedInject constructor(
         data class EditPet(val pet: Pet) : Config
 
         @Serializable
-        data object Details : Config
+        data class Details(val pet: Pet) : Config
     }
 
     @AssistedFactory
