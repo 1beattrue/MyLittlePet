@@ -1,26 +1,18 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general
 
-import android.net.Uri
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import edu.mirea.onebeattrue.mylittlepet.R
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GetPetByIdUseCase
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToYearsAndMonths
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.State
 import kotlinx.coroutines.launch
-import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 interface DetailsStore : Store<Intent, State, Label> {
@@ -152,8 +144,9 @@ class DetailsStoreFactory @Inject constructor(
                     scope.launch {
                         val weight = getState().weight.changeableValue
                         if (isCorrectWeight(weight)) {
-                            editPetUseCase(pet.copy(weight = weight.toFloat()))
-                            dispatch(Msg.SetWeight(weight.toFloat()))
+                            val roundedWeight = roundedWeight(weight.toFloat())
+                            editPetUseCase(pet.copy(weight = roundedWeight))
+                            dispatch(Msg.SetWeight(roundedWeight))
                         } else {
                             dispatch(Msg.OnIncorrectWeight)
                         }
@@ -222,10 +215,15 @@ class DetailsStoreFactory @Inject constructor(
         return formattedWeight
     }
 
+    private fun roundedWeight(weight: Float): Float {
+        val currentLocale = Locale.getDefault()
+        return String.format(currentLocale, "%.2f", weight).toFloat()
+    }
+
     private fun isCorrectWeight(weight: String): Boolean {
         try {
-            weight.toFloat()
-            return true
+            val weightValue = weight.toFloat()
+            return weightValue in 0f..1000f
         } catch (_: Exception) {
             return false
         }
