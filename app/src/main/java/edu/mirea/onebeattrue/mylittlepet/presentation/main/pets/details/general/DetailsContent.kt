@@ -223,7 +223,7 @@ private fun NoteListCard(
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Start,
 
-            )
+                )
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                 contentDescription = null
@@ -362,7 +362,7 @@ private fun PetCard(
         Box(
             modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
         ) {
-            if (pet.imageUri == Uri.EMPTY) {
+            if (Uri.parse(pet.imageUri) == Uri.EMPTY) {
                 Image(
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Crop,

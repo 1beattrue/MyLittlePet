@@ -92,7 +92,7 @@ class MedicalPhotoStoreFactory @Inject constructor(
                         val newMedicalData = MedicalData(
                             id = generateMedicalDataId(medicalList),
                             type = type,
-                            imageUri = localUri,
+                            imageUri = localUri.toString(),
                             text = text
                         )
 

@@ -111,8 +111,8 @@ class MedicalDataListStoreFactory @Inject constructor(
 
                 Intent.OnClickBack -> publish(Label.OnClickBack)
                 is Intent.OnOpenPhoto -> {
-                    val photo = intent.medicalData.imageUri
-                    if (photo != Uri.EMPTY) {
+                    val photoUri = Uri.parse(intent.medicalData.imageUri)
+                    if (photoUri != Uri.EMPTY) {
                         publish(Label.OnOpenPhoto(intent.medicalData))
                     }
                 }

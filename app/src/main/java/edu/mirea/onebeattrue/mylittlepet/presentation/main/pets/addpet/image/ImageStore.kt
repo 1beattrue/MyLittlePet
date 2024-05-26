@@ -50,7 +50,11 @@ class ImageStoreFactory @Inject constructor(
         object : ImageStore, Store<Intent, State, Label> by storeFactory.create(
             name = "ImageStore",
             initialState = State(
-                imageUri = pet?.imageUri ?: Uri.EMPTY
+                imageUri = if (pet == null) {
+                    Uri.EMPTY
+                } else {
+                    Uri.parse(pet.imageUri)
+                }
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = { ExecutorImpl(petType = petType, petName = petName, pet = pet) },
@@ -86,14 +90,14 @@ class ImageStoreFactory @Inject constructor(
                                 Pet(
                                     type = petType,
                                     name = petName,
-                                    imageUri = localUri
+                                    imageUri = localUri.toString()
                                 )
                             )
                         } else {
                             editPetUseCase(
                                 pet.copy(
                                     name = petName,
-                                    imageUri = localUri
+                                    imageUri = localUri.toString()
                                 )
                             )
                         }

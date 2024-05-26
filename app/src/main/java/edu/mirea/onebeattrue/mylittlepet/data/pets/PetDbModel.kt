@@ -1,15 +1,11 @@
 package edu.mirea.onebeattrue.mylittlepet.data.pets
 
-import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonWriter
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
@@ -19,7 +15,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 data class PetDbModel(
     val type: PetType,
     val name: String,
-    val imageUri: Uri,
+    val imageUri: String,
 
     val dateOfBirth: Long?,
     val weight: Float?,
@@ -34,19 +30,7 @@ data class PetDbModel(
 
 class Converters {
 
-    private val gson: Gson = GsonBuilder()
-        .registerTypeAdapter(Uri::class.java, UriTypeAdapter())
-        .create()
-
-    @TypeConverter
-    fun fromUri(uri: Uri): String {
-        return uri.toString()
-    }
-
-    @TypeConverter
-    fun toUri(uriString: String): Uri {
-        return Uri.parse(uriString)
-    }
+    private val gson: Gson = GsonBuilder().create()
 
     @TypeConverter
     fun fromEventList(eventList: List<Event>): String {
@@ -79,15 +63,5 @@ class Converters {
     fun toMedicalDataList(medicalDataListString: String): List<MedicalData> {
         val listType = object : TypeToken<List<MedicalData>>() {}.type
         return gson.fromJson(medicalDataListString, listType)
-    }
-}
-
-class UriTypeAdapter : TypeAdapter<Uri>() {
-    override fun write(out: JsonWriter, value: Uri) {
-        out.value(value.toString())
-    }
-
-    override fun read(`in`: JsonReader): Uri {
-        return Uri.parse(`in`.nextString())
     }
 }

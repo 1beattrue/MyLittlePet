@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,7 +54,7 @@ fun MedicalDataDetailsContent(
     val context = LocalContext.current
     LaunchedEffect(component.medicalData.imageUri) {
         val sizeRetriever = GlideSizeRetriever(context)
-        sizeRetriever.getImageSize(component.medicalData.imageUri) { width, height ->
+        sizeRetriever.getImageSize(Uri.parse(component.medicalData.imageUri)) { width, height ->
             aspectRatio = if (height != 0) width.toFloat() / height.toFloat() else 1f
         }
     }

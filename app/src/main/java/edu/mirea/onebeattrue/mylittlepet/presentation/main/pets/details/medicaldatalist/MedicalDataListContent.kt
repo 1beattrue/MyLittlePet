@@ -222,11 +222,11 @@ private fun MedicalDataCard(
             textAlign = TextAlign.Justify
         )
 
-        val photo = medicalData.imageUri
+        val photoUri = Uri.parse(medicalData.imageUri)
 
-        if (photo != Uri.EMPTY) {
+        if (photoUri != Uri.EMPTY) {
             GlideImage(
-                model = photo,
+                model = photoUri,
                 contentDescription = null
             )
         }
