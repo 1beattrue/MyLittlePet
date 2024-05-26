@@ -61,9 +61,14 @@ fun ProfileContent(
                     titleContentColor = MaterialTheme.colorScheme.onSurface
                 ),
                 title = {
+                    val text = if (state.isEnglishLanguage) { // TODO: костыль для перерисовки
+                        stringResource(R.string.profile_app_bar_title)
+                    } else {
+                        stringResource(R.string.profile_app_bar_title)
+                    }
                     Text(
                         style = MaterialTheme.typography.titleLarge,
-                        text = stringResource(R.string.profile_app_bar_title)
+                        text = text
                     )
                 },
                 actions = {
@@ -107,7 +112,7 @@ fun ProfileContent(
                     useSystemLanguage = state.useSystemLang,
                     onUsingSystemLanguageChanged = {
                         component.changeUseSystemLang(it)
-                    }
+                    },
                 )
             }
         }
@@ -211,7 +216,7 @@ fun ChangeLanguageCard(
     isEnglish: Boolean,
     onLanguageChanged: (Boolean) -> Unit,
     useSystemLanguage: Boolean,
-    onUsingSystemLanguageChanged: (Boolean) -> Unit
+    onUsingSystemLanguageChanged: (Boolean) -> Unit,
 ) {
     CustomCardExtremeElevation(modifier = modifier) {
         Text(
