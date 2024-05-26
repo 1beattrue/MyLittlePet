@@ -286,7 +286,10 @@ private fun DeletePetDialog(
             Text(text = stringResource(R.string.delete_dialog_title))
         },
         text = {
-            Text(text = stringResource(R.string.delete_dialog_text))
+            Text(
+                text = stringResource(R.string.delete_dialog_text),
+                textAlign = TextAlign.Center
+            )
         },
         confirmButton = {
             TextButton(

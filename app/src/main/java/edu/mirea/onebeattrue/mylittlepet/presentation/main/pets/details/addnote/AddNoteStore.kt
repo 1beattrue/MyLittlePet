@@ -103,7 +103,8 @@ class AddNoteStoreFactory @Inject constructor(
                 }
 
                 is Intent.ChangeText -> {
-                    dispatch(Msg.OnTextChanged(intent.text))
+                    val text = formattedText(intent.text)
+                    dispatch(Msg.OnTextChanged(text))
                 }
 
                 Intent.ClickBack -> {
@@ -120,6 +121,11 @@ class AddNoteStoreFactory @Inject constructor(
                 is Msg.OnIconChanged -> copy(selectedIcon = msg.icon)
                 is Msg.OnTextChanged -> copy(isIncorrect = false, text = msg.text)
             }
+    }
+
+    private fun formattedText(text: String): String {
+        if (text.length > 500) return text.substring(0..<500)
+        return text
     }
 
     private fun generateNoteId(list: List<Note>): Int {

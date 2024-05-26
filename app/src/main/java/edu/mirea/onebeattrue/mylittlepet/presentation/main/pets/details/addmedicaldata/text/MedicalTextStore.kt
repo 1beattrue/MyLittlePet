@@ -68,7 +68,8 @@ class MedicalTextStoreFactory @Inject constructor(
                 }
 
                 is Intent.SetText -> {
-                    dispatch(Msg.SetText(intent.text))
+                    val text = formattedText(intent.text)
+                    dispatch(Msg.SetText(text))
                 }
             }
         }
@@ -80,5 +81,10 @@ class MedicalTextStoreFactory @Inject constructor(
                 Msg.TextNotEntered -> copy(isIncorrect = true)
                 is Msg.SetText -> copy(isIncorrect = false, text = msg.text)
             }
+    }
+
+    private fun formattedText(text: String): String {
+        if (text.length > 500) return text.substring(0..<500)
+        return text
     }
 }

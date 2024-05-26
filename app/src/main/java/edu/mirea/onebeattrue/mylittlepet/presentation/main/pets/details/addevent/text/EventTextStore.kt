@@ -54,11 +54,12 @@ class EventTextStoreFactory @Inject constructor(
         }
     }
 
-    private class ExecutorImpl : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+    private inner class ExecutorImpl : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 is Intent.ChangeText -> {
-                    dispatch(Msg.OnTextChaned(intent.text))
+                    val text = formattedText(intent.text)
+                    dispatch(Msg.OnTextChaned(text))
                 }
 
                 Intent.GoNext -> {
@@ -79,5 +80,10 @@ class EventTextStoreFactory @Inject constructor(
                 is Msg.OnTextChaned -> copy(text = msg.text, isIncorrect = false)
                 Msg.TextNotEntered -> copy(isIncorrect = true)
             }
+    }
+
+    private fun formattedText(text: String): String {
+        if (text.length > 500) return text.substring(0..<500)
+        return text
     }
 }
