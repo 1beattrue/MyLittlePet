@@ -15,6 +15,7 @@ import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.DefaultMainComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.DataStoreUtils
 import edu.mirea.onebeattrue.mylittlepet.presentation.utils.LocaleUtils
 import edu.mirea.onebeattrue.mylittlepet.presentation.utils.UiUtils
 import edu.mirea.onebeattrue.mylittlepet.presentation.utils.componentScope
@@ -41,8 +42,12 @@ class DefaultRootComponent @AssistedInject constructor(
     private val isDarkTheme: Boolean
         get() = UiUtils.isSystemInDarkTheme(application)
     private val isEnglishLanguage: Boolean
-        get() = LocaleUtils.isEnglishLanguage()
-    //get() = application.resources.configuration.locales.toLanguageTags() == Language.EN.value
+        get() = if (DataStoreUtils.getLastSavedBoolean(application, USE_SYSTEM_LANG) == false) {
+            DataStoreUtils.getLastSavedBoolean(application, IS_ENGLISH_MODE_KEY)
+                ?: LocaleUtils.isEnglishLanguage()
+        } else {
+            LocaleUtils.isEnglishLanguage()
+        }
 
     val store = instanceKeeper.getStore {
         storeFactory.create(
