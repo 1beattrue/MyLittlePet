@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.Mail
+import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,9 +44,11 @@ import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.presentation.utils.Language
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -122,100 +125,49 @@ fun ProfileContent(
                     component.sendEmail()
                 }
             }
+            item {
+                PrivacyPolicyCard {
+                    component.openBottomSheet()
+                }
+            }
         }
 
     }
 
-//    Column(
-//        modifier = modifier
-//            .fillMaxSize()
-//            .padding(4.dp)
-//    ) {
-//        Text(
-//            modifier = modifier,
-//            text = stringResource(id = R.string.navigation_item_profile)
-//        )
-//        Spacer(modifier = Modifier.height(4.dp))
-//        CustomCardExtremeElevation {
-//            Row {
-//                Text(text = stringResource(id = R.string.change_theme))
-//                CustomSwitcher(
-//                    modifier = modifier,
-//                    booleanState = state.isDarkTheme,
-//                    action = {
-//                        component.changeTheme(it)
-//                    }
-//                )
-//            }
-//        }
-//        Spacer(modifier = Modifier.height(4.dp))
-//        CustomCardExtremeElevation {
-//            Row {
-//                Text(text = stringResource(id = R.string.change_language))
-//                CustomLanguageSwitcher(
-//                    modifier = modifier,
-//                    booleanState = state.isEnglishLanguage,
-//                    action = {
-//                        component.changeLanguage(!state.isEnglishLanguage)
-//                    }
-//                )
-//            }
-//        }
-//        Spacer(modifier = Modifier.height(4.dp))
-//        ClickableCustomCard(
-//            elevation = DEFAULT_ELEVATION,
-//            onClick = {
-//                component.sendEmail()
-//            }
-//        ) {
-//            Row {
-//                Text(text = stringResource(id = R.string.contact_us))
-//                Icon(
-//                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-//                    contentDescription = "Icon"
-//                )
-//            }
-//        }
-//        Spacer(modifier = Modifier.height(4.dp))
-//        ClickableCustomCard(
-//            elevation = DEFAULT_ELEVATION,
-//            onClick = {
-//                component.openBottomSheet()
-//            }
-//        ) {
-//            Row {
-//                Text(text = stringResource(id = R.string.privacy_policy))
-//                Icon(
-//                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-//                    contentDescription = "Icon"
-//                )
-//            }
-//        }
-//        Spacer(modifier = Modifier.height(4.dp))
-//
-//
-//
-//        Button(
-//            modifier = modifier.fillMaxWidth(),
-//            onClick = {
-//                Log.d("ProfileContent", "${state.bottomSheetState}")
-//                /* TODO() */
-//            }
-//        ) {
-//            Text(text = stringResource(id = R.string.delete_all_data))
-//        }
-//        Button(
-//            modifier = modifier.fillMaxWidth(),
-//            onClick = { component.signOut() }
-//        ) {
-//            Text(text = stringResource(id = R.string.log_out))
-//        }
-//    }
-//
-//    PrivacyPolicyBottomSheet(
-//        isExpanded = state.bottomSheetState,
-//        closeBottomSheet = { component.closeBottomSheet() }
-//    )
+    PrivacyPolicyBottomSheet(
+        isExpanded = state.bottomSheetState,
+        onCloseBottomSheet = { component.closeBottomSheet() }
+    )
+}
+
+@Composable
+private fun PrivacyPolicyCard(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    ClickableCustomCard(
+        modifier = modifier,
+        elevation = EXTREME_ELEVATION,
+        onClick = { onClick() }
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier.weight(0.7f),
+                overflow = TextOverflow.Ellipsis,
+                text = stringResource(R.string.privacy_policy),
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Start,
+            )
+            Icon(
+                imageVector = Icons.Rounded.Shield,
+                contentDescription = null
+            )
+        }
+    }
 }
 
 @Composable
@@ -366,18 +318,17 @@ fun ChangeThemeCard(
 private fun PrivacyPolicyBottomSheet(
     modifier: Modifier = Modifier,
     isExpanded: Boolean,
-    closeBottomSheet: () -> Unit
+    onCloseBottomSheet: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
 
     if (isExpanded) {
         ModalBottomSheet(
             modifier = modifier,
-            onDismissRequest = { closeBottomSheet() },
+            onDismissRequest = { onCloseBottomSheet() },
             sheetState = sheetState
         ) {
-            CustomCardExtremeElevation {
-                Text(text = stringResource(id = R.string.privacy_policy))
+            CustomCard(elevation = STRONG_ELEVATION) {
                 Text(text = stringResource(id = R.string.privacy_policy_content))
             }
             Spacer(modifier = Modifier.height(64.dp))
