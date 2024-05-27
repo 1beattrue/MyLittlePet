@@ -5,7 +5,6 @@ import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.booleanPreferencesKey
 
 val USE_SYSTEM_THEME = booleanPreferencesKey("use_system_theme")
-val USE_SYSTEM_LANG = booleanPreferencesKey("use_system_lang")
 val IS_NIGHT_MODE_KEY = booleanPreferencesKey("is_night_mode")
 val IS_ENGLISH_MODE_KEY = booleanPreferencesKey("is_english_mode")
 

@@ -21,6 +21,7 @@ fun RootContent(
 ) {
     val state by component.model.collectAsState()
     val context = LocalContext.current
+
     LocaleUtils.setLocale(context, state.isEnglishLanguage)
 
     MyLittlePetTheme(

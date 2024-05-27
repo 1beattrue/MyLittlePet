@@ -38,8 +38,8 @@ object LocaleUtils {
         return currentLocale.language == Locale.ENGLISH.language
     }
 
-    fun setLocale(context: Context, isEnglish: Boolean?) {
-        val language = if (isEnglish == null || isEnglish) Language.EN.value else Language.RU.value
+    fun setLocale(context: Context, isEnglish: Boolean) {
+        val language = if (isEnglish) Language.EN.value else Language.RU.value
         updateResources(context, language)
     }
 

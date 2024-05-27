@@ -52,10 +52,6 @@ class DefaultProfileComponent @AssistedInject constructor(
         store.accept(ProfileStore.Intent.ChangeLanguage(isEnglishLanguage))
     }
 
-    override fun changeUseSystemLang(useSystemLang: Boolean) {
-        store.accept(ProfileStore.Intent.ChangeUsingSystemLang(useSystemLang))
-    }
-
     override fun sendEmail() {
         store.accept(ProfileStore.Intent.SendEmail)
     }

@@ -21,7 +21,6 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.utils.dataStore
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_ENGLISH_MODE_KEY
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_NIGHT_MODE_KEY
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.SUPPORT_EMAIL
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.USE_SYSTEM_LANG
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.USE_SYSTEM_THEME
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,7 +34,6 @@ interface ProfileStore : Store<Intent, State, Label> {
         data class ChangeUsingSystemTheme(val useSystemTheme: Boolean) : Intent
 
         data class ChangeLanguage(val isEnglishLanguage: Boolean) : Intent
-        data class ChangeUsingSystemLang(val useSystemLang: Boolean) : Intent
 
         data object SendEmail : Intent
         data object OpenBottomSheet : Intent
@@ -46,7 +44,6 @@ interface ProfileStore : Store<Intent, State, Label> {
         val isDarkTheme: Boolean?,
         val useSystemTheme: Boolean,
         val isEnglishLanguage: Boolean,
-        val useSystemLang: Boolean,
         val bottomSheetState: Boolean
     )
 
@@ -71,9 +68,6 @@ class ProfileStoreFactory @Inject constructor(
                 isDarkTheme = DataStoreUtils
                     .getLastSavedBoolean(application, IS_NIGHT_MODE_KEY)
                     ?: UiUtils.isSystemInDarkTheme(application),
-                useSystemLang = DataStoreUtils
-                    .getLastSavedBoolean(application, USE_SYSTEM_LANG)
-                    ?: true,
                 isEnglishLanguage = DataStoreUtils
                     .getLastSavedBoolean(application, IS_ENGLISH_MODE_KEY)
                     ?: LocaleUtils.isEnglishLanguage(),
@@ -91,7 +85,6 @@ class ProfileStoreFactory @Inject constructor(
         data class ChangeUsingSystemTheme(val useSystemTheme: Boolean) : Msg
 
         data class ChangeLanguage(val isEnglishLanguage: Boolean) : Msg
-        data class ChangeUsingSystemLang(val useSystemLang: Boolean) : Msg
 
         data object SendEmail : Msg
         data class BottomSheetState(val bottomSheetState: Boolean) : Msg
@@ -156,16 +149,6 @@ class ProfileStoreFactory @Inject constructor(
                     }
                     dispatch(Msg.ChangeLanguage(intent.isEnglishLanguage))
                 }
-
-                is Intent.ChangeUsingSystemLang -> {
-                    scope.launch {
-                        val usingSystemLang = intent.useSystemLang
-                        application.dataStore.edit { preferences ->
-                            preferences[USE_SYSTEM_LANG] = usingSystemLang
-                        }
-                        dispatch(Msg.ChangeUsingSystemLang(usingSystemLang))
-                    }
-                }
             }
         }
     }
@@ -178,7 +161,6 @@ class ProfileStoreFactory @Inject constructor(
                 is Msg.ChangeTheme -> copy(isDarkTheme = msg.isDarkTheme)
                 is Msg.ChangeUsingSystemTheme -> copy(useSystemTheme = msg.useSystemTheme)
                 is Msg.ChangeLanguage -> copy(isEnglishLanguage = msg.isEnglishLanguage)
-                is Msg.ChangeUsingSystemLang -> copy(useSystemLang = msg.useSystemLang)
             }
     }
 

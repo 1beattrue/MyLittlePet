@@ -52,6 +52,10 @@ fun ProfileContent(
 ) {
     val state by component.model.collectAsState()
 
+    if (state.isEnglishLanguage) {
+        Any()
+    } // TODO: костыль для перерисовки
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -61,14 +65,13 @@ fun ProfileContent(
                     titleContentColor = MaterialTheme.colorScheme.onSurface
                 ),
                 title = {
-                    val text = if (state.isEnglishLanguage) { // TODO: костыль для перерисовки
-                        stringResource(R.string.profile_app_bar_title)
-                    } else {
-                        stringResource(R.string.profile_app_bar_title)
-                    }
+                    if (state.isEnglishLanguage) {
+                        Any()
+                    } // TODO: костыль для перерисовки
+
                     Text(
                         style = MaterialTheme.typography.titleLarge,
-                        text = text
+                        text = stringResource(R.string.profile_app_bar_title)
                     )
                 },
                 actions = {
@@ -109,13 +112,10 @@ fun ProfileContent(
                     onLanguageChanged = { isEnglish ->
                         component.changeLanguage(isEnglish)
                     },
-                    useSystemLanguage = state.useSystemLang,
-                    onUsingSystemLanguageChanged = {
-                        component.changeUseSystemLang(it)
-                    },
                 )
             }
         }
+
     }
 
 //    Column(
@@ -215,8 +215,6 @@ fun ChangeLanguageCard(
     modifier: Modifier = Modifier,
     isEnglish: Boolean,
     onLanguageChanged: (Boolean) -> Unit,
-    useSystemLanguage: Boolean,
-    onUsingSystemLanguageChanged: (Boolean) -> Unit,
 ) {
     CustomCardExtremeElevation(modifier = modifier) {
         Text(
@@ -226,52 +224,28 @@ fun ChangeLanguageCard(
             style = MaterialTheme.typography.titleLarge
         )
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
-                .clickable {
-                    onUsingSystemLanguageChanged(!useSystemLanguage)
-                },
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Checkbox(
-                checked = useSystemLanguage,
-                onCheckedChange = {
-                    onUsingSystemLanguageChanged(it)
+            Text(
+                modifier = Modifier.weight(0.7f),
+                overflow = TextOverflow.Ellipsis,
+                text = stringResource(R.string.change_language),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Start,
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(text = Language.RU.value, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.width(8.dp))
+            Switch(
+                checked = isEnglish,
+                onCheckedChange = { english ->
+                    onLanguageChanged(english)
                 }
             )
-            Text(
-                text = stringResource(R.string.use_system_lang),
-            )
-        }
-        AnimatedVisibility(
-            visible = !useSystemLanguage
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    modifier = Modifier.weight(0.7f),
-                    overflow = TextOverflow.Ellipsis,
-                    text = stringResource(R.string.change_language),
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Start,
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(text = Language.RU.value, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.width(8.dp))
-                Switch(
-                    checked = isEnglish,
-                    onCheckedChange = { english ->
-                        onLanguageChanged(english)
-                    }
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = Language.EN.value, fontWeight = FontWeight.Bold)
-            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = Language.EN.value, fontWeight = FontWeight.Bold)
         }
     }
 }

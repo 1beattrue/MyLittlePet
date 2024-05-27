@@ -12,7 +12,6 @@ interface ProfileComponent {
     fun changeUseSystemTheme(useSystemTheme: Boolean)
 
     fun changeLanguage(isEnglishLanguage: Boolean)
-    fun changeUseSystemLang(useSystemLang: Boolean)
 
     fun sendEmail()
     fun openBottomSheet()

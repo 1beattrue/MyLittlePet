@@ -22,7 +22,6 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.utils.componentScope
 import edu.mirea.onebeattrue.mylittlepet.presentation.utils.dataStore
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_ENGLISH_MODE_KEY
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_NIGHT_MODE_KEY
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.USE_SYSTEM_LANG
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.USE_SYSTEM_THEME
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
@@ -42,12 +41,9 @@ class DefaultRootComponent @AssistedInject constructor(
     private val isDarkTheme: Boolean
         get() = UiUtils.isSystemInDarkTheme(application)
     private val isEnglishLanguage: Boolean
-        get() = if (DataStoreUtils.getLastSavedBoolean(application, USE_SYSTEM_LANG) == false) {
-            DataStoreUtils.getLastSavedBoolean(application, IS_ENGLISH_MODE_KEY)
-                ?: LocaleUtils.isEnglishLanguage()
-        } else {
-            LocaleUtils.isEnglishLanguage()
-        }
+        get() = DataStoreUtils.getLastSavedBoolean(application, IS_ENGLISH_MODE_KEY)
+            ?: LocaleUtils.isEnglishLanguage()
+
 
     val store = instanceKeeper.getStore {
         storeFactory.create(
@@ -69,14 +65,10 @@ class DefaultRootComponent @AssistedInject constructor(
                         }
                     }
 
-                    preferences[IS_ENGLISH_MODE_KEY].let {
-                        val useSystemLang = preferences[USE_SYSTEM_LANG] ?: true
-                        if (!useSystemLang) {
-                            onLanguageChanged(it ?: isEnglishLanguage)
-                        } else {
-                            onLanguageChanged(null)
-                        }
-                    }
+                    onLanguageChanged(
+                        preferences[IS_ENGLISH_MODE_KEY]
+                            ?: isEnglishLanguage
+                    )
                 }
         }
     }
@@ -121,7 +113,7 @@ class DefaultRootComponent @AssistedInject constructor(
         store.accept(RootStore.Intent.ChangeTheme(isDarkTheme))
     }
 
-    private fun onLanguageChanged(isEnglishLanguage: Boolean?) {
+    private fun onLanguageChanged(isEnglishLanguage: Boolean) {
         store.accept(RootStore.Intent.ChangeLanguage(isEnglishLanguage))
     }
 
