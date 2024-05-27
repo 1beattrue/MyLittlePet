@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Logout
+import androidx.compose.material.icons.rounded.Mail
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,8 +42,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.presentation.utils.Language
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,6 +116,11 @@ fun ProfileContent(
                         component.changeLanguage(isEnglish)
                     },
                 )
+            }
+            item {
+                ContactCard {
+                    component.sendEmail()
+                }
             }
         }
 
@@ -208,6 +216,37 @@ fun ProfileContent(
 //        isExpanded = state.bottomSheetState,
 //        closeBottomSheet = { component.closeBottomSheet() }
 //    )
+}
+
+@Composable
+private fun ContactCard(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    ClickableCustomCard(
+        modifier = modifier,
+        elevation = EXTREME_ELEVATION,
+        onClick = { onClick() }
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier.weight(0.7f),
+                overflow = TextOverflow.Ellipsis,
+                text = stringResource(R.string.contact_us),
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Start,
+
+                )
+            Icon(
+                imageVector = Icons.Rounded.Mail,
+                contentDescription = null
+            )
+        }
+    }
 }
 
 @Composable
