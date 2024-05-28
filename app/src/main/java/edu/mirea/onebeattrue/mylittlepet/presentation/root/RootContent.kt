@@ -1,6 +1,8 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.root
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,7 +31,7 @@ fun RootContent(
         darkTheme = state.isDarkTheme ?: isSystemInDarkTheme()
     ) {
         Children(
-            modifier = modifier,
+            modifier = modifier.background(MaterialTheme.colorScheme.surface),
             stack = component.stack,
             animation = stackAnimation(fade())
         ) {

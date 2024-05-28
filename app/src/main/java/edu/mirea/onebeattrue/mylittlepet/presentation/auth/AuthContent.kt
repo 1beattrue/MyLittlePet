@@ -1,5 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.auth
 
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
@@ -17,7 +19,7 @@ fun AuthContent(
 ) {
     //TopAppBar(title = {})
     Children(
-        modifier = modifier,
+        modifier = modifier.background(MaterialTheme.colorScheme.surface),
         stack = component.stack,
         animation = stackAnimation(slide() + fade())
     ) {
