@@ -15,6 +15,7 @@ import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.DefaultMainComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.onboarding.DefaultOnboardingComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.utils.DataStoreUtils
 import edu.mirea.onebeattrue.mylittlepet.presentation.utils.LocaleUtils
 import edu.mirea.onebeattrue.mylittlepet.presentation.utils.UiUtils
@@ -33,6 +34,7 @@ class DefaultRootComponent @AssistedInject constructor(
 
     private val authComponentFactory: DefaultAuthComponent.Factory,
     private val mainComponentFactory: DefaultMainComponent.Factory,
+    private val onboardingComponentFactory: DefaultOnboardingComponent.Factory,
     private val authRepository: AuthRepository,
 
     private val application: Application,
@@ -82,7 +84,7 @@ class DefaultRootComponent @AssistedInject constructor(
     override val stack: Value<ChildStack<*, RootComponent.Child>> = childStack(
         source = navigation,
         serializer = Config.serializer(),
-        initialConfiguration = if (authRepository.currentUser == null) Config.Auth else Config.Main,
+        initialConfiguration = if (authRepository.currentUser == null) Config.Onboarding else Config.Main,
         handleBackButton = true,
         childFactory = ::child,
         key = "root"
@@ -107,6 +109,14 @@ class DefaultRootComponent @AssistedInject constructor(
             )
             RootComponent.Child.Main(component)
         }
+
+        Config.Onboarding -> {
+            val component = onboardingComponentFactory.create(
+                onSkipOnboarding = { navigation.replaceAll(Config.Auth) },
+                componentContext = componentContext
+            )
+            RootComponent.Child.Onboarding(component)
+        }
     }
 
     private fun onThemeChanged(isDarkTheme: Boolean?) {
@@ -124,6 +134,9 @@ class DefaultRootComponent @AssistedInject constructor(
 
         @Serializable
         data object Main : Config
+
+        @Serializable
+        data object Onboarding : Config
     }
 
     @AssistedFactory

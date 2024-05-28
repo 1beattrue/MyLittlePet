@@ -15,6 +15,7 @@ fun AuthContent(
     modifier: Modifier = Modifier,
     component: AuthComponent
 ) {
+    //TopAppBar(title = {})
     Children(
         modifier = modifier,
         stack = component.stack,

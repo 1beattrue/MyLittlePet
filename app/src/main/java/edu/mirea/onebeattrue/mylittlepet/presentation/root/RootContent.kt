@@ -11,6 +11,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.MainContent
+import edu.mirea.onebeattrue.mylittlepet.presentation.onboarding.OnboardingContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.utils.LocaleUtils
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
 
@@ -35,6 +36,7 @@ fun RootContent(
             when (val instance = it.instance) {
                 is RootComponent.Child.Auth -> AuthContent(component = instance.component)
                 is RootComponent.Child.Main -> MainContent(component = instance.component)
+                is RootComponent.Child.Onboarding -> OnboardingContent(component = instance.component)
             }
         }
     }
