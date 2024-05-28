@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -128,20 +127,15 @@ fun EventListContent(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item {
-                    NotificationPermissionCard(permissionState = permissionState)
+                    NotificationPermissionCard(
+                        permissionState = permissionState
+                    )
                 }
                 item {
-                    ClickableCustomCard(
-                        elevation = EXTREME_ELEVATION,
-                        onClick = { component.onDeletePastEvents() }
+                    DeletePastEventsCard(
+                        modifier = Modifier.animateItemPlacement(),
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Text(text = "Clear old events")
-                            Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
-                        }
+                        component.onDeletePastEvents()
                     }
                 }
                 items(
@@ -233,6 +227,21 @@ fun EventListContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun DeletePastEventsCard(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    ClickableCustomCard(
+        modifier = modifier,
+        elevation = EXTREME_ELEVATION,
+        onClick = { onClick() }
+    ) {
+        Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
+        Text(text = stringResource(R.string.clear_old_events))
     }
 }
 
