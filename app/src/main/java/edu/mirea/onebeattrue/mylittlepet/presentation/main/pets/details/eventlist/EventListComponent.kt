@@ -11,4 +11,6 @@ interface EventListComponent {
     fun onDeleteEvent(event: Event)
 
     fun onBackClicked()
+
+    fun onDeletePastEvents()
 }

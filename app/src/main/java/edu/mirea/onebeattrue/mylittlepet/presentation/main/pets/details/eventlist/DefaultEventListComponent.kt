@@ -54,6 +54,10 @@ class DefaultEventListComponent @AssistedInject constructor(
         store.accept(EventListStore.Intent.OnClickBack)
     }
 
+    override fun onDeletePastEvents() {
+        store.accept(EventListStore.Intent.DeletePastEvents)
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(

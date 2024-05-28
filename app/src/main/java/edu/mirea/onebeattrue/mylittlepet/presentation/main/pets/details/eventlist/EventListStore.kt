@@ -23,6 +23,7 @@ interface EventListStore : Store<Intent, State, Label> {
     sealed interface Intent {
         data object AddEvent : Intent
         data class DeleteEvent(val event: Event) : Intent
+        data object DeletePastEvents : Intent
         data object OnClickBack : Intent
     }
 
@@ -83,15 +84,7 @@ class EventListStoreFactory @Inject constructor(
         override fun executeAction(action: Action, getState: () -> State) {
             when (action) {
                 is Action.UpdateEventList -> {
-                    val sortedEvents = action.events
-                        .sortedWith(
-                            compareByDescending<Event> { it.repeatable }
-                                .thenByDescending {
-                                    if (it.repeatable) getTimeInHoursAndMinutes(
-                                        it.time
-                                    ) else it.time
-                                }
-                        )
+                    val sortedEvents = sortedEventList(action.events)
                     dispatch(Msg.UpdateEventList(sortedEvents))
                 }
             }
@@ -127,6 +120,28 @@ class EventListStoreFactory @Inject constructor(
                     }
                 }
 
+                Intent.DeletePastEvents -> {
+                    scope.launch {
+                        val currentTime = Calendar.getInstance().timeInMillis
+
+                        val oldEventList = getState().events
+                        oldEventList.filter { it.time <= currentTime && !it.repeatable }
+                            .forEach { event ->
+                                cancelNotification(
+                                    time = event.time,
+                                    title = pet.name,
+                                    text = event.label,
+                                    repeatable = event.repeatable
+                                )
+                            }
+
+                        val newEventList = oldEventList
+                            .filter { it.time > currentTime || it.repeatable }
+
+                        editPetUseCase(pet.copy(eventList = newEventList))
+                    }
+                }
+
                 Intent.OnClickBack -> publish(Label.OnClickBack)
             }
         }
@@ -139,6 +154,17 @@ class EventListStoreFactory @Inject constructor(
                     copy(events = msg.events)
                 }
             }
+    }
+
+    private fun sortedEventList(list: List<Event>): List<Event> {
+        return list.sortedWith(
+            compareByDescending<Event> { it.repeatable }
+                .thenByDescending {
+                    if (it.repeatable) getTimeInHoursAndMinutes(
+                        it.time
+                    ) else it.time
+                }
+        )
     }
 
     private fun getTimeInHoursAndMinutes(time: Long): Int {

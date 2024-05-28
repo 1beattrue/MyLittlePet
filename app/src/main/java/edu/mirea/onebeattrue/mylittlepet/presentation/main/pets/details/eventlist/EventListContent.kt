@@ -17,6 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.CleaningServices
+import androidx.compose.material.icons.rounded.ClearAll
 import androidx.compose.material.icons.rounded.NotificationImportant
 import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.NotificationsOff
@@ -106,6 +108,11 @@ fun EventListContent(
                     }
                 },
                 actions = {
+                    IconButton(
+                        onClick = { component.onDeletePastEvents() }
+                    ) {
+                        Icon(imageVector = Icons.Rounded.ClearAll, contentDescription = null)
+                    }
                     IconButton(
                         onClick = { component.onAddEvent() }
                     ) {
