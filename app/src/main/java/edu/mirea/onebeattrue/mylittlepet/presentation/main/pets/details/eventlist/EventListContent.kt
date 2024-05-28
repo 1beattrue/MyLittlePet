@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,8 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.CleaningServices
-import androidx.compose.material.icons.rounded.ClearAll
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.NotificationImportant
 import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.NotificationsOff
@@ -57,6 +57,7 @@ import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDateTime
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
@@ -109,11 +110,6 @@ fun EventListContent(
                 },
                 actions = {
                     IconButton(
-                        onClick = { component.onDeletePastEvents() }
-                    ) {
-                        Icon(imageVector = Icons.Rounded.ClearAll, contentDescription = null)
-                    }
-                    IconButton(
                         onClick = { component.onAddEvent() }
                     ) {
                         Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
@@ -133,6 +129,20 @@ fun EventListContent(
             ) {
                 item {
                     NotificationPermissionCard(permissionState = permissionState)
+                }
+                item {
+                    ClickableCustomCard(
+                        elevation = EXTREME_ELEVATION,
+                        onClick = { component.onDeletePastEvents() }
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(text = "Clear old events")
+                            Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
+                        }
+                    }
                 }
                 items(
                     items = state.events,
