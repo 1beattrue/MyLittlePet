@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -328,10 +329,19 @@ private fun PrivacyPolicyBottomSheet(
             onDismissRequest = { onCloseBottomSheet() },
             sheetState = sheetState
         ) {
-            CustomCard(elevation = STRONG_ELEVATION) {
-                Text(text = stringResource(id = R.string.privacy_policy_content))
+            LazyColumn(
+                //modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    top = 16.dp,
+                    bottom = 64.dp
+                )
+            ) {
+                item {
+                    CustomCard(elevation = STRONG_ELEVATION) {
+                        Text(text = stringResource(id = R.string.privacy_policy_content))
+                    }
+                }
             }
-            Spacer(modifier = Modifier.height(64.dp))
         }
     }
 }
