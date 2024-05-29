@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -56,7 +60,6 @@ import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToLocalDateTime
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
@@ -235,14 +238,33 @@ private fun DeletePastEventsCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    ClickableCustomCard(
-        modifier = modifier,
-        elevation = EXTREME_ELEVATION,
-        onClick = { onClick() }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
     ) {
-        Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
-        Text(text = stringResource(R.string.clear_old_events))
+        TextButton(
+            onClick = { onClick() },
+        ) {
+            Text(
+                text = stringResource(R.string.clear_old_events),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
+        }
     }
+
+//    ClickableCustomCard(
+//        modifier = modifier,
+//        elevation = EXTREME_ELEVATION,
+//        onClick = { onClick() }
+//    ) {
+//        Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
+//        Text(text = stringResource(R.string.clear_old_events))
+//    }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
