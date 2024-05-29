@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Circle
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Info
@@ -135,12 +137,24 @@ private fun PetCard(
             elevation = EXTREME_ELEVATION,
             onClick = { openDetails() }
         ) {
-            Text(
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge,
-                text = pet.name,
-                fontWeight = FontWeight.Bold,
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge,
+                    text = pet.name,
+                    fontWeight = FontWeight.Bold,
+                )
+                if (pet.isUnread()) {
+                    Icon(
+                        imageVector = Icons.Rounded.Circle,
+                        contentDescription = null,
+                        tint = Color.Red
+                    )
+                }
+            }
             Box(
                 modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
             ) {

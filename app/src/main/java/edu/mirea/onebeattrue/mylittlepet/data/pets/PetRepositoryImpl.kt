@@ -6,7 +6,6 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.repository.PetRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.Calendar
 import javax.inject.Inject
 
 class PetRepositoryImpl @Inject constructor(
@@ -45,16 +44,5 @@ class PetRepositoryImpl @Inject constructor(
 
     override fun getPetById(petId: Int): Flow<Pet> = petListDao.getPetById(petId).map {
         mapper.mapDbModelToEntity(it)
-    }
-
-    private fun getTimeInMillis(date: Long?, hours: Int, minutes: Int): Long {
-        val calendar = Calendar.getInstance().apply {
-            date?.let { timeInMillis = it }
-            set(Calendar.HOUR_OF_DAY, hours)
-            set(Calendar.MINUTE, minutes)
-            set(Calendar.SECOND, 0)
-        }
-
-        return calendar.timeInMillis
     }
 }

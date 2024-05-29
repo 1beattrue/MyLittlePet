@@ -1,6 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.domain.pets.entity
 
 import kotlinx.serialization.Serializable
+import java.util.Calendar
 
 @Serializable
 data class Pet(
@@ -17,6 +18,11 @@ data class Pet(
 
     val id: Int = UNDEFINED_ID
 ) {
+    fun isUnread(): Boolean {
+        val currentTime = Calendar.getInstance().timeInMillis
+        return eventList.any { it.time <= currentTime && !it.repeatable }
+    }
+
     companion object {
         private const val UNDEFINED_ID = 0
     }
