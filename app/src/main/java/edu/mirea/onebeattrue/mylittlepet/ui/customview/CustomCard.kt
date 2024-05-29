@@ -3,7 +3,6 @@ package edu.mirea.onebeattrue.mylittlepet.ui.customview
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +18,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
@@ -29,7 +29,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -81,6 +80,7 @@ fun ClickableCustomCard(
     modifier: Modifier = Modifier,
     elevation: Dp,
     paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp),
+    innerPadding: Dp = 32.dp,
     cardColors: CardColors = CardDefaults.elevatedCardColors(
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface
@@ -126,7 +126,7 @@ fun ClickableCustomCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp),
+                    .padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -185,15 +185,10 @@ fun CustomCardWithAddButton(
                     content()
                 }
 
-                val primaryColor = MaterialTheme.colorScheme.primary
-                Canvas(modifier = Modifier.fillMaxWidth()) {
-                    drawLine(
-                        color = primaryColor,
-                        strokeWidth = 1.dp.toPx(),
-                        start = Offset(0F, 0F),
-                        end = Offset(this.size.width, 0f)
-                    )
-                }
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.primary
+                )
+
                 TextButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = { onAddClick() },
