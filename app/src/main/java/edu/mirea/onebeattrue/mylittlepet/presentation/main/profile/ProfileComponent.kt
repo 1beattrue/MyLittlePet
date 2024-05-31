@@ -16,4 +16,7 @@ interface ProfileComponent {
     fun sendEmail()
     fun openBottomSheet()
     fun closeBottomSheet()
+
+    fun openDialog()
+    fun closeDialog()
 }

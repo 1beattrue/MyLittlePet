@@ -64,6 +64,14 @@ class DefaultProfileComponent @AssistedInject constructor(
         store.accept(ProfileStore.Intent.CloseBottomSheet)
     }
 
+    override fun openDialog() {
+        store.accept(ProfileStore.Intent.OpenDialog)
+    }
+
+    override fun closeDialog() {
+        store.accept(ProfileStore.Intent.CloseDialog)
+    }
+
 
     @AssistedFactory
     interface Factory {

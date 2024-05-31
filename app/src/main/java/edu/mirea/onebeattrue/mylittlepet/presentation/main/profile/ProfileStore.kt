@@ -38,13 +38,17 @@ interface ProfileStore : Store<Intent, State, Label> {
         data object SendEmail : Intent
         data object OpenBottomSheet : Intent
         data object CloseBottomSheet : Intent
+
+        data object OpenDialog : Intent
+        data object CloseDialog : Intent
     }
 
     data class State(
         val isDarkTheme: Boolean?,
         val useSystemTheme: Boolean,
         val isEnglishLanguage: Boolean,
-        val bottomSheetState: Boolean
+        val bottomSheetState: Boolean,
+        val isLogOutDialogOpen: Boolean
     )
 
     sealed interface Label {
@@ -71,7 +75,8 @@ class ProfileStoreFactory @Inject constructor(
                 isEnglishLanguage = DataStoreUtils
                     .getLastSavedBoolean(application, IS_ENGLISH_MODE_KEY)
                     ?: LocaleUtils.isEnglishLanguage(),
-                bottomSheetState = false
+                bottomSheetState = false,
+                isLogOutDialogOpen = false
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -86,8 +91,9 @@ class ProfileStoreFactory @Inject constructor(
 
         data class ChangeLanguage(val isEnglishLanguage: Boolean) : Msg
 
-        data object SendEmail : Msg
         data class BottomSheetState(val bottomSheetState: Boolean) : Msg
+
+        data class LogOutDialogState(val isOpen: Boolean) : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -149,6 +155,14 @@ class ProfileStoreFactory @Inject constructor(
                     }
                     dispatch(Msg.ChangeLanguage(intent.isEnglishLanguage))
                 }
+
+                Intent.OpenDialog -> {
+                    dispatch(Msg.LogOutDialogState(true))
+                }
+
+                Intent.CloseDialog -> {
+                    dispatch(Msg.LogOutDialogState(false))
+                }
             }
         }
     }
@@ -156,11 +170,11 @@ class ProfileStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                Msg.SendEmail -> TODO()
                 is Msg.BottomSheetState -> copy(bottomSheetState = msg.bottomSheetState)
                 is Msg.ChangeTheme -> copy(isDarkTheme = msg.isDarkTheme)
                 is Msg.ChangeUsingSystemTheme -> copy(useSystemTheme = msg.useSystemTheme)
                 is Msg.ChangeLanguage -> copy(isEnglishLanguage = msg.isEnglishLanguage)
+                is Msg.LogOutDialogState -> copy(isLogOutDialogOpen = msg.isOpen)
             }
     }
 

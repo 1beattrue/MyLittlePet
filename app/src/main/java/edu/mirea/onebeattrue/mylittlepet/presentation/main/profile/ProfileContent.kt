@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.Mail
 import androidx.compose.material.icons.rounded.Shield
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -25,6 +26,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -34,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -76,12 +79,12 @@ fun ProfileContent(
 
                     Text(
                         style = MaterialTheme.typography.titleLarge,
-                        text = stringResource(R.string.profile_app_bar_title)
+                        text = stringResource(R.string.settings_app_bar_title)
                     )
                 },
                 actions = {
                     IconButton(
-                        onClick = { component.signOut() }
+                        onClick = { component.openDialog() }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.Logout,
@@ -137,6 +140,18 @@ fun ProfileContent(
         isExpanded = state.bottomSheetState,
         onCloseBottomSheet = { component.closeBottomSheet() }
     )
+
+    if (state.isLogOutDialogOpen) {
+        LogOutDialog(
+            onDismissRequest = {
+                component.closeDialog()
+            },
+            onConfirmation = {
+                component.closeDialog()
+                component.signOut()
+            }
+        )
+    }
 }
 
 @Composable
@@ -342,4 +357,53 @@ private fun PrivacyPolicyBottomSheet(
             }
         }
     }
+}
+
+@Composable
+private fun LogOutDialog(
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = { onDismissRequest() },
+        icon = {
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.Logout,
+                contentDescription = null,
+            )
+        },
+        title = {
+            Text(text = stringResource(R.string.log_out))
+        },
+        text = {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.log_out_dialog_text),
+                textAlign = TextAlign.Center
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmation()
+                }
+            ) {
+                Text(
+                    text = stringResource(R.string.log_out),
+                    color = Color.Red
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(text = stringResource(R.string.cancel))
+            }
+        }
+    )
 }

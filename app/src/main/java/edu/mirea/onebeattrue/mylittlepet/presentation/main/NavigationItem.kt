@@ -20,8 +20,8 @@ sealed class NavigationItem(
     )
 
     data object ProfileItem : NavigationItem(
-        titleResId = R.string.navigation_item_profile,
-        iconResId = R.drawable.ic_profile,
+        titleResId = R.string.navigation_item_settings,
+        iconResId = R.drawable.ic_settings,
         config = DefaultMainComponent.Config.Profile
     )
 }
