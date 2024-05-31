@@ -24,11 +24,11 @@ interface NoteListStore : Store<Intent, State, Label> {
     }
 
     data class State(
-        val notes: List<Note>
+        val pet: Pet
     )
 
     sealed interface Label {
-        data class OnAddNoteClick(val notes: List<Note>) : Label
+        data class OnAddNoteClick(val pet: Pet) : Label
         data object OnClickBack : Label
     }
 }
@@ -44,19 +44,19 @@ class EventListStoreFactory @Inject constructor(
         object : NoteListStore, Store<Intent, State, Label> by storeFactory.create(
             name = "EventListStore",
             initialState = State(
-                notes = pet.noteList
+                pet = pet
             ),
             bootstrapper = BootstrapperImpl(pet),
-            executorFactory = { ExecutorImpl(pet) },
+            executorFactory = ::ExecutorImpl,
             reducer = ReducerImpl
         ) {}
 
     private sealed interface Action {
-        data class UpdateNoteList(val notes: List<Note>) : Action
+        data class UpdatePet(val pet: Pet) : Action
     }
 
     private sealed interface Msg {
-        data class UpdateNoteList(val notes: List<Note>) : Msg
+        data class UpdatePet(val pet: Pet) : Msg
     }
 
     private inner class BootstrapperImpl(
@@ -65,20 +65,18 @@ class EventListStoreFactory @Inject constructor(
         override fun invoke() {
             scope.launch {
                 getPetByIdUseCase(pet.id).collect { updatedPet ->
-                    dispatch(Action.UpdateNoteList(updatedPet.noteList))
+                    dispatch(Action.UpdatePet(updatedPet))
                 }
             }
         }
     }
 
-    private inner class ExecutorImpl(
-        private val pet: Pet
-    ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+    private inner class ExecutorImpl : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
 
         override fun executeAction(action: Action, getState: () -> State) {
             when (action) {
-                is Action.UpdateNoteList -> {
-                    dispatch(Msg.UpdateNoteList(action.notes))
+                is Action.UpdatePet -> {
+                    dispatch(Msg.UpdatePet(action.pet))
                 }
             }
         }
@@ -86,13 +84,15 @@ class EventListStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 Intent.AddNote -> {
-                    val notes = getState().notes
-                    publish(Label.OnAddNoteClick(notes))
+                    val pet = getState().pet
+                    publish(Label.OnAddNoteClick(pet))
                 }
 
                 is Intent.DeleteNote -> {
                     scope.launch {
-                        val oldNoteList = getState().notes
+                        val pet = getState().pet
+
+                        val oldNoteList = getState().pet.noteList
                         val newNoteList = oldNoteList
                             .toMutableList()
                             .apply {
@@ -114,8 +114,8 @@ class EventListStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.UpdateNoteList -> {
-                    copy(notes = msg.notes)
+                is Msg.UpdatePet -> {
+                    copy(pet = msg.pet)
                 }
             }
     }

@@ -17,6 +17,7 @@
     <string name="add">Добавить</string>
     <string name="ready">Готово</string>
     <string name="ok">OK</string>
+    <string name="skip">Пропустить</string>
 
     <string name="resend_code">Отправить повторно</string>
     <string name="resend_code_exception">Повторная отправка кода будет доступна через %s секунд</string>
@@ -32,18 +33,14 @@
     <string name="navigation_item_pets">Питомцы</string>
 
 
-    <string name="navigation_item_profile">Профиль</string>
+    <string name="navigation_item_settings">Настройки</string>
     <string name="change_theme">Сменить тему</string>
     <string name="change_language">Сменить язык</string>
     <string name="contact_us">Связаться с нами</string>
     <string name="email_subject">Мой маленький питомец</string>
     <string name="privacy_policy">Политика конфиденциальности</string>
-    <string name="privacy_policy_content">Здесь будет вся политика конфиденциальности</string>
-    <string name="privacy_policy_close">Закрыть политику конфиденциальности</string>
-    <string name="delete_all_data">Удалить все данные</string>
     <string name="log_out">Выход</string>
-
-
+    <string name="log_out_dialog_text">Вы действительно хотите выйти?</string>
 
 
     <string name="auth_app_bar_title">Авторизация</string>
@@ -156,6 +153,12 @@
     <string name="notification_permission_required">Для отправки уведомлений требуется разрешение</string>
     <string name="notification_permission_denied">Разрешение на отправку уведомлений отклонено. Откройте настройки</string>
 
+    <string name="profile_app_bar_title">Профиль</string>
+    <string name="use_system_theme">Использовать тему системы</string>
+    <string name="use_system_lang">Использовать язык системы</string>
+    <string name="theme_title">Тема</string>
+    <string name="lang_title">Язык</string>
+
     <plurals name="years_format">
         <item quantity="one">%1$d год</item>
         <item quantity="few">%1$d года</item>
@@ -169,4 +172,12 @@
         <item quantity="many">%1$d месяцев</item>
         <item quantity="other">%1$d месяца</item>
     </plurals>
+
+    <string name="privacy_policy_content">
+        "Политика конфиденциальности\n\n1. Введение\n\nДобро пожаловать в приложение \"Мой маленький питомец\". Ваша конфиденциальность имеет для нас важное значение, и мы стремимся защищать ваши личные данные. В данной Политике конфиденциальности описываются типы информации, которые мы собираем, как мы её используем и защищаем.\n\n2. Сбор информации\n\nМы можем собирать следующие типы данных:\n- Личная информация: имя, номер телефона.\n- Информация об использовании: история взаимодействий с приложением, предпочтения, время использования.\n\n3. Использование информации\n\nМы используем собранную информацию для:\n- Предоставления и улучшения нашего сервиса.\n- Персонализации вашего опыта.\n- Связи с вами для предоставления обновлений и новостей.\n\n4. Передача данных\n\nМы не передаем вашу личную информацию третьим лицам без вашего согласия, за исключением случаев, предусмотренных законом.\n\n5. Безопасность данных\n\nМы принимаем все необходимые меры для защиты вашей информации от несанкционированного доступа, изменения или уничтожения.\n\n6. Ваши права\n\nВы имеете право:\n- Получить доступ к своим данным.\n- Исправить неточности в своих данных.\n- Удалить свои данные.\n- Ограничить обработку своих данных.\n\n7. Изменения в Политике конфиденциальности\n\nМы можем время от времени обновлять данную Политику конфиденциальности. Мы уведомим вас о любых изменениях, разместив новую Политику на этой странице."
+    </string>
+    <string name="clear_old_events">Очистить старые события</string>
+
+    <string name="qr_code_title">Вся информация о вашем питомце:</string>
+    <string name="something_went_wrong">Что-то пошло не так :(</string>
 </resources>

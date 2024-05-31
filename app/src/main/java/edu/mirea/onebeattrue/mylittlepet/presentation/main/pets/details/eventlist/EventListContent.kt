@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.NotificationImportant
 import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.NotificationsOff
@@ -30,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -125,10 +130,19 @@ fun EventListContent(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item {
-                    NotificationPermissionCard(permissionState = permissionState)
+                    NotificationPermissionCard(
+                        permissionState = permissionState
+                    )
+                }
+                item {
+                    DeletePastEventsCard(
+                        modifier = Modifier.animateItemPlacement(),
+                    ) {
+                        component.onDeletePastEvents()
+                    }
                 }
                 items(
-                    items = state.events,
+                    items = state.pet.eventList,
                     key = { it.id },
                 ) { event ->
                     val swipeState = rememberSwipeToDismissBoxState()
@@ -215,6 +229,31 @@ fun EventListContent(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DeletePastEventsCard(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
+    ) {
+        TextButton(
+            onClick = { onClick() },
+        ) {
+            Text(
+                text = stringResource(R.string.clear_old_events),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
         }
     }
 }

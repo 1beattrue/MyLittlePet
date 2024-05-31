@@ -8,7 +8,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.componentScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,9 +18,9 @@ class DefaultDetailsComponent @AssistedInject constructor(
 
     @Assisted("pet") override val pet: Pet,
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
-    @Assisted("onClickOpenEventList") private val onClickOpenEventList: () -> Unit,
-    @Assisted("onClickOpenNoteList") private val onClickOpenNoteList: () -> Unit,
-    @Assisted("onClickOpenMedicalDataList") private val onClickOpenMedicalDataList: () -> Unit,
+    @Assisted("onClickOpenEventList") private val onClickOpenEventList: (Pet) -> Unit,
+    @Assisted("onClickOpenNoteList") private val onClickOpenNoteList: (Pet) -> Unit,
+    @Assisted("onClickOpenMedicalDataList") private val onClickOpenMedicalDataList: (Pet) -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : DetailsComponent, ComponentContext by componentContext {
     val store = instanceKeeper.getStore { storeFactory.create(pet) }
@@ -33,16 +33,16 @@ class DefaultDetailsComponent @AssistedInject constructor(
                         onClickBack()
                     }
 
-                    DetailsStore.Label.OpenEventList -> {
-                        onClickOpenEventList()
+                    is DetailsStore.Label.OpenEventList -> {
+                        onClickOpenEventList(it.pet)
                     }
 
-                    DetailsStore.Label.OpenMedicalDataList -> {
-                        onClickOpenMedicalDataList()
+                    is DetailsStore.Label.OpenMedicalDataList -> {
+                        onClickOpenMedicalDataList(it.pet)
                     }
 
-                    DetailsStore.Label.OpenNoteList -> {
-                        onClickOpenNoteList()
+                    is DetailsStore.Label.OpenNoteList -> {
+                        onClickOpenNoteList(it.pet)
                     }
                 }
             }
@@ -97,15 +97,23 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.OpenMedicalDataList)
     }
 
+    override fun showQrCode() {
+        store.accept(DetailsStore.Intent.ShowQrCode)
+    }
+
+    override fun hideQrCode() {
+        store.accept(DetailsStore.Intent.HideQrCode)
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(
 
             @Assisted("pet") pet: Pet,
             @Assisted("onClickBack") onClickBack: () -> Unit,
-            @Assisted("onClickOpenEventList") onClickOpenEventList: () -> Unit,
-            @Assisted("onClickOpenNoteList") onClickOpenNoteList: () -> Unit,
-            @Assisted("onClickOpenMedicalDataList") onClickOpenMedicalDataList: () -> Unit,
+            @Assisted("onClickOpenEventList") onClickOpenEventList: (Pet) -> Unit,
+            @Assisted("onClickOpenNoteList") onClickOpenNoteList: (Pet) -> Unit,
+            @Assisted("onClickOpenMedicalDataList") onClickOpenMedicalDataList: (Pet) -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultDetailsComponent
     }

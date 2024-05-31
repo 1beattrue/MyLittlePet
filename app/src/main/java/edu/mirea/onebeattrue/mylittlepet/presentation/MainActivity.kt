@@ -23,8 +23,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val component = rootComponentFactory.create(
-            componentContext =  defaultComponentContext(),
-            context = application
+            componentContext =  defaultComponentContext()
         )
 
         setContent {
@@ -38,5 +37,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }

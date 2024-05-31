@@ -1,6 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +20,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.QrCode
 import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -95,6 +99,18 @@ fun DetailsContent(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            component.showQrCode()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.QrCode,
                             contentDescription = null
                         )
                     }
@@ -168,6 +184,13 @@ fun DetailsContent(
         onSetWeight = { component.setWeight() },
         mustBeClosed = state.bottomSheetMustBeClosed
     )
+
+    if (state.qrCode.isOpen) {
+        QrCodeDialog(
+            onDismissRequest = { component.hideQrCode() },
+            qrCode = state.qrCode.bitmap
+        )
+    }
 
 }
 
@@ -522,4 +545,42 @@ private fun CustomDatePickerDialog(
             }
         }
     }
+}
+
+@Composable
+private fun QrCodeDialog(
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    qrCode: Bitmap?
+) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = { onDismissRequest() },
+        title = {
+            Text(
+                text = stringResource(R.string.qr_code_title),
+                textAlign = TextAlign.Center
+            )
+        },
+        text = {
+            if (qrCode != null) {
+                Image(
+                    modifier = Modifier.fillMaxWidth(),
+                    bitmap = qrCode.asImageBitmap(),
+                    contentDescription = null,
+                )
+            } else {
+                Text(text = stringResource(R.string.something_went_wrong))
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(text = stringResource(R.string.ready))
+            }
+        }
+    )
 }

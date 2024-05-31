@@ -1,9 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.root
 
 import android.app.Application
-import android.content.Context
-import android.content.res.Configuration
-import android.util.Log
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -17,12 +14,16 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.DefaultAuthComponent
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.Language
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.dataStore
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.DefaultMainComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.onboarding.DefaultOnboardingComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.DataStoreUtils
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.LocaleUtils
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.UiUtils
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.componentScope
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.dataStore
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_ENGLISH_MODE_KEY
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.IS_NIGHT_MODE_KEY
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.USE_SYSTEM_THEME
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -33,27 +34,43 @@ class DefaultRootComponent @AssistedInject constructor(
 
     private val authComponentFactory: DefaultAuthComponent.Factory,
     private val mainComponentFactory: DefaultMainComponent.Factory,
+    private val onboardingComponentFactory: DefaultOnboardingComponent.Factory,
     private val authRepository: AuthRepository,
 
     private val application: Application,
-
-    @Assisted("context") private val context: Context,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : RootComponent, ComponentContext by componentContext {
-    private var isDarkTheme: Boolean =
-        (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-    private var isEnglishLanguage: Boolean =
-        application.resources.configuration.locales.toLanguageTags() == Language.EN.value
+    private val isDarkTheme: Boolean
+        get() = UiUtils.isSystemInDarkTheme(application)
+    private val isEnglishLanguage: Boolean
+        get() = DataStoreUtils.getLastSavedBoolean(application, IS_ENGLISH_MODE_KEY)
+            ?: LocaleUtils.isEnglishLanguage()
 
-    val store = instanceKeeper.getStore { storeFactory.create() }
+
+    val store = instanceKeeper.getStore {
+        storeFactory.create(
+            isDarkTheme = isDarkTheme,
+            isEnglishLanguage = isEnglishLanguage
+        )
+    }
 
     init {
         componentScope.launch {
-            context.dataStore.data
-                .collect {
-                    onThemeChanged(it[IS_NIGHT_MODE_KEY] ?: isDarkTheme)
-                    onLanguageChanged(it[IS_ENGLISH_MODE_KEY] ?: isEnglishLanguage)
-                    Log.d("DefaultRootComponent", "${it[IS_ENGLISH_MODE_KEY]}")
+            application.dataStore.data
+                .collect { preferences ->
+                    preferences[IS_NIGHT_MODE_KEY].let {
+                        val useSystemTheme = preferences[USE_SYSTEM_THEME] ?: true
+                        if (!useSystemTheme) {
+                            onThemeChanged(it ?: isDarkTheme)
+                        } else {
+                            onThemeChanged(null)
+                        }
+                    }
+
+                    onLanguageChanged(
+                        preferences[IS_ENGLISH_MODE_KEY]
+                            ?: isEnglishLanguage
+                    )
                 }
         }
     }
@@ -67,7 +84,7 @@ class DefaultRootComponent @AssistedInject constructor(
     override val stack: Value<ChildStack<*, RootComponent.Child>> = childStack(
         source = navigation,
         serializer = Config.serializer(),
-        initialConfiguration = if (authRepository.currentUser == null) Config.Auth else Config.Main,
+        initialConfiguration = if (authRepository.currentUser == null) Config.Onboarding else Config.Main,
         handleBackButton = true,
         childFactory = ::child,
         key = "root"
@@ -88,17 +105,25 @@ class DefaultRootComponent @AssistedInject constructor(
         Config.Main -> {
             val component = mainComponentFactory.create(
                 componentContext = componentContext,
-                onSignOutClicked = { navigation.replaceAll(Config.Auth) }
+                onSignOutClicked = { navigation.replaceAll(Config.Auth) },
             )
             RootComponent.Child.Main(component)
         }
+
+        Config.Onboarding -> {
+            val component = onboardingComponentFactory.create(
+                onSkipOnboarding = { navigation.replaceAll(Config.Auth) },
+                componentContext = componentContext
+            )
+            RootComponent.Child.Onboarding(component)
+        }
     }
 
-    override fun onThemeChanged(isDarkTheme: Boolean) {
+    private fun onThemeChanged(isDarkTheme: Boolean?) {
         store.accept(RootStore.Intent.ChangeTheme(isDarkTheme))
     }
 
-    override fun onLanguageChanged(isEnglishLanguage: Boolean) {
+    private fun onLanguageChanged(isEnglishLanguage: Boolean) {
         store.accept(RootStore.Intent.ChangeLanguage(isEnglishLanguage))
     }
 
@@ -109,12 +134,14 @@ class DefaultRootComponent @AssistedInject constructor(
 
         @Serializable
         data object Main : Config
+
+        @Serializable
+        data object Onboarding : Config
     }
 
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("context") context: Context,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultRootComponent
     }

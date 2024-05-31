@@ -9,7 +9,6 @@ import com.arkivanov.decompose.value.Value
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalDataType
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedicaldata.photo.DefaultMedicalPhotoComponent
@@ -23,7 +22,6 @@ class DefaultAddMedicalDataComponent @AssistedInject constructor(
     private val photoComponentFactory: DefaultMedicalPhotoComponent.Factory,
 
     @Assisted("pet") private val pet: Pet,
-    @Assisted("medicalDataList") private val medicalDataList: List<MedicalData>,
     @Assisted("onAddMedicalDataClosed") private val onAddMedicalDataClosed: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : AddMedicalDataComponent, ComponentContext by componentContext {
@@ -68,7 +66,7 @@ class DefaultAddMedicalDataComponent @AssistedInject constructor(
             val component = photoComponentFactory.create(
                 medicalDataType = config.medicalDataType,
                 medicalDataText = config.medicalDataText,
-                medicalDataList = medicalDataList,
+                medicalDataList = pet.medicalDataList,
                 pet = pet,
                 onFinished = {
                     onAddMedicalDataClosed()
@@ -102,7 +100,6 @@ class DefaultAddMedicalDataComponent @AssistedInject constructor(
     interface Factory {
         fun create(
             @Assisted("pet") pet: Pet,
-            @Assisted("medicalDataList") medicalDataList: List<MedicalData>,
             @Assisted("onAddMedicalDataClosed") onAddMedicalDataClosed: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultAddMedicalDataComponent

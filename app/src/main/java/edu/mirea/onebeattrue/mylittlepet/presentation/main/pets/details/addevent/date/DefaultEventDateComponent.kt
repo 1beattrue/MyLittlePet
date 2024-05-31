@@ -3,15 +3,12 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addeven
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
-import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.StateFlow
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.componentScope
 import kotlinx.coroutines.launch
 
 class DefaultEventDateComponent @AssistedInject constructor(

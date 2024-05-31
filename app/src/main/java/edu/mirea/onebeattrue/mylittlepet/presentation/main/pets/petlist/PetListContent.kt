@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +23,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,12 +42,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -128,129 +130,171 @@ private fun PetCard(
     var expanded by rememberSaveable { mutableStateOf(false) }
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
 
-    Box(
-        modifier = modifier
+    ClickableCustomCard(
+        modifier = modifier,
+        elevation = EXTREME_ELEVATION,
+        onClick = { openDetails() },
+        innerPadding = 0.dp
     ) {
-        ClickableCustomCard(
-            elevation = EXTREME_ELEVATION,
-            onClick = { openDetails() }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
         ) {
+            if (pet.isUnread()) {
+                Icon(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(
+                            top = 16.dp,
+                            start = 24.dp
+                        )
+                        .rotate(-45f),
+                    painter = painterResource(R.drawable.ic_pets),
+                    contentDescription = null,
+                    tint = Color.Red
+                )
+            }
+
             Text(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(
+                        top = 32.dp,
+                        start = 64.dp,
+                        end = 64.dp
+                    ),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
                 text = pet.name,
                 fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
+
             Box(
-                modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(
+                        top = 16.dp,
+                        end = 8.dp
+                    )
             ) {
-                if (Uri.parse(pet.imageUri) == Uri.EMPTY) {
-                    Image(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Crop,
-                        painter = painterResource(id = pet.type.getImageId()),
-                        contentDescription = null
+                IconButton(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart),
+                    onClick = { expanded = !expanded }
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.MoreVert,
+                        contentDescription = null,
                     )
-                } else {
-                    GlideImage(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f),
-                        model = pet.imageUri,
-                        contentDescription = null
+                }
+
+                MaterialTheme(
+                    shapes = MaterialTheme.shapes.copy(
+                        extraSmall = RoundedCornerShape(
+                            CORNER_RADIUS_CONTAINER
+                        )
                     )
+                ) {
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            contentPadding = MENU_ITEM_PADDING,
+                            text = {
+                                Text(
+                                    text = stringResource(id = R.string.edit),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Rounded.Edit,
+                                    contentDescription = null
+                                )
+                            },
+                            onClick = {
+                                expanded = false
+                                editPet()
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            contentPadding = MENU_ITEM_PADDING,
+                            text = {
+                                Text(
+                                    text = stringResource(id = R.string.details),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Rounded.Info,
+                                    contentDescription = null
+                                )
+                            },
+                            onClick = {
+                                expanded = false
+                                openDetails()
+                            }
+                        )
+
+                        HorizontalDivider()
+
+                        DropdownMenuItem(
+                            contentPadding = MENU_ITEM_PADDING,
+                            text = {
+                                Text(
+                                    text = stringResource(id = R.string.delete),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Rounded.Delete,
+                                    contentDescription = null
+                                )
+                            },
+                            colors = MenuDefaults.itemColors(
+                                textColor = Color.Red,
+                                trailingIconColor = Color.Red
+                            ),
+                            onClick = {
+                                expanded = false
+                                showDeleteDialog = true
+                            }
+                        )
+                    }
                 }
             }
         }
+
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .wrapContentSize(Alignment.TopEnd)
-        ) {
-            IconButton(
-                onClick = { expanded = !expanded },
-            ) {
-                Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
-            }
-            MaterialTheme(
-                shapes = MaterialTheme.shapes.copy(
-                    extraSmall = RoundedCornerShape(
-                        CORNER_RADIUS_CONTAINER
-                    )
+                .padding(
+                    start = 32.dp,
+                    end = 32.dp,
+                    bottom = 32.dp
                 )
-            ) {
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    DropdownMenuItem(
-                        modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER)),
-                        contentPadding = MENU_ITEM_PADDING,
-                        text = {
-                            Text(
-                                text = stringResource(id = R.string.edit),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Rounded.Edit,
-                                contentDescription = null
-                            )
-                        },
-                        onClick = {
-                            expanded = false
-                            editPet()
-                        }
-                    )
-
-                    DropdownMenuItem(
-                        modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER)),
-                        contentPadding = MENU_ITEM_PADDING,
-                        text = {
-                            Text(
-                                text = stringResource(id = R.string.details),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Rounded.Info,
-                                contentDescription = null
-                            )
-                        },
-                        onClick = {
-                            expanded = false
-                            openDetails()
-                        }
-                    )
-
-                    DropdownMenuItem(
-                        modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER)),
-                        contentPadding = MENU_ITEM_PADDING,
-                        text = {
-                            Text(
-                                text = stringResource(id = R.string.delete),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Rounded.Delete,
-                                contentDescription = null
-                            )
-                        },
-                        colors = MenuDefaults.itemColors(
-                            textColor = Color.Red,
-                            trailingIconColor = Color.Red
-                        ),
-                        onClick = {
-                            expanded = false
-                            showDeleteDialog = true
-                        }
-                    )
-                }
+                .clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
+        ) {
+            if (Uri.parse(pet.imageUri) == Uri.EMPTY) {
+                Image(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Crop,
+                    painter = painterResource(id = pet.type.getImageId()),
+                    contentDescription = null
+                )
+            } else {
+                GlideImage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
+                    model = pet.imageUri,
+                    contentDescription = null
+                )
             }
         }
     }

@@ -9,8 +9,14 @@ interface ProfileComponent {
     fun signOut()
 
     fun changeTheme(isDarkTheme: Boolean)
+    fun changeUseSystemTheme(useSystemTheme: Boolean)
+
     fun changeLanguage(isEnglishLanguage: Boolean)
+
     fun sendEmail()
     fun openBottomSheet()
     fun closeBottomSheet()
+
+    fun openDialog()
+    fun closeDialog()
 }

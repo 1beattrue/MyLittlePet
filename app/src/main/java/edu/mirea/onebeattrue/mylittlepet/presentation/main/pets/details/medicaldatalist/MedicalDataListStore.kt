@@ -26,11 +26,11 @@ interface MedicalDataListStore : Store<Intent, State, Label> {
     }
 
     data class State(
-        val medicalDataList: List<MedicalData>
+        val pet: Pet
     )
 
     sealed interface Label {
-        data class OnAddMedicalDataClick(val medicalDataList: List<MedicalData>) : Label
+        data class OnAddMedicalDataClick(val pet: Pet) : Label
         data object OnClickBack : Label
         data class OnOpenPhoto(val medicalData: MedicalData) : Label
     }
@@ -45,21 +45,21 @@ class MedicalDataListStoreFactory @Inject constructor(
         pet: Pet
     ): MedicalDataListStore =
         object : MedicalDataListStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "EventListStore",
+            name = STORE_NAME,
             initialState = State(
-                medicalDataList = pet.medicalDataList
+                pet = pet
             ),
             bootstrapper = BootstrapperImpl(pet),
-            executorFactory = { ExecutorImpl(pet) },
+            executorFactory = ::ExecutorImpl,
             reducer = ReducerImpl
         ) {}
 
     private sealed interface Action {
-        data class UpdateMedicalDataList(val medicalDataList: List<MedicalData>) : Action
+        data class UpdatePet(val pet: Pet) : Action
     }
 
     private sealed interface Msg {
-        data class UpdateMedicalDataList(val medicalDataList: List<MedicalData>) : Msg
+        data class UpdatePet(val pet: Pet) : Msg
     }
 
     private inner class BootstrapperImpl(
@@ -68,20 +68,18 @@ class MedicalDataListStoreFactory @Inject constructor(
         override fun invoke() {
             scope.launch {
                 getPetByIdUseCase(pet.id).collect { updatedPet ->
-                    dispatch(Action.UpdateMedicalDataList(updatedPet.medicalDataList))
+                    dispatch(Action.UpdatePet(updatedPet))
                 }
             }
         }
     }
 
-    private inner class ExecutorImpl(
-        private val pet: Pet
-    ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+    private inner class ExecutorImpl : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
 
         override fun executeAction(action: Action, getState: () -> State) {
             when (action) {
-                is Action.UpdateMedicalDataList -> {
-                    dispatch(Msg.UpdateMedicalDataList(action.medicalDataList))
+                is Action.UpdatePet -> {
+                    dispatch(Msg.UpdatePet(action.pet))
                 }
             }
         }
@@ -89,13 +87,15 @@ class MedicalDataListStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 Intent.AddMedicalData -> {
-                    val medicalDataList = getState().medicalDataList
-                    publish(Label.OnAddMedicalDataClick(medicalDataList))
+                    val pet = getState().pet
+                    publish(Label.OnAddMedicalDataClick(pet))
                 }
 
                 is Intent.DeleteMedicalData -> {
                     scope.launch {
-                        val oldMedicalDataList = getState().medicalDataList
+                        val pet = getState().pet
+
+                        val oldMedicalDataList = getState().pet.medicalDataList
                         val newMedicalDataList = oldMedicalDataList
                             .toMutableList()
                             .apply {
@@ -123,9 +123,13 @@ class MedicalDataListStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.UpdateMedicalDataList -> {
-                    copy(medicalDataList = msg.medicalDataList)
+                is Msg.UpdatePet -> {
+                    copy(pet = msg.pet)
                 }
             }
+    }
+
+    companion object {
+        private const val STORE_NAME = "MedicalDataListStore"
     }
 }

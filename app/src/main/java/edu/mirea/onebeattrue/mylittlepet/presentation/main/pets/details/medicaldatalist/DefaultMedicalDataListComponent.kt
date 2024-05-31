@@ -9,7 +9,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.componentScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ class DefaultMedicalDataListComponent @AssistedInject constructor(
     private val storeFactory: MedicalDataListStoreFactory,
 
     @Assisted("pet") private val pet: Pet,
-    @Assisted("onAddMedicalDataClicked") private val onAddMedicalDataClicked: (List<MedicalData>) -> Unit,
+    @Assisted("onAddMedicalDataClicked") private val onAddMedicalDataClicked: (Pet) -> Unit,
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
     @Assisted("onPhotoOpened") private val onPhotoOpened: (MedicalData) -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
@@ -30,7 +30,7 @@ class DefaultMedicalDataListComponent @AssistedInject constructor(
             store.labels.collect {
                 when (it) {
                     is MedicalDataListStore.Label.OnAddMedicalDataClick -> {
-                        onAddMedicalDataClicked(it.medicalDataList)
+                        onAddMedicalDataClicked(it.pet)
                     }
 
                     MedicalDataListStore.Label.OnClickBack -> {
@@ -70,7 +70,7 @@ class DefaultMedicalDataListComponent @AssistedInject constructor(
     interface Factory {
         fun create(
             @Assisted("pet") pet: Pet,
-            @Assisted("onAddMedicalDataClicked") onAddMedicalDataClicked: (List<MedicalData>) -> Unit,
+            @Assisted("onAddMedicalDataClicked") onAddMedicalDataClicked: (Pet) -> Unit,
             @Assisted("onClickBack") onClickBack: () -> Unit,
             @Assisted("onPhotoOpened") onPhotoOpened: (MedicalData) -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext

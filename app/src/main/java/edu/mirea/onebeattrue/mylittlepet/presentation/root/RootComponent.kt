@@ -4,6 +4,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import edu.mirea.onebeattrue.mylittlepet.presentation.auth.AuthComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.MainComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.onboarding.OnboardingComponent
 import kotlinx.coroutines.flow.StateFlow
 
 interface RootComponent {
@@ -13,8 +14,6 @@ interface RootComponent {
     sealed class Child {
         class Auth(val component: AuthComponent) : Child()
         class Main(val component: MainComponent) : Child()
+        class Onboarding(val component: OnboardingComponent) : Child()
     }
-
-    fun onThemeChanged(isDarkTheme: Boolean)
-    fun onLanguageChanged(isEnglishLanguage: Boolean)
 }

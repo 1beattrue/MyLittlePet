@@ -9,7 +9,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.componentScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ class DefaultEventListComponent @AssistedInject constructor(
     private val storeFactory: EventListStoreFactory,
 
     @Assisted("pet") private val pet: Pet,
-    @Assisted("onAddEvent") private val onAddEventClick: (List<Event>) -> Unit,
+    @Assisted("onAddEvent") private val onAddEventClick: (Pet) -> Unit,
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : EventListComponent, ComponentContext by componentContext {
@@ -29,7 +29,7 @@ class DefaultEventListComponent @AssistedInject constructor(
             store.labels.collect {
                 when (it) {
                     is EventListStore.Label.OnAddEventClick -> {
-                        onAddEventClick(it.events)
+                        onAddEventClick(it.pet)
                     }
 
                     EventListStore.Label.OnClickBack -> onClickBack()
@@ -54,11 +54,15 @@ class DefaultEventListComponent @AssistedInject constructor(
         store.accept(EventListStore.Intent.OnClickBack)
     }
 
+    override fun onDeletePastEvents() {
+        store.accept(EventListStore.Intent.DeletePastEvents)
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(
             @Assisted("pet") pet: Pet,
-            @Assisted("onAddEvent") onAddEvent: (List<Event>) -> Unit,
+            @Assisted("onAddEvent") onAddEvent: (Pet) -> Unit,
             @Assisted("onClickBack") onClickBack: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultEventListComponent

@@ -13,13 +13,13 @@ import javax.inject.Inject
 interface RootStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
-        data class ChangeTheme(val isDarkTheme: Boolean) : Intent
-        data class ChangeLanguage(val isEnglishLanguage: Boolean): Intent
+        data class ChangeTheme(val isDarkTheme: Boolean?) : Intent
+        data class ChangeLanguage(val isEnglishLanguage: Boolean) : Intent
     }
 
     data class State(
         var isDarkTheme: Boolean?,
-        var isEnglishLanguage: Boolean?
+        var isEnglishLanguage: Boolean
     )
 
     sealed interface Label {
@@ -30,12 +30,15 @@ class RootStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory
 ) {
 
-    fun create(): RootStore =
+    fun create(
+        isDarkTheme: Boolean?,
+        isEnglishLanguage: Boolean,
+    ): RootStore =
         object : RootStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "RootStore",
+            name = STORE_NAME,
             initialState = State(
-                isDarkTheme = null,
-                isEnglishLanguage = null
+                isDarkTheme = isDarkTheme,
+                isEnglishLanguage = isEnglishLanguage
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -46,7 +49,7 @@ class RootStoreFactory @Inject constructor(
     }
 
     private sealed interface Msg {
-        data class ChangeTheme(val isDarkTheme: Boolean) : Msg
+        data class ChangeTheme(val isDarkTheme: Boolean?) : Msg
         data class ChangeLanguage(val isEnglishLanguage: Boolean) : Msg
     }
 
@@ -75,5 +78,9 @@ class RootStoreFactory @Inject constructor(
                 is Msg.ChangeTheme -> copy(isDarkTheme = msg.isDarkTheme)
                 is Msg.ChangeLanguage -> copy(isEnglishLanguage = msg.isEnglishLanguage)
             }
+    }
+
+    companion object {
+        const val STORE_NAME = "RootStore"
     }
 }

@@ -7,9 +7,8 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.presentation.extensions.componentScope
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.componentScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,11 +16,10 @@ import kotlinx.coroutines.launch
 class DefaultAddNoteComponent @AssistedInject constructor(
     private val storeFactory: AddNoteStoreFactory,
     @Assisted("pet") private val pet: Pet,
-    @Assisted("notes") private val notes: List<Note>,
     @Assisted("onAddNoteClosed") private val onAddNoteClosed: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext,
 ) : AddNoteComponent, ComponentContext by componentContext {
-    private val store = instanceKeeper.getStore { storeFactory.create(pet = pet, noteList = notes) }
+    private val store = instanceKeeper.getStore { storeFactory.create(pet = pet, noteList = pet.noteList) }
 
     init {
         componentScope.launch {
@@ -57,7 +55,6 @@ class DefaultAddNoteComponent @AssistedInject constructor(
     interface Factory {
         fun create(
             @Assisted("pet") pet: Pet,
-            @Assisted("notes") notes: List<Note>,
             @Assisted("onAddNoteClosed") onAddNoteClosed: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext,
         ): DefaultAddNoteComponent

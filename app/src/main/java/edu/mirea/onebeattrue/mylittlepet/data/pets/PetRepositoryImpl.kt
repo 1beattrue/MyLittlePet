@@ -1,12 +1,17 @@
 package edu.mirea.onebeattrue.mylittlepet.data.pets
 
+import android.graphics.Bitmap
+import com.google.gson.Gson
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
+import com.journeyapps.barcodescanner.BarcodeEncoder
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.repository.PetRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.Calendar
 import javax.inject.Inject
 
 class PetRepositoryImpl @Inject constructor(
@@ -47,14 +52,15 @@ class PetRepositoryImpl @Inject constructor(
         mapper.mapDbModelToEntity(it)
     }
 
-    private fun getTimeInMillis(date: Long?, hours: Int, minutes: Int): Long {
-        val calendar = Calendar.getInstance().apply {
-            date?.let { timeInMillis = it }
-            set(Calendar.HOUR_OF_DAY, hours)
-            set(Calendar.MINUTE, minutes)
-            set(Calendar.SECOND, 0)
-        }
+    override suspend fun generateQrCode(pet: Pet): Bitmap {
+        val petString = Gson().toJson(pet)
+        val bitMatrix: BitMatrix = MultiFormatWriter().encode(petString, BarcodeFormat.QR_CODE, QR_CODE_WIDTH, QR_CODE_HEIGHT)
+        val barcodeEncoder = BarcodeEncoder()
+        return barcodeEncoder.createBitmap(bitMatrix)
+    }
 
-        return calendar.timeInMillis
+    companion object {
+        private const val QR_CODE_WIDTH = 1080
+        private const val QR_CODE_HEIGHT = 1080
     }
 }

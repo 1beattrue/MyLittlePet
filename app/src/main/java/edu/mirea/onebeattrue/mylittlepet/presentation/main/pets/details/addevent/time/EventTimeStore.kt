@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.time
 
+import android.app.AlarmManager
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -44,7 +45,7 @@ class EventTimeStoreFactory @Inject constructor(
         eventList: List<Event>
     ): EventTimeStore =
         object : EventTimeStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "EventTimeStore",
+            name = STORE_NAME,
             initialState = State(
                 isDaily = true
             ),
@@ -78,9 +79,15 @@ class EventTimeStoreFactory @Inject constructor(
                         val hours = intent.hours
                         val minutes = intent.minutes
 
+                        var triggerTime = getTimeMillis(intent.hours, intent.minutes)
+                        val currentTime = System.currentTimeMillis()
+                        if (triggerTime <= currentTime) {
+                            triggerTime += AlarmManager.INTERVAL_DAY
+                        }
+
                         if (isDaily) {
                             val newEvent = Event(
-                                time = getTimeMillis(intent.hours, intent.minutes),
+                                time = triggerTime,
                                 label = eventText,
                                 id = generateEventId(eventList),
                                 repeatable = true
@@ -142,5 +149,9 @@ class EventTimeStoreFactory @Inject constructor(
             if (it.id > maxId) maxId = it.id
         }
         return maxId + 1
+    }
+
+    companion object {
+        private const val STORE_NAME = "EventTimeStore"
     }
 }
