@@ -97,6 +97,14 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.OpenMedicalDataList)
     }
 
+    override fun showQrCode() {
+        store.accept(DetailsStore.Intent.ShowQrCode)
+    }
+
+    override fun hideQrCode() {
+        store.accept(DetailsStore.Intent.HideQrCode)
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(

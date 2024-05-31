@@ -32,12 +32,16 @@ interface DetailsStore : Store<Intent, State, Label> {
         data object OpenEventList : Intent
         data object OpenNoteList : Intent
         data object OpenMedicalDataList : Intent
+
+        data object ShowQrCode : Intent
+        data object HideQrCode : Intent
     }
 
     data class State(
         val age: AgeState,
         val weight: WeightState,
         val bottomSheetMustBeClosed: Boolean,
+        val isQrCodeOpen: Boolean
     ) {
         data class AgeState(
             val years: Int?,
@@ -85,7 +89,8 @@ class DetailsStoreFactory @Inject constructor(
                     isIncorrect = false,
                     bottomSheetState = false
                 ),
-                bottomSheetMustBeClosed = false
+                bottomSheetMustBeClosed = false,
+                isQrCodeOpen = false
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = { ExecutorImpl(pet) },
@@ -104,6 +109,9 @@ class DetailsStoreFactory @Inject constructor(
         data object OnIncorrectWeight : Msg
         data class SetWeight(val weight: Float) : Msg
         data object CloseBottomSheet : Msg
+
+        data object ShowQrCode : Msg
+        data object HideQrCode : Msg
     }
 
     private inner class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -157,6 +165,14 @@ class DetailsStoreFactory @Inject constructor(
                 Intent.OpenEventList -> publish(Label.OpenEventList)
                 Intent.OpenNoteList -> publish(Label.OpenNoteList)
                 Intent.OpenMedicalDataList -> publish(Label.OpenMedicalDataList)
+
+                Intent.ShowQrCode -> {
+                    dispatch(Msg.ShowQrCode)
+                }
+
+                Intent.HideQrCode -> {
+                    dispatch(Msg.HideQrCode)
+                }
             }
         }
     }
@@ -206,6 +222,10 @@ class DetailsStoreFactory @Inject constructor(
                     bottomSheetMustBeClosed = false,
                     weight = weight.copy(bottomSheetState = false),
                 )
+
+                Msg.ShowQrCode -> copy(isQrCodeOpen = true)
+
+                Msg.HideQrCode -> copy(isQrCodeOpen = false)
             }
     }
 

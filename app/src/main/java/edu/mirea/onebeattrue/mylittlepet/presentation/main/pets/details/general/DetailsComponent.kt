@@ -19,4 +19,7 @@ interface DetailsComponent {
     fun onClickEventList()
     fun onClickNoteList()
     fun onClickMedicalDataList()
+
+    fun showQrCode()
+    fun hideQrCode()
 }

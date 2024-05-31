@@ -19,7 +19,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.QrCode
 import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -98,6 +100,18 @@ fun DetailsContent(
                             contentDescription = null
                         )
                     }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            component.showQrCode()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.QrCode,
+                            contentDescription = null
+                        )
+                    }
                 }
             )
         },
@@ -168,6 +182,12 @@ fun DetailsContent(
         onSetWeight = { component.setWeight() },
         mustBeClosed = state.bottomSheetMustBeClosed
     )
+
+    if (state.isQrCodeOpen) {
+        QrCodeDialog(
+            onDismissRequest = { component.hideQrCode() }
+        )
+    }
 
 }
 
@@ -522,4 +542,35 @@ private fun CustomDatePickerDialog(
             }
         }
     }
+}
+
+@Composable
+private fun QrCodeDialog(
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = { onDismissRequest() },
+        title = {
+            Text(text = stringResource(R.string.qr_code_title))
+        },
+        text = {
+            Image(
+                modifier = Modifier.fillMaxWidth(),
+                painter = painterResource(R.drawable.image_dog_gray),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(text = stringResource(R.string.ready))
+            }
+        }
+    )
 }
