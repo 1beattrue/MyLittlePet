@@ -176,7 +176,7 @@ private fun PetCard(
                     .align(Alignment.CenterEnd)
                     .padding(
                         top = 16.dp,
-                        end = 16.dp
+                        end = 8.dp
                     )
             ) {
                 IconButton(
