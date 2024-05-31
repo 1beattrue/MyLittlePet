@@ -54,8 +54,16 @@ android {
 }
 
 dependencies {
+    val cameraxVersion = "1.4.0-beta01"
+    implementation("androidx.camera:camera-core:$cameraxVersion")
+    implementation("androidx.camera:camera-camera2:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
+    implementation("androidx.camera:camera-view:$cameraxVersion")
+
     val qrCodeVersion = "4.3.0"
     implementation("com.journeyapps:zxing-android-embedded:$qrCodeVersion")
+    val qrCodeCoreVersion = "3.4.1"
+    implementation("com.google.zxing:core:$qrCodeCoreVersion")
 
     val dataStoreVersion = "1.1.1"
     implementation("androidx.datastore:datastore-preferences:$dataStoreVersion")
