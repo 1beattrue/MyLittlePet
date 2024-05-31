@@ -180,4 +180,5 @@
 
     <string name="qr_code_title">Вся информация о вашем питомце:</string>
     <string name="something_went_wrong">Что-то пошло не так :(</string>
+    <string name="add_your_first_pet">Добавьте своего первого питомца!</string>
 </resources>

@@ -182,4 +182,5 @@
 
     <string name="qr_code_title">All information about your pet:</string>
     <string name="something_went_wrong">Something went wrong :(</string>
+    <string name="add_your_first_pet">Add your first pet!</string>
 </resources>
