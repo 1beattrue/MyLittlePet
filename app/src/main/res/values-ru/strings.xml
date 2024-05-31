@@ -178,4 +178,5 @@
     <string name="clear_old_events">Очистить старые события</string>
 
     <string name="qr_code_title">Вся информация о вашем питомце:</string>
+    <string name="something_went_wrong">Что-то пошло не так :(</string>
 </resources>

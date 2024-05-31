@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.domain.pets.repository
 
+import android.graphics.Bitmap
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import kotlinx.coroutines.flow.Flow
 
@@ -10,4 +11,6 @@ interface PetRepository {
     fun getPetList(): Flow<List<Pet>>
 
     fun getPetById(petId: Int): Flow<Pet>
+
+    suspend fun generateQrCode(pet: Pet): Bitmap
 }

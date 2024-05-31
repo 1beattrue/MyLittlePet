@@ -54,6 +54,9 @@ android {
 }
 
 dependencies {
+    val qrCodeVersion = "4.3.0"
+    implementation("com.journeyapps:zxing-android-embedded:$qrCodeVersion")
+
     val dataStoreVersion = "1.1.1"
     implementation("androidx.datastore:datastore-preferences:$dataStoreVersion")
     

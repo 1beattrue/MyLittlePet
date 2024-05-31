@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general
 
+import android.graphics.Bitmap
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -7,10 +8,13 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GenerateQrCodeUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GetPetByIdUseCase
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToYearsAndMonths
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.State
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
@@ -41,7 +45,7 @@ interface DetailsStore : Store<Intent, State, Label> {
         val age: AgeState,
         val weight: WeightState,
         val bottomSheetMustBeClosed: Boolean,
-        val isQrCodeOpen: Boolean
+        val qrCode: QrCode
     ) {
         data class AgeState(
             val years: Int?,
@@ -54,6 +58,11 @@ interface DetailsStore : Store<Intent, State, Label> {
             val changeableValue: String,
             val isIncorrect: Boolean,
             val bottomSheetState: Boolean
+        )
+
+        data class QrCode(
+            val isOpen: Boolean,
+            val bitmap: Bitmap?
         )
     }
 
@@ -68,6 +77,8 @@ interface DetailsStore : Store<Intent, State, Label> {
 class DetailsStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val editPetUseCase: EditPetUseCase,
+    private val generateQrCodeUseCase: GenerateQrCodeUseCase,
+    private val getPetByIdUseCase: GetPetByIdUseCase
 ) {
 
     fun create(pet: Pet): DetailsStore =
@@ -90,7 +101,10 @@ class DetailsStoreFactory @Inject constructor(
                     bottomSheetState = false
                 ),
                 bottomSheetMustBeClosed = false,
-                isQrCodeOpen = false
+                qrCode = State.QrCode(
+                    isOpen = false,
+                    bitmap = null
+                )
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = { ExecutorImpl(pet) },
@@ -110,7 +124,10 @@ class DetailsStoreFactory @Inject constructor(
         data class SetWeight(val weight: Float) : Msg
         data object CloseBottomSheet : Msg
 
-        data object ShowQrCode : Msg
+        data class ShowQrCode(
+            val bitmap: Bitmap
+        ) : Msg
+
         data object HideQrCode : Msg
     }
 
@@ -167,7 +184,11 @@ class DetailsStoreFactory @Inject constructor(
                 Intent.OpenMedicalDataList -> publish(Label.OpenMedicalDataList)
 
                 Intent.ShowQrCode -> {
-                    dispatch(Msg.ShowQrCode)
+                    scope.launch {
+                        val updatedPet = getPetByIdUseCase(pet.id).first()
+                        val qrCode = generateQrCodeUseCase(updatedPet)
+                        dispatch(Msg.ShowQrCode(qrCode))
+                    }
                 }
 
                 Intent.HideQrCode -> {
@@ -223,9 +244,9 @@ class DetailsStoreFactory @Inject constructor(
                     weight = weight.copy(bottomSheetState = false),
                 )
 
-                Msg.ShowQrCode -> copy(isQrCodeOpen = true)
+                is Msg.ShowQrCode -> copy(qrCode = State.QrCode(isOpen = true, bitmap = msg.bitmap))
 
-                Msg.HideQrCode -> copy(isQrCodeOpen = false)
+                Msg.HideQrCode -> copy(qrCode = qrCode.copy(isOpen = false, bitmap = null))
             }
     }
 

@@ -1,6 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -46,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -183,9 +185,10 @@ fun DetailsContent(
         mustBeClosed = state.bottomSheetMustBeClosed
     )
 
-    if (state.isQrCodeOpen) {
+    if (state.qrCode.isOpen) {
         QrCodeDialog(
-            onDismissRequest = { component.hideQrCode() }
+            onDismissRequest = { component.hideQrCode() },
+            qrCode = state.qrCode.bitmap
         )
     }
 
@@ -548,6 +551,7 @@ private fun CustomDatePickerDialog(
 private fun QrCodeDialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
+    qrCode: Bitmap?
 ) {
     AlertDialog(
         modifier = modifier,
@@ -556,12 +560,15 @@ private fun QrCodeDialog(
             Text(text = stringResource(R.string.qr_code_title))
         },
         text = {
-            Image(
-                modifier = Modifier.fillMaxWidth(),
-                painter = painterResource(R.drawable.image_dog_gray),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
+            if (qrCode != null) {
+                Image(
+                    modifier = Modifier.fillMaxWidth(),
+                    bitmap = qrCode.asImageBitmap(),
+                    contentDescription = null,
+                )
+            } else {
+                Text(text = stringResource(R.string.something_went_wrong))
+            }
         },
         confirmButton = {
             TextButton(

@@ -1,5 +1,11 @@
 package edu.mirea.onebeattrue.mylittlepet.data.pets
 
+import android.graphics.Bitmap
+import com.google.gson.Gson
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
+import com.journeyapps.barcodescanner.BarcodeEncoder
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
@@ -44,5 +50,17 @@ class PetRepositoryImpl @Inject constructor(
 
     override fun getPetById(petId: Int): Flow<Pet> = petListDao.getPetById(petId).map {
         mapper.mapDbModelToEntity(it)
+    }
+
+    override suspend fun generateQrCode(pet: Pet): Bitmap {
+        val petString = Gson().toJson(pet)
+        val bitMatrix: BitMatrix = MultiFormatWriter().encode(petString, BarcodeFormat.QR_CODE, QR_CODE_WIDTH, QR_CODE_HEIGHT)
+        val barcodeEncoder = BarcodeEncoder()
+        return barcodeEncoder.createBitmap(bitMatrix)
+    }
+
+    companion object {
+        private const val QR_CODE_WIDTH = 1080
+        private const val QR_CODE_HEIGHT = 1080
     }
 }
