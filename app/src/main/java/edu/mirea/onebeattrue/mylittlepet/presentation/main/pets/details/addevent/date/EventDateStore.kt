@@ -75,21 +75,26 @@ class EventDateStoreFactory @Inject constructor(
                         val hours = eventTimeHours
                         val minutes = eventTimeMinutes
 
+                        val triggerTime = getTimeMillis(intent.date, hours, minutes)
+                        val currentTime = System.currentTimeMillis()
+
                         val newEvent = Event(
-                            time = getTimeMillis(intent.date, hours, minutes),
+                            time = triggerTime,
                             label = eventText,
                             id = generateEventId(eventList),
                             repeatable = false
                         )
 
-                        alarmScheduler.schedule(
-                            AlarmItem(
-                                title = pet.name,
-                                text = newEvent.label,
-                                time = newEvent.time,
-                                repeatable = newEvent.repeatable
+                        if (triggerTime > currentTime) {
+                            alarmScheduler.schedule(
+                                AlarmItem(
+                                    title = pet.name,
+                                    text = newEvent.label,
+                                    time = newEvent.time,
+                                    repeatable = newEvent.repeatable
+                                )
                             )
-                        )
+                        }
 
                         val oldEventList = eventList
                         val newEventList = oldEventList
