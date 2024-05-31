@@ -142,7 +142,7 @@ fun EventListContent(
                     }
                 }
                 items(
-                    items = state.events,
+                    items = state.pet.eventList,
                     key = { it.id },
                 ) { event ->
                     val swipeState = rememberSwipeToDismissBoxState()
@@ -256,15 +256,6 @@ private fun DeletePastEventsCard(
             Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
         }
     }
-
-//    ClickableCustomCard(
-//        modifier = modifier,
-//        elevation = EXTREME_ELEVATION,
-//        onClick = { onClick() }
-//    ) {
-//        Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
-//        Text(text = stringResource(R.string.clear_old_events))
-//    }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)

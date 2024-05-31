@@ -28,11 +28,11 @@ interface EventListStore : Store<Intent, State, Label> {
     }
 
     data class State(
-        val events: List<Event>
+        val pet: Pet
     )
 
     sealed interface Label {
-        data class OnAddEventClick(val events: List<Event>) : Label
+        data class OnAddEventClick(val pet: Pet) : Label
         data object OnClickBack : Label
     }
 }
@@ -48,21 +48,21 @@ class EventListStoreFactory @Inject constructor(
         pet: Pet
     ): EventListStore =
         object : EventListStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "EventListStore",
+            name = STORE_NAME,
             initialState = State(
-                events = pet.eventList
+                pet = pet
             ),
             bootstrapper = BootstrapperImpl(pet),
-            executorFactory = { ExecutorImpl(pet) },
+            executorFactory = ::ExecutorImpl,
             reducer = ReducerImpl
         ) {}
 
     private sealed interface Action {
-        data class UpdateEventList(val events: List<Event>) : Action
+        data class UpdatePet(val pet: Pet) : Action
     }
 
     private sealed interface Msg {
-        data class UpdateEventList(val events: List<Event>) : Msg
+        data class UpdatePet(val pet: Pet) : Msg
     }
 
     private inner class BootstrapperImpl(
@@ -71,21 +71,21 @@ class EventListStoreFactory @Inject constructor(
         override fun invoke() {
             scope.launch {
                 getPetByIdUseCase(pet.id).collect { updatedPet ->
-                    dispatch(Action.UpdateEventList(updatedPet.eventList))
+                    dispatch(Action.UpdatePet(updatedPet))
                 }
             }
         }
     }
 
-    private inner class ExecutorImpl(
-        private val pet: Pet
-    ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+    private inner class ExecutorImpl : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
 
         override fun executeAction(action: Action, getState: () -> State) {
             when (action) {
-                is Action.UpdateEventList -> {
-                    val sortedEvents = sortedEventList(action.events)
-                    dispatch(Msg.UpdateEventList(sortedEvents))
+                is Action.UpdatePet -> {
+                    val pet = action.pet
+                    val sortedEvents = sortedEventList(action.pet.eventList)
+                    val petWithSortedEvents = pet.copy(eventList = sortedEvents)
+                    dispatch(Msg.UpdatePet(petWithSortedEvents))
                 }
             }
         }
@@ -93,13 +93,15 @@ class EventListStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 Intent.AddEvent -> {
-                    val events = getState().events
-                    publish(Label.OnAddEventClick(events))
+                    val pet = getState().pet
+                    publish(Label.OnAddEventClick(pet))
                 }
 
                 is Intent.DeleteEvent -> {
                     scope.launch {
-                        val oldEventList = getState().events
+                        val pet = getState().pet
+
+                        val oldEventList = pet.eventList
                         val newEventList = oldEventList
                             .toMutableList()
                             .apply {
@@ -122,9 +124,11 @@ class EventListStoreFactory @Inject constructor(
 
                 Intent.DeletePastEvents -> {
                     scope.launch {
+                        val pet = getState().pet
+
                         val currentTime = Calendar.getInstance().timeInMillis
 
-                        val oldEventList = getState().events
+                        val oldEventList = getState().pet.eventList
                         oldEventList.filter { it.time <= currentTime && !it.repeatable }
                             .forEach { event ->
                                 cancelNotification(
@@ -150,8 +154,8 @@ class EventListStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.UpdateEventList -> {
-                    copy(events = msg.events)
+                is Msg.UpdatePet -> {
+                    copy(pet = msg.pet)
                 }
             }
     }
@@ -186,5 +190,9 @@ class EventListStoreFactory @Inject constructor(
                 repeatable = repeatable
             )
         )
+    }
+
+    companion object {
+        private const val STORE_NAME = "EventListStore"
     }
 }

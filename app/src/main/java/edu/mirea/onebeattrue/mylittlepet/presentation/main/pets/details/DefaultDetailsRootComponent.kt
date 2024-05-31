@@ -10,17 +10,15 @@ import com.arkivanov.decompose.value.Value
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.DefaultAddEventComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedicaldata.DefaultAddMedicalDataComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.DefaultAddNoteComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.DefaultEventListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DefaultDetailsComponent
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist.DefaultMedicalDataListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatadetails.DefaultMedicalDataDetailsComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist.DefaultMedicalDataListComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.DefaultNoteListComponent
 import kotlinx.serialization.Serializable
 
@@ -62,8 +60,7 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
     ): DetailsRootComponent.Child = when (config) {
         is Config.AddEvent -> {
             val component = addEventComponentFactory.create(
-                eventList = config.eventList,
-                pet = pet,
+                pet = config.pet,
                 onAddEventClosed = {
                     navigation.pop()
                 },
@@ -95,8 +92,8 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
         Config.EventList -> {
             val component = eventListComponentFactory.create(
                 pet = pet,
-                onAddEvent = { eventList ->
-                    navigation.pushNew(Config.AddEvent(eventList))
+                onAddEvent = {
+                    navigation.pushNew(Config.AddEvent(it))
                 },
                 onClickBack = {
                     navigation.pop()
@@ -109,8 +106,8 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
         Config.NoteList -> {
             val component = noteListComponentFactory.create(
                 pet = pet,
-                onAddNoteClicked = { noteList ->
-                    navigation.pushNew(Config.AddNote(noteList))
+                onAddNoteClicked = {
+                    navigation.pushNew(Config.AddNote(it))
                 },
                 onClickBack = {
                     navigation.pop()
@@ -122,8 +119,7 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
 
         is Config.AddNote -> {
             val component = addNoteComponentFactory.create(
-                pet = pet,
-                notes = config.noteList,
+                pet = config.pet,
                 onAddNoteClosed = {
                     navigation.pop()
                 },
@@ -135,8 +131,8 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
         is Config.MedicalDataList -> {
             val component = medicalDataListComponentFactory.create(
                 pet = pet,
-                onAddMedicalDataClicked = { medicalDataList ->
-                    navigation.pushNew(Config.AddMedicalData(medicalDataList))
+                onAddMedicalDataClicked = {
+                    navigation.pushNew(Config.AddMedicalData(it))
                 },
                 onClickBack = {
                     navigation.pop()
@@ -151,8 +147,7 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
 
         is Config.AddMedicalData -> {
             val component = addMedicalDataComponentFactory.create(
-                pet = pet,
-                medicalDataList = config.medicalDataList,
+                pet = config.pet,
                 onAddMedicalDataClosed = {
                     navigation.pop()
                 },
@@ -182,19 +177,19 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
         data object EventList : Config
 
         @Serializable
-        data class AddEvent(val eventList: List<Event>) : Config
+        data class AddEvent(val pet: Pet) : Config
 
         @Serializable
         data object NoteList : Config
 
         @Serializable
-        data class AddNote(val noteList: List<Note>) : Config
+        data class AddNote(val pet: Pet) : Config
 
         @Serializable
         data object MedicalDataList : Config
 
         @Serializable
-        data class AddMedicalData(val medicalDataList: List<MedicalData>) : Config
+        data class AddMedicalData(val pet: Pet) : Config
 
         @Serializable
         data class MedicalDataDetails(val medicalData: MedicalData) : Config

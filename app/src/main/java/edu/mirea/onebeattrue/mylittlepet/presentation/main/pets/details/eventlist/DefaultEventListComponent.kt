@@ -18,7 +18,7 @@ class DefaultEventListComponent @AssistedInject constructor(
     private val storeFactory: EventListStoreFactory,
 
     @Assisted("pet") private val pet: Pet,
-    @Assisted("onAddEvent") private val onAddEventClick: (List<Event>) -> Unit,
+    @Assisted("onAddEvent") private val onAddEventClick: (Pet) -> Unit,
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : EventListComponent, ComponentContext by componentContext {
@@ -29,7 +29,7 @@ class DefaultEventListComponent @AssistedInject constructor(
             store.labels.collect {
                 when (it) {
                     is EventListStore.Label.OnAddEventClick -> {
-                        onAddEventClick(it.events)
+                        onAddEventClick(it.pet)
                     }
 
                     EventListStore.Label.OnClickBack -> onClickBack()
@@ -62,7 +62,7 @@ class DefaultEventListComponent @AssistedInject constructor(
     interface Factory {
         fun create(
             @Assisted("pet") pet: Pet,
-            @Assisted("onAddEvent") onAddEvent: (List<Event>) -> Unit,
+            @Assisted("onAddEvent") onAddEvent: (Pet) -> Unit,
             @Assisted("onClickBack") onClickBack: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultEventListComponent

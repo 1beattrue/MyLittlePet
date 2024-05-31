@@ -14,7 +14,6 @@ import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToYearsAndMonth
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general.DetailsStore.State
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
@@ -42,6 +41,7 @@ interface DetailsStore : Store<Intent, State, Label> {
     }
 
     data class State(
+        val pet: Pet,
         val age: AgeState,
         val weight: WeightState,
         val bottomSheetMustBeClosed: Boolean,
@@ -68,9 +68,9 @@ interface DetailsStore : Store<Intent, State, Label> {
 
     sealed interface Label {
         data object ClickBack : Label
-        data object OpenEventList : Label
-        data object OpenNoteList : Label
-        data object OpenMedicalDataList : Label
+        data class OpenEventList(val pet: Pet) : Label
+        data class OpenNoteList(val pet: Pet) : Label
+        data class OpenMedicalDataList(val pet: Pet) : Label
     }
 }
 
@@ -83,7 +83,7 @@ class DetailsStoreFactory @Inject constructor(
 
     fun create(pet: Pet): DetailsStore =
         object : DetailsStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "DetailsStore",
+            name = STORE_NAME,
             initialState = State(
                 age = if (pet.dateOfBirth == null) State.AgeState(
                     years = null,
@@ -104,14 +104,17 @@ class DetailsStoreFactory @Inject constructor(
                 qrCode = State.QrCode(
                     isOpen = false,
                     bitmap = null
-                )
+                ),
+                pet = pet
             ),
-            bootstrapper = BootstrapperImpl(),
-            executorFactory = { ExecutorImpl(pet) },
+            bootstrapper = BootstrapperImpl(pet),
+            executorFactory = ::ExecutorImpl,
             reducer = ReducerImpl
         ) {}
 
-    private sealed interface Action
+    private sealed interface Action {
+        data class UpdatePet(val pet: Pet) : Action
+    }
 
     private sealed interface Msg {
         data object OpenDatePickerDialog : Msg
@@ -129,16 +132,28 @@ class DetailsStoreFactory @Inject constructor(
         ) : Msg
 
         data object HideQrCode : Msg
+
+        data class UpdatePet(val pet: Pet) : Msg
     }
 
-    private inner class BootstrapperImpl : CoroutineBootstrapper<Action>() {
+    private inner class BootstrapperImpl(
+        private val pet: Pet
+    ) : CoroutineBootstrapper<Action>() {
         override fun invoke() {
+            scope.launch {
+                getPetByIdUseCase(pet.id).collect { updatedPet ->
+                    dispatch(Action.UpdatePet(updatedPet))
+                }
+            }
         }
     }
 
-    private inner class ExecutorImpl(
-        private val pet: Pet
-    ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+    private inner class ExecutorImpl : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+        override fun executeAction(action: Action, getState: () -> State) {
+            when (action) {
+                is Action.UpdatePet -> dispatch(Msg.UpdatePet(action.pet))
+            }
+        }
 
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
@@ -149,6 +164,7 @@ class DetailsStoreFactory @Inject constructor(
                 Intent.CloseDatePickerDialog -> dispatch(Msg.CloseDatePickerDialog)
                 is Intent.SetAge -> {
                     scope.launch {
+                        val pet = getState().pet
                         editPetUseCase(pet.copy(dateOfBirth = intent.dateOfBirth))
                         dispatch(Msg.SetAge(intent.dateOfBirth))
                     }
@@ -170,6 +186,7 @@ class DetailsStoreFactory @Inject constructor(
                         val weight = getState().weight.changeableValue
                         if (isCorrectWeight(weight)) {
                             val roundedWeight = roundedWeight(weight.toFloat())
+                            val pet = getState().pet
                             editPetUseCase(pet.copy(weight = roundedWeight))
                             dispatch(Msg.SetWeight(roundedWeight))
                         } else {
@@ -179,14 +196,25 @@ class DetailsStoreFactory @Inject constructor(
                 }
 
                 Intent.ClickBack -> publish(Label.ClickBack)
-                Intent.OpenEventList -> publish(Label.OpenEventList)
-                Intent.OpenNoteList -> publish(Label.OpenNoteList)
-                Intent.OpenMedicalDataList -> publish(Label.OpenMedicalDataList)
+                Intent.OpenEventList -> {
+                    val pet = getState().pet
+                    publish(Label.OpenEventList(pet))
+                }
+
+                Intent.OpenNoteList -> {
+                    val pet = getState().pet
+                    publish(Label.OpenNoteList(pet))
+                }
+
+                Intent.OpenMedicalDataList -> {
+                    val pet = getState().pet
+                    publish(Label.OpenMedicalDataList(pet))
+                }
 
                 Intent.ShowQrCode -> {
                     scope.launch {
-                        val updatedPet = getPetByIdUseCase(pet.id).first()
-                        val qrCode = generateQrCodeUseCase(updatedPet)
+                        val pet = getState().pet
+                        val qrCode = generateQrCodeUseCase(pet)
                         dispatch(Msg.ShowQrCode(qrCode))
                     }
                 }
@@ -247,6 +275,7 @@ class DetailsStoreFactory @Inject constructor(
                 is Msg.ShowQrCode -> copy(qrCode = State.QrCode(isOpen = true, bitmap = msg.bitmap))
 
                 Msg.HideQrCode -> copy(qrCode = qrCode.copy(isOpen = false, bitmap = null))
+                is Msg.UpdatePet -> copy(pet = msg.pet)
             }
     }
 
@@ -257,7 +286,7 @@ class DetailsStoreFactory @Inject constructor(
     }
 
     private fun roundedWeight(weight: Float): Float {
-        val currentLocale = Locale.getDefault()
+        val currentLocale = Locale.ENGLISH
         return String.format(currentLocale, "%.2f", weight).toFloat()
     }
 
@@ -268,5 +297,9 @@ class DetailsStoreFactory @Inject constructor(
         } catch (_: Exception) {
             return false
         }
+    }
+
+    companion object {
+        private const val STORE_NAME = "DetailsStore"
     }
 }

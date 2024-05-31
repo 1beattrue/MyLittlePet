@@ -18,7 +18,7 @@ class DefaultNoteListComponent @AssistedInject constructor(
     private val storeFactory: EventListStoreFactory,
 
     @Assisted("pet") private val pet: Pet,
-    @Assisted("onAddNoteClicked") private val onAddNoteClicked: (List<Note>) -> Unit,
+    @Assisted("onAddNoteClicked") private val onAddNoteClicked: (Pet) -> Unit,
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : NoteListComponent, ComponentContext by componentContext {
@@ -29,7 +29,7 @@ class DefaultNoteListComponent @AssistedInject constructor(
             store.labels.collect {
                 when (it) {
                     is NoteListStore.Label.OnAddNoteClick -> {
-                        onAddNoteClicked(it.notes)
+                        onAddNoteClicked(it.pet)
                     }
 
                     NoteListStore.Label.OnClickBack -> {
@@ -61,7 +61,7 @@ class DefaultNoteListComponent @AssistedInject constructor(
     interface Factory {
         fun create(
             @Assisted("pet") pet: Pet,
-            @Assisted("onAddNoteClicked") onAddNoteClicked: (List<Note>) -> Unit,
+            @Assisted("onAddNoteClicked") onAddNoteClicked: (Pet) -> Unit,
             @Assisted("onClickBack") onClickBack: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultNoteListComponent

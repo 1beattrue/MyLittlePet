@@ -103,7 +103,7 @@ fun MedicalDataListContent(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(
-                    items = state.medicalDataList,
+                    items = state.pet.medicalDataList,
                     key = { it.id },
                 ) { medicalData ->
                     val swipeState = rememberSwipeToDismissBoxState()
