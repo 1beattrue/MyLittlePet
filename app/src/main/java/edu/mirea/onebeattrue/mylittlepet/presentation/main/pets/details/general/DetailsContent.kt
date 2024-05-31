@@ -557,7 +557,10 @@ private fun QrCodeDialog(
         modifier = modifier,
         onDismissRequest = { onDismissRequest() },
         title = {
-            Text(text = stringResource(R.string.qr_code_title))
+            Text(
+                text = stringResource(R.string.qr_code_title),
+                textAlign = TextAlign.Center
+            )
         },
         text = {
             if (qrCode != null) {
