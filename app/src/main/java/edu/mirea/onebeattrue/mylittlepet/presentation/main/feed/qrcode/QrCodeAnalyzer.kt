@@ -60,13 +60,6 @@ class QrCodeAnalyzer(
         }
     }
 
-    private fun ByteBuffer.toByteArray(): ByteArray {
-        rewind()
-        return ByteArray(remaining()).also {
-            get(it)
-        }
-    }
-
     private fun getLuminancePlaneData(image: ImageProxy): ByteArray {
         val plane = image.planes.first()
         val buf: ByteBuffer = plane.buffer
