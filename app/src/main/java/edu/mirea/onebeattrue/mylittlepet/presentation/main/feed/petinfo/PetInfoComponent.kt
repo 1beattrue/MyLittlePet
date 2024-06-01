@@ -7,4 +7,6 @@ interface PetInfoComponent {
     val pet: Pet?
 
     fun onClickBack()
+
+    fun addPet()
 }

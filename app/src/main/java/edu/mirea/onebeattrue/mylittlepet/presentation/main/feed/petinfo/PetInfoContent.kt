@@ -79,7 +79,10 @@ fun PetInfoContent(
                 },
                 actions = {
                     IconButton(
-                        onClick = { },
+                        onClick = {
+                            component.addPet()
+                            component.onClickBack()
+                        },
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.AddCircle,
@@ -138,7 +141,8 @@ private fun Error(
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(R.string.something_went_wrong),
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center
         )
     }
 }

@@ -24,7 +24,7 @@ data class Pet(
     }
 
     companion object {
-        private const val UNDEFINED_ID = 0
+        const val UNDEFINED_ID = 0
     }
 }
 
