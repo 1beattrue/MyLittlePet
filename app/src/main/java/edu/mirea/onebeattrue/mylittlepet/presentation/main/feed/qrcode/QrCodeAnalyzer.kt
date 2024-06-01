@@ -35,6 +35,7 @@ class QrCodeAnalyzer(
                 image.height,
                 false
             )
+
             val binaryBitmap = BinaryBitmap(HybridBinarizer(source))
             try {
                 val result = MultiFormatReader().apply {
@@ -45,7 +46,7 @@ class QrCodeAnalyzer(
                             )
                         )
                     )
-                }.decodeWithState(binaryBitmap)
+                }.decode(binaryBitmap)
                 onQrCodeScanned(result.text)
             } catch (e: Exception) {
                 e.printStackTrace()
