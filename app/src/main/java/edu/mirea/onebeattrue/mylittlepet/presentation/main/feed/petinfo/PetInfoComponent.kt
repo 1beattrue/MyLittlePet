@@ -4,5 +4,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 
 
 interface PetInfoComponent {
-    val pet: Pet
+    val pet: Pet?
+
+    fun onClickBack()
 }

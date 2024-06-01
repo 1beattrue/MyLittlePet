@@ -3,11 +3,14 @@ package edu.mirea.onebeattrue.mylittlepet.extensions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import edu.mirea.onebeattrue.mylittlepet.R
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.LocaleUtils
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneId
+import java.util.Date
 
 fun Long.convertMillisToLocalDate(): LocalDate {
     return Instant.ofEpochMilli(this)
@@ -31,6 +34,13 @@ fun Long.convertMillisToYearsAndMonths(): Pair<Int, Int> {
     val months = birthDate.until(currentDate).months
 
     return Pair(years, months)
+}
+
+fun Long.convertToStringDate(): String {
+    val isEnglishLocale = LocaleUtils.isEnglishLanguage()
+    val format = if (isEnglishLocale) "MM/dd/yyyy" else "dd/MM/yyyy"
+    val sdf = SimpleDateFormat.getInstance().format(format)
+    return sdf.format(Date(this))
 }
 
 @Composable

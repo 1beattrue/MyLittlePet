@@ -320,7 +320,7 @@ private fun WeightBottomSheet(
         ) {
             CustomCard(elevation = STRONG_ELEVATION) {
                 Text(
-                    text = stringResource(id = R.string.enter_weight),
+                    text = stringResource(id = R.string.enter_weight_hint),
                     style = MaterialTheme.typography.titleLarge
                 )
 
@@ -430,7 +430,7 @@ private fun AgeCard(
             )
 
             val formattedAge = if (age.years == null || age.months == null) {
-                stringResource(R.string.unknown_age)
+                stringResource(R.string.enter_age)
             } else {
                 val years = age.years
                 val months = age.months
@@ -485,7 +485,7 @@ private fun WeightCard(
             )
 
             val displayWeight = if (weight == null) {
-                stringResource(R.string.unknown_weight)
+                stringResource(R.string.enter_weight)
             } else {
                 stringResource(R.string.weight_format, weight)
             }

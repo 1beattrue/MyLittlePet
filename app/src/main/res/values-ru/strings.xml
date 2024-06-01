@@ -78,15 +78,15 @@
 
     <string name="select_image">Выберите изображение</string>
 
-    <string name="unknown_age">Указать</string>
-    <string name="unknown_weight">Указать</string>
+    <string name="enter_age">Указать</string>
+    <string name="enter_weight">Указать</string>
     <string name="age_title">Возраст</string>
     <string name="weight_title">Вес</string>
     <string name="error_weight">Неверный формат</string>
     <string name="weight_hint">Вес питомца</string>
     <string name="weight_suffix">кг</string>
     <string name="weight_format">%1\$s кг</string>
-    <string name="enter_weight">Введите вес</string>
+    <string name="enter_weight_hint">Введите вес</string>
 
     <string name="add_event_app_bar_title">Добавление события</string>
     <string name="event_list_app_bar_title">События</string>
@@ -185,4 +185,7 @@
     <string name="feed_app_bar_title">Лента</string>
     <string name="open_qr_code_card_text">Узнать больше о питомце</string>
     <string name="scanner_app_bar_title">Отсканируйте QR код</string>
+    <string name="pet_info_app_bar_title">Информация о питомце</string>
+    <string name="pet_type">Тип питомца</string>
+    <string name="unknown">Неизвестно</string>
 </resources>

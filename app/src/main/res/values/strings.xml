@@ -79,15 +79,15 @@
 
     <string name="select_image">Select image</string>
 
-    <string name="unknown_age">Enter</string>
-    <string name="unknown_weight">Enter</string>
+    <string name="enter_age">Enter</string>
+    <string name="enter_weight">Enter</string>
     <string name="age_title">Age</string>
     <string name="weight_title">Weight</string>
     <string name="error_weight">Incorrect format</string>
     <string name="weight_hint">Pet\'s weight</string>
     <string name="weight_suffix">kg</string>
     <string name="weight_format">%1\$s kg</string>
-    <string name="enter_weight">Enter weight</string>
+    <string name="enter_weight_hint">Enter weight</string>
 
 
     <string name="add_event_app_bar_title">Adding an event</string>
@@ -186,4 +186,7 @@
     <string name="feed_app_bar_title">Feed</string>
     <string name="open_qr_code_card_text">Find out more about the pet</string>
     <string name="scanner_app_bar_title">Scan the QR code</string>
+    <string name="pet_info_app_bar_title">Pet information</string>
+    <string name="pet_type">Pet type</string>
+    <string name="unknown">Unknown</string>
 </resources>

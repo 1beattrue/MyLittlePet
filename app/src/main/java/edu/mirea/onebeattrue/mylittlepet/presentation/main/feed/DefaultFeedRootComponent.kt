@@ -72,6 +72,9 @@ class DefaultFeedRootComponent @AssistedInject constructor(
 
         is Config.PetInfo -> {
             val component = petInfoComponentFactory.create(
+                onBackClicked = {
+                    navigation.pop()
+                },
                 petString = config.petString,
                 componentContext = componentContext
             )
