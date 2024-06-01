@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -104,25 +105,40 @@ fun PetListContent(
             ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (state.petList.isNotEmpty()) {
-                items(items = state.petList, key = { it.id }) { pet ->
-                    PetCard(
-                        modifier = Modifier
-                            .animateItemPlacement(),
-                        pet = pet,
-                        deletePet = { component.deletePet(pet) },
-                        editPet = {
-                            component.editPet(pet)
-                        },
-                        openDetails = {
-                            component.openDetails(pet)
+            when (val screenState = state.screenState) {
+                PetListStore.State.ScreenState.Empty -> {
+                    item {
+                        AddFirstPetCard {
+                            component.addPet()
                         }
-                    )
+                    }
                 }
-            } else {
-                item {
-                    AddFirstPetCard {
-                        component.addPet()
+
+                is PetListStore.State.ScreenState.Loaded -> {
+                    items(items = screenState.petList, key = { it.id }) { pet ->
+                        PetCard(
+                            modifier = Modifier
+                                .animateItemPlacement(),
+                            pet = pet,
+                            deletePet = { component.deletePet(pet) },
+                            editPet = {
+                                component.editPet(pet)
+                            },
+                            openDetails = {
+                                component.openDetails(pet)
+                            }
+                        )
+                    }
+                }
+
+                PetListStore.State.ScreenState.Loading -> {
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
             }
