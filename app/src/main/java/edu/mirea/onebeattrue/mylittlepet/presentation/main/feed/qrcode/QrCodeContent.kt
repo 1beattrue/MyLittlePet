@@ -1,6 +1,5 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.qrcode
 
-import android.util.Log
 import android.util.Size
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -20,7 +19,7 @@ import androidx.core.content.ContextCompat
 @Composable
 fun QrCodeContent(
     modifier: Modifier = Modifier,
-    // component: QrCodeComponent
+    component: QrCodeComponent
 ) {
 
     val context = LocalContext.current
@@ -56,7 +55,7 @@ fun QrCodeContent(
                 imageAnalysis.setAnalyzer(
                     ContextCompat.getMainExecutor(context),
                     QrCodeAnalyzer { result ->
-                        Log.d("QrCodeContent", "$result")
+                        component.onCodeScanned(result)
                     }
                 )
                 try {

@@ -22,7 +22,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.FeedContent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.FeedRootContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.PetsContent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.ProfileContent
 
@@ -55,7 +55,7 @@ fun MainContent(
         ) {
             when (val instance = it.instance) {
                 is MainComponent.Child.Feed -> {
-                    FeedContent(component = instance.component)
+                    FeedRootContent(component = instance.component)
                 }
 
                 is MainComponent.Child.Pets -> {

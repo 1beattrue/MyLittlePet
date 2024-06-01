@@ -13,7 +13,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.DefaultFeedComponent
+import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.DefaultFeedRootComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.DefaultPetsComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.profile.DefaultProfileComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +22,7 @@ import kotlinx.serialization.Serializable
 
 class DefaultMainComponent @AssistedInject constructor(
     private val storeFactory: MainStoreFactory,
-    private val feedComponentFactory: DefaultFeedComponent.Factory,
+    private val feedComponentFactory: DefaultFeedRootComponent.Factory,
     private val petsComponentFactory: DefaultPetsComponent.Factory,
     private val profileComponentFactory: DefaultProfileComponent.Factory,
 
