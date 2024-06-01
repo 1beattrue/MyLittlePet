@@ -184,4 +184,5 @@
 
     <string name="feed_app_bar_title">Лента</string>
     <string name="open_qr_code_card_text">Узнать больше о питомце</string>
+    <string name="scanner_app_bar_title">Отсканируйте QR код</string>
 </resources>

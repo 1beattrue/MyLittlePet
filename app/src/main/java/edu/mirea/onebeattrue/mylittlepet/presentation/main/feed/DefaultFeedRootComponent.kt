@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
@@ -58,6 +59,9 @@ class DefaultFeedRootComponent @AssistedInject constructor(
 
         Config.QrCode -> {
             val component = qrCodeComponentFactory.create(
+                onBackClicked = {
+                    navigation.pop()
+                },
                 onQrCodeScanned = { petString ->
                     navigation.replaceCurrent(Config.PetInfo(petString))
                 },
