@@ -40,8 +40,9 @@ import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
-import edu.mirea.onebeattrue.mylittlepet.extensions.convertToStringDate
+import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToDayMonthYear
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
+import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
@@ -234,7 +235,8 @@ private fun PetDateOfBirthCard(
             val dobText = if (dateOfBirth == null) {
                 stringResource(R.string.unknown)
             } else {
-                dateOfBirth.convertToStringDate()
+                val (day, month, year) = dateOfBirth.convertMillisToDayMonthYear()
+                stringResource(R.string.date_format, day, month.getName(), year)
             }
             Text(text = dobText)
         }
