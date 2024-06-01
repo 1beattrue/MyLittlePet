@@ -6,11 +6,17 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.QrCodeScanner
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
@@ -29,12 +35,11 @@ fun QrCodeContent(
         ProcessCameraProvider.getInstance(context)
     }
 
-    Column(
+    Box(
         modifier = modifier.fillMaxSize()
     ) {
         AndroidView(
-            modifier = Modifier
-                .weight(1f),
+            modifier = Modifier.fillMaxSize(),
             factory = { context ->
                 val previewView = PreviewView(context)
                 val preview = Preview.Builder()
@@ -70,6 +75,15 @@ fun QrCodeContent(
                 }
                 previewView
             }
+        )
+        Icon(
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center)
+                .alpha(0.5f),
+            imageVector = Icons.Rounded.QrCodeScanner,
+            contentDescription = null,
+            tint = Color.Gray,
         )
     }
 }
