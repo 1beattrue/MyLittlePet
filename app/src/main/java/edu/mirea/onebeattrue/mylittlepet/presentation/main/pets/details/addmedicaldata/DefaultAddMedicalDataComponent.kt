@@ -66,7 +66,6 @@ class DefaultAddMedicalDataComponent @AssistedInject constructor(
             val component = photoComponentFactory.create(
                 medicalDataType = config.medicalDataType,
                 medicalDataText = config.medicalDataText,
-                medicalDataList = pet.medicalDataList,
                 pet = pet,
                 onFinished = {
                     onAddMedicalDataClosed()

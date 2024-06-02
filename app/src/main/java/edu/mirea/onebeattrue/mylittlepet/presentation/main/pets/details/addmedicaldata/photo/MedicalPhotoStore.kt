@@ -10,7 +10,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalDataType
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddMedicalDataUseCase
 import edu.mirea.onebeattrue.mylittlepet.extensions.ImageUtils.saveImageToInternalStorage
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedicaldata.photo.MedicalPhotoStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedicaldata.photo.MedicalPhotoStore.Label
@@ -37,18 +37,17 @@ interface MedicalPhotoStore : Store<Intent, State, Label> {
 
 class MedicalPhotoStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
-    private val editPetUseCase: EditPetUseCase,
+    private val addMedicalDataUseCase: AddMedicalDataUseCase,
     private val application: Application,
 ) {
 
     fun create(
         medicalDataType: MedicalDataType,
         medicalDataText: String,
-        medicalList: List<MedicalData>,
         pet: Pet
     ): MedicalPhotoStore =
         object : MedicalPhotoStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "MedicalPhotoStore",
+            name = STORE_NAME,
             initialState = State(
                 imageUri = Uri.EMPTY
             ),
@@ -57,7 +56,6 @@ class MedicalPhotoStoreFactory @Inject constructor(
                 ExecutorImpl(
                     type = medicalDataType,
                     text = medicalDataText,
-                    medicalList = medicalList,
                     pet = pet
                 )
             },
@@ -79,7 +77,6 @@ class MedicalPhotoStoreFactory @Inject constructor(
     private inner class ExecutorImpl(
         private val type: MedicalDataType,
         private val text: String,
-        private val medicalList: List<MedicalData>,
         private val pet: Pet,
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
@@ -90,18 +87,13 @@ class MedicalPhotoStoreFactory @Inject constructor(
                         val localUri = saveImageToInternalStorage(application, imageUri)
 
                         val newMedicalData = MedicalData(
-                            id = generateMedicalDataId(medicalList),
                             type = type,
                             imageUri = localUri.toString(),
-                            text = text
+                            text = text,
+                            petId = pet.id
                         )
 
-                        val oldMedicalList = medicalList
-                        val newMedicalList = oldMedicalList
-                            .toMutableList()
-                            .apply { add(newMedicalData) }
-                            .toList()
-                        editPetUseCase(pet = pet.copy(medicalDataList = newMedicalList))
+                        addMedicalDataUseCase(newMedicalData)
                         publish(Label.AddMedicalData)
                     }
                 }
@@ -132,5 +124,9 @@ class MedicalPhotoStoreFactory @Inject constructor(
             if (it.id > maxId) maxId = it.id
         }
         return maxId + 1
+    }
+
+    companion object {
+        private const val STORE_NAME = "MedicalPhotoStore"
     }
 }

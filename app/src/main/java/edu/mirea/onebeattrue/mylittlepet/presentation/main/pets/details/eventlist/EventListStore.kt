@@ -6,11 +6,10 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GetPetByIdUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.DeleteEventUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GetEventListUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListStore.State
@@ -28,7 +27,7 @@ interface EventListStore : Store<Intent, State, Label> {
     }
 
     data class State(
-        val pet: Pet
+        val eventList: List<Event>
     )
 
     sealed interface Label {
@@ -39,9 +38,8 @@ interface EventListStore : Store<Intent, State, Label> {
 
 class EventListStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
-    private val editPetUseCase: EditPetUseCase,
-    private val alarmScheduler: AlarmScheduler,
-    private val getPetByIdUseCase: GetPetByIdUseCase
+    private val getEventListUseCase: GetEventListUseCase,
+    private val deleteEventUseCase: DeleteEventUseCase
 ) {
 
     fun create(
@@ -50,19 +48,21 @@ class EventListStoreFactory @Inject constructor(
         object : EventListStore, Store<Intent, State, Label> by storeFactory.create(
             name = STORE_NAME,
             initialState = State(
-                pet = pet
+                eventList = pet.eventList
             ),
             bootstrapper = BootstrapperImpl(pet),
-            executorFactory = ::ExecutorImpl,
+            executorFactory = {
+                ExecutorImpl(pet)
+            },
             reducer = ReducerImpl
         ) {}
 
     private sealed interface Action {
-        data class UpdatePet(val pet: Pet) : Action
+        data class UpdateList(val events: List<Event>) : Action
     }
 
     private sealed interface Msg {
-        data class UpdatePet(val pet: Pet) : Msg
+        data class UpdateList(val events: List<Event>) : Msg
     }
 
     private inner class BootstrapperImpl(
@@ -70,22 +70,22 @@ class EventListStoreFactory @Inject constructor(
     ) : CoroutineBootstrapper<Action>() {
         override fun invoke() {
             scope.launch {
-                getPetByIdUseCase(pet.id).collect { updatedPet ->
-                    dispatch(Action.UpdatePet(updatedPet))
+                getEventListUseCase(pet.id).collect { updatedList ->
+                    dispatch(Action.UpdateList(updatedList))
                 }
             }
         }
     }
 
-    private inner class ExecutorImpl : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+    private inner class ExecutorImpl(
+        private val pet: Pet
+    ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
 
         override fun executeAction(action: Action, getState: () -> State) {
             when (action) {
-                is Action.UpdatePet -> {
-                    val pet = action.pet
-                    val sortedEvents = sortedEventList(action.pet.eventList)
-                    val petWithSortedEvents = pet.copy(eventList = sortedEvents)
-                    dispatch(Msg.UpdatePet(petWithSortedEvents))
+                is Action.UpdateList -> {
+                    val sortedEvents = sortedEventList(action.events)
+                    dispatch(Msg.UpdateList(sortedEvents))
                 }
             }
         }
@@ -93,56 +93,24 @@ class EventListStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 Intent.AddEvent -> {
-                    val pet = getState().pet
                     publish(Label.OnAddEventClick(pet))
                 }
 
                 is Intent.DeleteEvent -> {
                     scope.launch {
-                        val pet = getState().pet
-
-                        val oldEventList = pet.eventList
-                        val newEventList = oldEventList
-                            .toMutableList()
-                            .apply {
-                                removeIf {
-                                    it.id == intent.event.id
-                                }
-                            }
-                            .toList()
-
-                        cancelNotification(
-                            time = intent.event.time,
-                            title = pet.name,
-                            text = intent.event.label,
-                            repeatable = intent.event.repeatable
-                        )
-
-                        editPetUseCase(pet.copy(eventList = newEventList))
+                        deleteEventUseCase(petName = pet.name, event = intent.event)
                     }
                 }
 
                 Intent.DeletePastEvents -> {
                     scope.launch {
-                        val pet = getState().pet
-
                         val currentTime = Calendar.getInstance().timeInMillis
 
-                        val oldEventList = getState().pet.eventList
+                        val oldEventList = getState().eventList
                         oldEventList.filter { it.time <= currentTime && !it.repeatable }
                             .forEach { event ->
-                                cancelNotification(
-                                    time = event.time,
-                                    title = pet.name,
-                                    text = event.label,
-                                    repeatable = event.repeatable
-                                )
+                                deleteEventUseCase(petName = pet.name, event = event)
                             }
-
-                        val newEventList = oldEventList
-                            .filter { it.time > currentTime || it.repeatable }
-
-                        editPetUseCase(pet.copy(eventList = newEventList))
                     }
                 }
 
@@ -154,8 +122,8 @@ class EventListStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.UpdatePet -> {
-                    copy(pet = msg.pet)
+                is Msg.UpdateList -> {
+                    copy(eventList = msg.events)
                 }
             }
     }
@@ -174,22 +142,6 @@ class EventListStoreFactory @Inject constructor(
     private fun getTimeInHoursAndMinutes(time: Long): Int {
         val calendar = Calendar.getInstance().apply { timeInMillis = time }
         return calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE)
-    }
-
-    private fun cancelNotification(
-        time: Long,
-        title: String,
-        text: String,
-        repeatable: Boolean
-    ) {
-        alarmScheduler.cancel(
-            AlarmItem(
-                time = time,
-                title = title,
-                text = text,
-                repeatable = repeatable
-            )
-        )
     }
 
     companion object {

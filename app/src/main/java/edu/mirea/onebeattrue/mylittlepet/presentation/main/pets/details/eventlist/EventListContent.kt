@@ -142,7 +142,7 @@ fun EventListContent(
                     }
                 }
                 items(
-                    items = state.pet.eventList,
+                    items = state.eventList,
                     key = { it.id },
                 ) { event ->
                     val swipeState = rememberSwipeToDismissBoxState()

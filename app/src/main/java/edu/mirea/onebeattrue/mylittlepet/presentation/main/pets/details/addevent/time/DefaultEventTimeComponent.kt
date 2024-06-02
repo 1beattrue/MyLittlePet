@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 class DefaultEventTimeComponent @AssistedInject constructor(
     private val storeFactory: EventTimeStoreFactory,
 
-    @Assisted("eventList") private val eventList: List<Event>,
     @Assisted("eventText") private val eventText: String,
     @Assisted("pet") private val pet: Pet,
 
@@ -29,8 +28,7 @@ class DefaultEventTimeComponent @AssistedInject constructor(
     private val store = instanceKeeper.getStore {
         storeFactory.create(
             eventText,
-            pet,
-            eventList
+            pet
         )
     }
 
@@ -65,7 +63,6 @@ class DefaultEventTimeComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("eventList") eventList: List<Event>,
             @Assisted("eventText") eventText: String,
             @Assisted("pet") pet: Pet,
             @Assisted("onNextClicked") onNextClicked: (Int, Int) -> Unit,

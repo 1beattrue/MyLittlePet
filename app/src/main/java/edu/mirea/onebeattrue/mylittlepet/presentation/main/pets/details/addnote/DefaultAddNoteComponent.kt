@@ -19,7 +19,7 @@ class DefaultAddNoteComponent @AssistedInject constructor(
     @Assisted("onAddNoteClosed") private val onAddNoteClosed: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext,
 ) : AddNoteComponent, ComponentContext by componentContext {
-    private val store = instanceKeeper.getStore { storeFactory.create(pet = pet, noteList = pet.noteList) }
+    private val store = instanceKeeper.getStore { storeFactory.create(pet = pet) }
 
     init {
         componentScope.launch {

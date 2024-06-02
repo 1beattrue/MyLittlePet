@@ -52,7 +52,6 @@ class DefaultAddEventComponent @AssistedInject constructor(
 
         is Config.Time -> {
             val component = timeComponentFactory.create(
-                eventList = pet.eventList,
                 eventText = config.eventText,
                 pet = pet,
                 onNextClicked = { h, m ->
@@ -68,7 +67,6 @@ class DefaultAddEventComponent @AssistedInject constructor(
 
         is Config.Date -> {
             val component = dateComponentFactory.create(
-                eventList = pet.eventList,
                 eventText = config.eventText,
                 eventTimeHours = config.eventTimeHours,
                 eventTimeMinutes = config.eventTimeMinutes,

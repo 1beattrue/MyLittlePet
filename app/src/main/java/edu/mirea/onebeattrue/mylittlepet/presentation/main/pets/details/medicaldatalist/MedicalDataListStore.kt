@@ -8,8 +8,8 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GetPetByIdUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.DeleteMedicalDataUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GetMedicalDataListUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist.MedicalDataListStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist.MedicalDataListStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.medicaldatalist.MedicalDataListStore.State
@@ -26,7 +26,7 @@ interface MedicalDataListStore : Store<Intent, State, Label> {
     }
 
     data class State(
-        val pet: Pet
+        val medicalDataList: List<MedicalData>
     )
 
     sealed interface Label {
@@ -38,8 +38,8 @@ interface MedicalDataListStore : Store<Intent, State, Label> {
 
 class MedicalDataListStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
-    private val editPetUseCase: EditPetUseCase,
-    private val getPetByIdUseCase: GetPetByIdUseCase
+    private val getMedicalDataListUseCase: GetMedicalDataListUseCase,
+    private val deleteMedicalDataUseCase: DeleteMedicalDataUseCase
 ) {
     fun create(
         pet: Pet
@@ -47,19 +47,21 @@ class MedicalDataListStoreFactory @Inject constructor(
         object : MedicalDataListStore, Store<Intent, State, Label> by storeFactory.create(
             name = STORE_NAME,
             initialState = State(
-                pet = pet
+                medicalDataList = pet.medicalDataList
             ),
             bootstrapper = BootstrapperImpl(pet),
-            executorFactory = ::ExecutorImpl,
+            executorFactory = {
+                ExecutorImpl(pet)
+            },
             reducer = ReducerImpl
         ) {}
 
     private sealed interface Action {
-        data class UpdatePet(val pet: Pet) : Action
+        data class UpdateList(val medicalDataList: List<MedicalData>) : Action
     }
 
     private sealed interface Msg {
-        data class UpdatePet(val pet: Pet) : Msg
+        data class UpdateList(val medicalDataList: List<MedicalData>) : Msg
     }
 
     private inner class BootstrapperImpl(
@@ -67,19 +69,21 @@ class MedicalDataListStoreFactory @Inject constructor(
     ) : CoroutineBootstrapper<Action>() {
         override fun invoke() {
             scope.launch {
-                getPetByIdUseCase(pet.id).collect { updatedPet ->
-                    dispatch(Action.UpdatePet(updatedPet))
+                getMedicalDataListUseCase(pet.id).collect { updatedList ->
+                    dispatch(Action.UpdateList(updatedList))
                 }
             }
         }
     }
 
-    private inner class ExecutorImpl : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+    private inner class ExecutorImpl(
+        private val pet: Pet
+    ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
 
         override fun executeAction(action: Action, getState: () -> State) {
             when (action) {
-                is Action.UpdatePet -> {
-                    dispatch(Msg.UpdatePet(action.pet))
+                is Action.UpdateList -> {
+                    dispatch(Msg.UpdateList(action.medicalDataList))
                 }
             }
         }
@@ -87,25 +91,12 @@ class MedicalDataListStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 Intent.AddMedicalData -> {
-                    val pet = getState().pet
                     publish(Label.OnAddMedicalDataClick(pet))
                 }
 
                 is Intent.DeleteMedicalData -> {
                     scope.launch {
-                        val pet = getState().pet
-
-                        val oldMedicalDataList = getState().pet.medicalDataList
-                        val newMedicalDataList = oldMedicalDataList
-                            .toMutableList()
-                            .apply {
-                                removeIf {
-                                    it.id == intent.medicalData.id
-                                }
-                            }
-                            .toList()
-
-                        editPetUseCase(pet.copy(medicalDataList = newMedicalDataList))
+                        deleteMedicalDataUseCase(intent.medicalData)
                     }
                 }
 
@@ -123,8 +114,8 @@ class MedicalDataListStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.UpdatePet -> {
-                    copy(pet = msg.pet)
+                is Msg.UpdateList -> {
+                    copy(medicalDataList = msg.medicalDataList)
                 }
             }
     }

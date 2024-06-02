@@ -101,7 +101,7 @@ fun NoteListContent(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(
-                    items = state.pet.noteList,
+                    items = state.notes,
                     key = { it.id },
                 ) { note ->
                     val swipeState = rememberSwipeToDismissBoxState()

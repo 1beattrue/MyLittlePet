@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.data.pets
+package edu.mirea.onebeattrue.mylittlepet.data.pets.repository
 
 import android.graphics.Bitmap
 import com.google.gson.Gson
@@ -6,6 +6,8 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
+import edu.mirea.onebeattrue.mylittlepet.data.pets.PetListDao
+import edu.mirea.onebeattrue.mylittlepet.data.pets.PetMapper
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
@@ -20,9 +22,7 @@ class PetRepositoryImpl @Inject constructor(
     private val alarmScheduler: AlarmScheduler
 ) : PetRepository {
     override suspend fun addPet(pet: Pet) {
-        petListDao.addPet(
-            mapper.mapEntityToDbModel(pet)
-        )
+        petListDao.addPet(mapper.mapPetEntityToDbModel(pet))
     }
 
     override suspend fun deletePet(pet: Pet) {
@@ -41,7 +41,7 @@ class PetRepositoryImpl @Inject constructor(
     }
 
     override suspend fun editPet(pet: Pet) {
-        addPet(pet)
+        petListDao.updatePet(mapper.mapPetEntityToDbModel(pet))
     }
 
     override fun getPetList(): Flow<List<Pet>> = petListDao.getPetList().map {
@@ -49,12 +49,17 @@ class PetRepositoryImpl @Inject constructor(
     }
 
     override fun getPetById(petId: Int): Flow<Pet> = petListDao.getPetById(petId).map {
-        mapper.mapDbModelToEntity(it)
+        mapper.mapPetDbModelToEntity(it)
     }
 
     override suspend fun generateQrCode(pet: Pet): Bitmap {
         val petString = Gson().toJson(pet)
-        val bitMatrix: BitMatrix = MultiFormatWriter().encode(petString, BarcodeFormat.QR_CODE, QR_CODE_WIDTH, QR_CODE_HEIGHT)
+        val bitMatrix: BitMatrix = MultiFormatWriter().encode(
+            petString,
+            BarcodeFormat.QR_CODE,
+            QR_CODE_WIDTH,
+            QR_CODE_HEIGHT
+        )
         val barcodeEncoder = BarcodeEncoder()
         return barcodeEncoder.createBitmap(bitMatrix)
     }

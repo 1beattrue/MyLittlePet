@@ -7,8 +7,8 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GetPetByIdUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.DeleteNoteUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GetNoteListUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.NoteListStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.NoteListStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist.NoteListStore.State
@@ -24,7 +24,7 @@ interface NoteListStore : Store<Intent, State, Label> {
     }
 
     data class State(
-        val pet: Pet
+        val notes: List<Note>
     )
 
     sealed interface Label {
@@ -35,28 +35,30 @@ interface NoteListStore : Store<Intent, State, Label> {
 
 class EventListStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
-    private val editPetUseCase: EditPetUseCase,
-    private val getPetByIdUseCase: GetPetByIdUseCase
+    private val getNoteListUseCase: GetNoteListUseCase,
+    private val deleteNoteUseCase: DeleteNoteUseCase
 ) {
     fun create(
         pet: Pet
     ): NoteListStore =
         object : NoteListStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "EventListStore",
+            name = STORE_NAME,
             initialState = State(
-                pet = pet
+                notes = pet.noteList
             ),
             bootstrapper = BootstrapperImpl(pet),
-            executorFactory = ::ExecutorImpl,
+            executorFactory = {
+                ExecutorImpl(pet)
+            },
             reducer = ReducerImpl
         ) {}
 
     private sealed interface Action {
-        data class UpdatePet(val pet: Pet) : Action
+        data class UpdateList(val notes: List<Note>) : Action
     }
 
     private sealed interface Msg {
-        data class UpdatePet(val pet: Pet) : Msg
+        data class UpdateList(val notes: List<Note>) : Msg
     }
 
     private inner class BootstrapperImpl(
@@ -64,19 +66,21 @@ class EventListStoreFactory @Inject constructor(
     ) : CoroutineBootstrapper<Action>() {
         override fun invoke() {
             scope.launch {
-                getPetByIdUseCase(pet.id).collect { updatedPet ->
-                    dispatch(Action.UpdatePet(updatedPet))
+                getNoteListUseCase(pet.id).collect { updatedList ->
+                    dispatch(Action.UpdateList(updatedList))
                 }
             }
         }
     }
 
-    private inner class ExecutorImpl : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+    private inner class ExecutorImpl(
+        private val pet: Pet
+    ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
 
         override fun executeAction(action: Action, getState: () -> State) {
             when (action) {
-                is Action.UpdatePet -> {
-                    dispatch(Msg.UpdatePet(action.pet))
+                is Action.UpdateList -> {
+                    dispatch(Msg.UpdateList(action.notes))
                 }
             }
         }
@@ -84,25 +88,12 @@ class EventListStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 Intent.AddNote -> {
-                    val pet = getState().pet
                     publish(Label.OnAddNoteClick(pet))
                 }
 
                 is Intent.DeleteNote -> {
                     scope.launch {
-                        val pet = getState().pet
-
-                        val oldNoteList = getState().pet.noteList
-                        val newNoteList = oldNoteList
-                            .toMutableList()
-                            .apply {
-                                removeIf {
-                                    it.id == intent.note.id
-                                }
-                            }
-                            .toList()
-
-                        editPetUseCase(pet.copy(noteList = newNoteList))
+                        deleteNoteUseCase(intent.note)
                     }
                 }
 
@@ -114,9 +105,13 @@ class EventListStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.UpdatePet -> {
-                    copy(pet = msg.pet)
+                is Msg.UpdateList -> {
+                    copy(notes = msg.notes)
                 }
             }
+    }
+
+    companion object {
+        private const val STORE_NAME = "EventListStore"
     }
 }

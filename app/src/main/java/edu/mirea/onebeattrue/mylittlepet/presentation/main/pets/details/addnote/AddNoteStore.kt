@@ -7,7 +7,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddNoteUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.AddNoteStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.AddNoteStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.AddNoteStore.State
@@ -36,22 +36,21 @@ interface AddNoteStore : Store<Intent, State, Label> {
 
 class AddNoteStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
-    private val editPetUseCase: EditPetUseCase
+    private val addNoteUseCase: AddNoteUseCase
 ) {
 
     fun create(
-        pet: Pet,
-        noteList: List<Note>
+        pet: Pet
     ): AddNoteStore =
         object : AddNoteStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "AddNoteStore",
+            name = STORE_NAME,
             initialState = State(
                 text = "",
                 selectedIcon = NoteIcon.FoodItem,
                 isIncorrect = false
             ),
             bootstrapper = BootstrapperImpl(),
-            executorFactory = { ExecutorImpl(pet, noteList) },
+            executorFactory = { ExecutorImpl(pet) },
             reducer = ReducerImpl
         ) {}
 
@@ -69,8 +68,7 @@ class AddNoteStoreFactory @Inject constructor(
     }
 
     private inner class ExecutorImpl(
-        private val pet: Pet,
-        private val noteList: List<Note>,
+        private val pet: Pet
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
@@ -82,17 +80,12 @@ class AddNoteStoreFactory @Inject constructor(
                         } else {
                             val iconResId = getState().selectedIcon.iconResId
                             val newNote = Note(
-                                id = generateNoteId(noteList),
                                 text = noteText,
-                                iconResId = iconResId
+                                iconResId = iconResId,
+                                petId = pet.id
                             )
 
-                            val oldNoteList = noteList
-                            val newNoteList = oldNoteList
-                                .toMutableList()
-                                .apply { add(newNote) }
-                                .toList()
-                            editPetUseCase(pet = pet.copy(noteList = newNoteList))
+                            addNoteUseCase(newNote)
                             publish(Label.CloseAddNote)
                         }
                     }
@@ -135,5 +128,9 @@ class AddNoteStoreFactory @Inject constructor(
             if (it.id > maxId) maxId = it.id
         }
         return maxId + 1
+    }
+
+    companion object {
+        private const val STORE_NAME = "AddNoteStore"
     }
 }
