@@ -11,7 +11,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalDataType
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
-import edu.mirea.onebeattrue.mylittlepet.extensions.saveImageToInternalStorage
+import edu.mirea.onebeattrue.mylittlepet.extensions.ImageUtils.saveImageToInternalStorage
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedicaldata.photo.MedicalPhotoStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedicaldata.photo.MedicalPhotoStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedicaldata.photo.MedicalPhotoStore.State

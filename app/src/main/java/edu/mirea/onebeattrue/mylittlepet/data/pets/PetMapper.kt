@@ -1,13 +1,19 @@
 package edu.mirea.onebeattrue.mylittlepet.data.pets
 
+import android.app.Application
+import android.net.Uri
+import androidx.core.net.toUri
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
+import edu.mirea.onebeattrue.mylittlepet.extensions.ImageUtils
 import javax.inject.Inject
 
-class PetMapper @Inject constructor() {
-    fun mapEntityToDbModel(entity: Pet): PetDbModel = PetDbModel(
+class PetMapper @Inject constructor(
+    private val application: Application
+) {
+    suspend fun mapEntityToDbModel(entity: Pet): PetDbModel = PetDbModel(
         type = entity.type,
         name = entity.name,
-        image = entity.image,
+        image = mapUriToImage(entity.imageUri.toUri()),
         id = entity.id,
 
         dateOfBirth = entity.dateOfBirth,
@@ -17,10 +23,10 @@ class PetMapper @Inject constructor() {
         medicalDataList = entity.medicalDataList
     )
 
-    fun mapDbModelToEntity(dbModel: PetDbModel): Pet = Pet(
+    suspend fun mapDbModelToEntity(dbModel: PetDbModel): Pet = Pet(
         type = dbModel.type,
         name = dbModel.name,
-        image = dbModel.image,
+        imageUri = mapImageToUri(dbModel.image, dbModel.id).toString(),
         id = dbModel.id,
 
         dateOfBirth = dbModel.dateOfBirth,
@@ -30,9 +36,18 @@ class PetMapper @Inject constructor() {
         medicalDataList = dbModel.medicalDataList
     )
 
-    fun mapListDbModelToListEntity(
+    suspend fun mapListDbModelToListEntity(
         listDbModel: List<PetDbModel>
     ): List<Pet> = listDbModel.map { petDbModel ->
         mapDbModelToEntity(petDbModel)
+    }
+
+    suspend fun mapImageToUri(image: ByteArray?, uniqueId: Int): Uri {
+        return image?.let { ImageUtils.saveImageToInternalStorage(application, it, uniqueId) }
+            ?: Uri.EMPTY
+    }
+
+    suspend fun mapUriToImage(uri: Uri): ByteArray? {
+        return ImageUtils.uriToByteArray(application, uri)
     }
 }
