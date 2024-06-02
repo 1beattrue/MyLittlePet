@@ -42,7 +42,7 @@ fun ImageContent(
             )
 
             CustomImagePicker(
-                image = state.image,
+                uri = state.imageUri,
                 onImagePicked = {
                     component.setPetImage(it)
                 },

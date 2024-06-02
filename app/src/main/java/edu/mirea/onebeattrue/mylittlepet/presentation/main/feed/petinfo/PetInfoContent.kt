@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,7 +43,6 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToDayMonthYear
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
-import edu.mirea.onebeattrue.mylittlepet.presentation.utils.ImageUtils
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
@@ -170,7 +168,7 @@ private fun PetCard(
         Box(
             modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
         ) {
-            if (pet.image == null) {
+            if (Uri.parse(pet.imageUri) == Uri.EMPTY) {
                 Image(
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Crop,
@@ -178,15 +176,13 @@ private fun PetCard(
                     contentDescription = null
                 )
             } else {
-                ImageUtils.byteArrayToBitmap(pet.image)?.asImageBitmap()?.let {
-                    Image(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f),
-                        bitmap = it,
-                        contentDescription = null
-                    )
-                }
+                GlideImage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
+                    model = pet.imageUri,
+                    contentDescription = null
+                )
             }
         }
     }

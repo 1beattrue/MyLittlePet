@@ -15,7 +15,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 data class PetDbModel(
     val type: PetType,
     val name: String,
-    val image: ByteArray?,
+    val imageUri: String,
 
     val dateOfBirth: Long?,
     val weight: Float?,

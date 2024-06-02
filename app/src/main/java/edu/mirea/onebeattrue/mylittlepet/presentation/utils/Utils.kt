@@ -3,9 +3,6 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.utils
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -19,11 +16,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.io.InputStream
 import java.util.Locale
-
 
 val ComponentContext.componentScope
     get() = CoroutineScope(
@@ -78,30 +71,5 @@ object DataStoreUtils {
             val preferences = dataStore.data.first()
             preferences[key]
         }
-    }
-}
-
-object ImageUtils {
-    fun uriToByteArray(context: Context, uri: Uri): ByteArray? {
-        var inputStream: InputStream? = null
-        return try {
-            inputStream = context.contentResolver.openInputStream(uri)
-            val byteBuffer = ByteArrayOutputStream()
-            val buffer = ByteArray(1024)
-            var len: Int
-            while (inputStream!!.read(buffer).also { len = it } != -1) {
-                byteBuffer.write(buffer, 0, len)
-            }
-            byteBuffer.toByteArray()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        } finally {
-            inputStream?.close()
-        }
-    }
-
-    fun byteArrayToBitmap(byteArray: ByteArray): Bitmap? {
-        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
     }
 }

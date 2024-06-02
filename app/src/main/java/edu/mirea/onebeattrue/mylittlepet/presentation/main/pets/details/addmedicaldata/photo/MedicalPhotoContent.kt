@@ -25,6 +25,7 @@ import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevatio
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomImagePicker
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MedicalPhotoContent(
     modifier: Modifier = Modifier,
@@ -45,7 +46,7 @@ fun MedicalPhotoContent(
             )
 
             CustomImagePicker(
-                image = null, // TODO: заглушка для тестирования
+                uri = state.imageUri,
                 onImagePicked = {
                     component.setPhoto(it)
                 },

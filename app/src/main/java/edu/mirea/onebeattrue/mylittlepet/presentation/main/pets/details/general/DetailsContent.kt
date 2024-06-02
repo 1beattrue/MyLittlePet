@@ -62,7 +62,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
-import edu.mirea.onebeattrue.mylittlepet.presentation.utils.ImageUtils
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
@@ -386,7 +385,7 @@ private fun PetCard(
         Box(
             modifier = Modifier.clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
         ) {
-            if (pet.image == null) {
+            if (Uri.parse(pet.imageUri) == Uri.EMPTY) {
                 Image(
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Crop,
@@ -394,15 +393,13 @@ private fun PetCard(
                     contentDescription = null
                 )
             } else {
-                ImageUtils.byteArrayToBitmap(pet.image)?.asImageBitmap()?.let {
-                    Image(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f),
-                        bitmap = it,
-                        contentDescription = null
-                    )
-                }
+                GlideImage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
+                    model = pet.imageUri,
+                    contentDescription = null
+                )
             }
         }
     }
