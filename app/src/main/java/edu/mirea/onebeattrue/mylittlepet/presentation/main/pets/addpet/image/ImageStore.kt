@@ -15,6 +15,7 @@ import edu.mirea.onebeattrue.mylittlepet.extensions.saveImageToInternalStorage
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.State
+import edu.mirea.onebeattrue.mylittlepet.presentation.utils.ImageUtils
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,7 +28,7 @@ interface ImageStore : Store<Intent, State, Label> {
     }
 
     data class State(
-        val imageUri: Uri
+        val image: ByteArray?
     )
 
     sealed interface Label {
@@ -48,13 +49,9 @@ class ImageStoreFactory @Inject constructor(
         pet: Pet?
     ): ImageStore =
         object : ImageStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "ImageStore",
+            name = STORE_NAME,
             initialState = State(
-                imageUri = if (pet == null) {
-                    Uri.EMPTY
-                } else {
-                    Uri.parse(pet.imageUri)
-                }
+                pet?.image
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = { ExecutorImpl(petType = petType, petName = petName, pet = pet) },
@@ -64,7 +61,7 @@ class ImageStoreFactory @Inject constructor(
     private sealed interface Action
 
     private sealed interface Msg {
-        data class SetPetImage(val imageUri: Uri) : Msg
+        data class SetPetImage(val image: ByteArray?) : Msg
         data object DeletePetImage : Msg
     }
 
@@ -82,22 +79,21 @@ class ImageStoreFactory @Inject constructor(
             when (intent) {
                 Intent.AddPet -> {
                     scope.launch {
-                        val imageUri = getState().imageUri
-                        val localUri = saveImageToInternalStorage(application, imageUri)
+                        val image = getState().image
 
                         if (pet == null) {
                             addPetUseCase(
                                 Pet(
                                     type = petType,
                                     name = petName,
-                                    imageUri = localUri.toString()
+                                    image = image
                                 )
                             )
                         } else {
                             editPetUseCase(
                                 pet.copy(
                                     name = petName,
-                                    imageUri = localUri.toString()
+                                    image = image
                                 )
                             )
                         }
@@ -106,7 +102,16 @@ class ImageStoreFactory @Inject constructor(
                     }
                 }
 
-                is Intent.SetPetImage -> dispatch(Msg.SetPetImage(intent.imageUri))
+                is Intent.SetPetImage -> {
+                    scope.launch {
+                        val imageUri = intent.imageUri
+                        val localUri = saveImageToInternalStorage(application, imageUri)
+
+                        val image = ImageUtils.uriToByteArray(application, localUri)
+
+                        dispatch(Msg.SetPetImage(image))
+                    }
+                }
                 Intent.DeletePetImage -> dispatch(Msg.DeletePetImage)
             }
         }
@@ -115,8 +120,12 @@ class ImageStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.SetPetImage -> copy(imageUri = msg.imageUri)
-                Msg.DeletePetImage -> copy(imageUri = Uri.EMPTY)
+                is Msg.SetPetImage -> copy(image = msg.image)
+                Msg.DeletePetImage -> copy(image = null)
             }
+    }
+
+    companion object {
+        private const val STORE_NAME = "ImageStore"
     }
 }

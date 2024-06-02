@@ -7,7 +7,7 @@ class PetMapper @Inject constructor() {
     fun mapEntityToDbModel(entity: Pet): PetDbModel = PetDbModel(
         type = entity.type,
         name = entity.name,
-        imageUri = entity.imageUri,
+        image = entity.image,
         id = entity.id,
 
         dateOfBirth = entity.dateOfBirth,
@@ -20,7 +20,7 @@ class PetMapper @Inject constructor() {
     fun mapDbModelToEntity(dbModel: PetDbModel): Pet = Pet(
         type = dbModel.type,
         name = dbModel.name,
-        imageUri = dbModel.imageUri,
+        image = dbModel.image,
         id = dbModel.id,
 
         dateOfBirth = dbModel.dateOfBirth,

@@ -7,7 +7,7 @@ import java.util.Calendar
 data class Pet(
     val type: PetType,
     val name: String,
-    val imageUri: String,
+    val image: ByteArray?,
 
     val dateOfBirth: Long? = null,
     val weight: Float? = null,
