@@ -155,6 +155,9 @@
     <string name="notification_permission_required">Permission is required to send notifications</string>
     <string name="notification_permission_denied">Permission to send notifications is denied. Open Settings</string>
 
+    <string name="camera_permission_required">Permission is required to use the camera</string>
+    <string name="camera_permission_denied">Permission to use the camera is denied. Open Settings</string>
+
     <string name="profile_app_bar_title">Profile</string>
     <string name="use_system_theme">Use system theme</string>
     <string name="use_system_lang">Use system language</string>

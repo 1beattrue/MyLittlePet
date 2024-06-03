@@ -153,6 +153,9 @@
     <string name="notification_permission_required">Для отправки уведомлений требуется разрешение</string>
     <string name="notification_permission_denied">Разрешение на отправку уведомлений отклонено. Откройте настройки</string>
 
+    <string name="camera_permission_required">Требуется разрешение на использование камеры</string>
+    <string name="camera_permission_denied">Разрешение на использование камеры отклонено. Откройте настройки</string>
+
     <string name="profile_app_bar_title">Профиль</string>
     <string name="use_system_theme">Использовать тему системы</string>
     <string name="use_system_lang">Использовать язык системы</string>
