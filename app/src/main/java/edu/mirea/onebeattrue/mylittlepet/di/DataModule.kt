@@ -9,6 +9,8 @@ import edu.mirea.onebeattrue.mylittlepet.data.repository.AuthRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.AppDatabase
 import edu.mirea.onebeattrue.mylittlepet.data.repository.AlarmSchedulerImpl
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
+import edu.mirea.onebeattrue.mylittlepet.data.remote.api.ApiFactory
+import edu.mirea.onebeattrue.mylittlepet.data.remote.api.ApiService
 import edu.mirea.onebeattrue.mylittlepet.data.repository.EventRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.data.repository.MedicalDataRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.data.repository.NoteRepositoryImpl
@@ -44,6 +46,10 @@ interface DataModule {
     fun bindMedicalDataRepository(impl: MedicalDataRepositoryImpl): MedicalDataRepository
 
     companion object {
+        @ApplicationScope
+        @Provides
+        fun provideApiService(): ApiService = ApiFactory.apiService
+
         @ApplicationScope
         @Provides
         fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
