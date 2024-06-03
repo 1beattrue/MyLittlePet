@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToDayMonthYear
@@ -124,6 +126,32 @@ fun PetInfoContent(
                     item {
                         PetWeightCard(weight = pet.weight)
                     }
+
+                    item {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 32.dp),
+                            text = stringResource(R.string.medical_data_list_title),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+
+                    if (pet.medicalDataList.isEmpty()) {
+                        item {
+                            EmptyMedicalDataCard()
+                        }
+                    } else {
+                        items(
+                            items = pet.medicalDataList,
+                            key = { it.id },
+                        ) { medicalData ->
+                            MedicalDataCard(
+                                medicalData = medicalData,
+                            )
+                        }
+                    }
+
                 }
             }
         }
@@ -268,5 +296,55 @@ private fun PetWeightCard(
             }
             Text(text = weightText)
         }
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+private fun MedicalDataCard(
+    modifier: Modifier = Modifier,
+    medicalData: MedicalData,
+) {
+    CustomCardExtremeElevation(
+        modifier = modifier,
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = medicalData.type.getName(),
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Start
+        )
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = medicalData.text,
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Justify
+        )
+
+        val photoUri = Uri.parse(medicalData.imageUri)
+
+        if (photoUri != Uri.EMPTY) {
+            GlideImage(
+                model = photoUri,
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmptyMedicalDataCard(
+    modifier: Modifier = Modifier,
+) {
+    CustomCardExtremeElevation(
+        modifier = modifier,
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.empty_medical_data),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Start
+        )
     }
 }

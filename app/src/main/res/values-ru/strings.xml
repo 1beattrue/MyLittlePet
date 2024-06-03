@@ -104,6 +104,7 @@
     <string name="add_note">Добавить заметку</string>
 
     <string name="medical_data_list_app_bar_title">Медицинские данные</string>
+    <string name="medical_data_list_title">Медицинские данные:</string>
     <string name="add_medical_data">Добавить медицицинские данные</string>
     <string name="add_note_app_bar_title">Добавление заметки</string>
     <string name="select_note_icon">Выберите иконку заметки</string>
@@ -191,4 +192,5 @@
     <string name="pet_info_app_bar_title">Информация о питомце</string>
     <string name="pet_type">Тип питомца</string>
     <string name="unknown">Неизвестно</string>
+    <string name="empty_medical_data">Медицинские данные не добавлены</string>
 </resources>
