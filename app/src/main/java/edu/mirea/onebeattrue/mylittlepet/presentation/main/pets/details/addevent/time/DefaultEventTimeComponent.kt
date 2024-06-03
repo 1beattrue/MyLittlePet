@@ -18,7 +18,7 @@ class DefaultEventTimeComponent @AssistedInject constructor(
     private val storeFactory: EventTimeStoreFactory,
 
     @Assisted("eventText") private val eventText: String,
-    @Assisted("pet") private val pet: Pet,
+    @Assisted("lastPet") private val pet: Pet,
 
     @Assisted("onNextClicked") private val onNextClicked: (Int, Int) -> Unit,
     @Assisted("onFinish") private val onFinish: () -> Unit,
@@ -64,7 +64,7 @@ class DefaultEventTimeComponent @AssistedInject constructor(
     interface Factory {
         fun create(
             @Assisted("eventText") eventText: String,
-            @Assisted("pet") pet: Pet,
+            @Assisted("lastPet") pet: Pet,
             @Assisted("onNextClicked") onNextClicked: (Int, Int) -> Unit,
             @Assisted("onFinish") onFinish: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext

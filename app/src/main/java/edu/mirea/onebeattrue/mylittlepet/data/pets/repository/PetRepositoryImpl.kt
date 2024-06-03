@@ -13,6 +13,8 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.repository.PetRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -21,6 +23,9 @@ class PetRepositoryImpl @Inject constructor(
     private val mapper: PetMapper,
     private val alarmScheduler: AlarmScheduler
 ) : PetRepository {
+
+    private val lastPetScanned = MutableStateFlow<Pet?>(null)
+
     override suspend fun addPet(pet: Pet) {
         petListDao.addPet(mapper.mapPetEntityToDbModel(pet))
     }
@@ -63,6 +68,13 @@ class PetRepositoryImpl @Inject constructor(
         val barcodeEncoder = BarcodeEncoder()
         return barcodeEncoder.createBitmap(bitMatrix)
     }
+
+    override suspend fun setLastPetScanned(pet: Pet) {
+        lastPetScanned.value = pet
+    }
+
+    override fun getLastPetScanned(): Flow<Pet?> = lastPetScanned.asStateFlow()
+
 
     companion object {
         private const val QR_CODE_WIDTH = 1080

@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -52,7 +53,6 @@ import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToDayMonthYear
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
@@ -125,7 +125,6 @@ fun PetInfoContent(
                 }
 
                 else -> {
-
                     if (state.petWasAlreadyAdded) {
                         item {
                             SuccessfullyAdded()
@@ -133,6 +132,9 @@ fun PetInfoContent(
                     }
 
                     item {
+                        LaunchedEffect(Unit) {
+                            component.setLastScannedPet(pet)
+                        }
                         PetCard(pet = pet)
                     }
 

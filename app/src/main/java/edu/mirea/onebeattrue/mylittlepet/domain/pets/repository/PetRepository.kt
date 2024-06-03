@@ -16,4 +16,7 @@ interface PetRepository {
     fun getPetById(petId: Int): Flow<Pet>
 
     suspend fun generateQrCode(pet: Pet): Bitmap
+
+    suspend fun setLastPetScanned(pet: Pet)
+    fun getLastPetScanned(): Flow<Pet?>
 }

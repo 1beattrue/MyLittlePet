@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class DefaultMedicalDataListComponent @AssistedInject constructor(
     private val storeFactory: MedicalDataListStoreFactory,
 
-    @Assisted("pet") private val pet: Pet,
+    @Assisted("lastPet") private val pet: Pet,
     @Assisted("onAddMedicalDataClicked") private val onAddMedicalDataClicked: (Pet) -> Unit,
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
     @Assisted("onPhotoOpened") private val onPhotoOpened: (MedicalData) -> Unit,
@@ -69,7 +69,7 @@ class DefaultMedicalDataListComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("pet") pet: Pet,
+            @Assisted("lastPet") pet: Pet,
             @Assisted("onAddMedicalDataClicked") onAddMedicalDataClicked: (Pet) -> Unit,
             @Assisted("onClickBack") onClickBack: () -> Unit,
             @Assisted("onPhotoOpened") onPhotoOpened: (MedicalData) -> Unit,

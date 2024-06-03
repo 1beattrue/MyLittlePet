@@ -1,7 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.general
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,8 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -38,6 +38,8 @@ fun FeedContent(
     modifier: Modifier = Modifier,
     component: FeedComponent
 ) {
+    val state by component.state.collectAsState()
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -80,8 +82,10 @@ fun FeedContent(
                 }
             }
             item {
-                LastPetScannedCard(pet = null) {
-
+                LastPetScannedCard(pet = state.lastPetScanned) {
+                    state.lastPetScanned?.let {
+                        component.openPetInfo(it)
+                    }
                 }
             }
         }

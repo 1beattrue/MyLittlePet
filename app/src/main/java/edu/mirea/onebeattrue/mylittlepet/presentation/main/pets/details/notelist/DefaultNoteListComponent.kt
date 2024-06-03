@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class DefaultNoteListComponent @AssistedInject constructor(
     private val storeFactory: EventListStoreFactory,
 
-    @Assisted("pet") private val pet: Pet,
+    @Assisted("lastPet") private val pet: Pet,
     @Assisted("onAddNoteClicked") private val onAddNoteClicked: (Pet) -> Unit,
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
@@ -60,7 +60,7 @@ class DefaultNoteListComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("pet") pet: Pet,
+            @Assisted("lastPet") pet: Pet,
             @Assisted("onAddNoteClicked") onAddNoteClicked: (Pet) -> Unit,
             @Assisted("onClickBack") onClickBack: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext

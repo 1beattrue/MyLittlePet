@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class DefaultEventListComponent @AssistedInject constructor(
     private val storeFactory: EventListStoreFactory,
 
-    @Assisted("pet") private val pet: Pet,
+    @Assisted("lastPet") private val pet: Pet,
     @Assisted("onAddEvent") private val onAddEventClick: (Pet) -> Unit,
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
@@ -61,7 +61,7 @@ class DefaultEventListComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("pet") pet: Pet,
+            @Assisted("lastPet") pet: Pet,
             @Assisted("onAddEvent") onAddEvent: (Pet) -> Unit,
             @Assisted("onClickBack") onClickBack: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext

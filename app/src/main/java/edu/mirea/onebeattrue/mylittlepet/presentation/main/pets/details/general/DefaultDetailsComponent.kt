@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 class DefaultDetailsComponent @AssistedInject constructor(
     private val storeFactory: DetailsStoreFactory,
 
-    @Assisted("pet") override val pet: Pet,
+    @Assisted("lastPet") override val pet: Pet,
     @Assisted("onClickBack") private val onClickBack: () -> Unit,
     @Assisted("onClickOpenEventList") private val onClickOpenEventList: (Pet) -> Unit,
     @Assisted("onClickOpenNoteList") private val onClickOpenNoteList: (Pet) -> Unit,
@@ -109,7 +109,7 @@ class DefaultDetailsComponent @AssistedInject constructor(
     interface Factory {
         fun create(
 
-            @Assisted("pet") pet: Pet,
+            @Assisted("lastPet") pet: Pet,
             @Assisted("onClickBack") onClickBack: () -> Unit,
             @Assisted("onClickOpenEventList") onClickOpenEventList: (Pet) -> Unit,
             @Assisted("onClickOpenNoteList") onClickOpenNoteList: (Pet) -> Unit,

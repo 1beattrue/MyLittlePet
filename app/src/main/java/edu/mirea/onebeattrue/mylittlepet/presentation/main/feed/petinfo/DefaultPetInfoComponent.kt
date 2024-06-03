@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 class DefaultPetInfoComponent @AssistedInject constructor(
     private val storeFactory: PetInfoStoreFactory,
 
+    @Assisted("lastPet") private val lastPet: Pet?,
     @Assisted("onBackClicked") private val onBackClicked: () -> Unit,
     @Assisted("petString") private val petString: String,
     @Assisted("componentContext") componentContext: ComponentContext
@@ -38,7 +39,7 @@ class DefaultPetInfoComponent @AssistedInject constructor(
     override val state: StateFlow<PetInfoStore.State>
         get() = store.stateFlow
 
-    override val pet: Pet? = try {
+    override val pet: Pet? = lastPet ?: try {
         Gson().fromJson(petString, Pet::class.java)
     } catch (e: Exception) {
         e.printStackTrace()
@@ -55,9 +56,14 @@ class DefaultPetInfoComponent @AssistedInject constructor(
         }
     }
 
+    override fun setLastScannedPet(pet: Pet) {
+        store.accept(PetInfoStore.Intent.SetLastScanned(pet))
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(
+            @Assisted("lastPet") lastPet: Pet?,
             @Assisted("onBackClicked") onBackClicked: () -> Unit,
             @Assisted("petString") petString: String,
             @Assisted("componentContext") componentContext: ComponentContext

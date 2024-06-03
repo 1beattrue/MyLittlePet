@@ -21,7 +21,7 @@ class DefaultAddMedicalDataComponent @AssistedInject constructor(
     private val textComponentFactory: DefaultMedicalTextComponent.Factory,
     private val photoComponentFactory: DefaultMedicalPhotoComponent.Factory,
 
-    @Assisted("pet") private val pet: Pet,
+    @Assisted("lastPet") private val pet: Pet,
     @Assisted("onAddMedicalDataClosed") private val onAddMedicalDataClosed: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : AddMedicalDataComponent, ComponentContext by componentContext {
@@ -98,7 +98,7 @@ class DefaultAddMedicalDataComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("pet") pet: Pet,
+            @Assisted("lastPet") pet: Pet,
             @Assisted("onAddMedicalDataClosed") onAddMedicalDataClosed: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultAddMedicalDataComponent

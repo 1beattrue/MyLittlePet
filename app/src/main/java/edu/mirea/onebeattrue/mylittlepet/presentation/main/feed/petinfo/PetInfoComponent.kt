@@ -11,4 +11,6 @@ interface PetInfoComponent {
     fun onClickBack()
 
     fun addPet()
+
+    fun setLastScannedPet(pet: Pet)
 }

@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class DefaultAddNoteComponent @AssistedInject constructor(
     private val storeFactory: AddNoteStoreFactory,
-    @Assisted("pet") private val pet: Pet,
+    @Assisted("lastPet") private val pet: Pet,
     @Assisted("onAddNoteClosed") private val onAddNoteClosed: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext,
 ) : AddNoteComponent, ComponentContext by componentContext {
@@ -54,7 +54,7 @@ class DefaultAddNoteComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("pet") pet: Pet,
+            @Assisted("lastPet") pet: Pet,
             @Assisted("onAddNoteClosed") onAddNoteClosed: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext,
         ): DefaultAddNoteComponent

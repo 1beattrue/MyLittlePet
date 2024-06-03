@@ -11,6 +11,7 @@ import com.arkivanov.decompose.value.Value
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.general.DefaultFeedComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.petinfo.DefaultPetInfoComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.qrcode.DefaultQrCodeComponent
@@ -51,6 +52,14 @@ class DefaultFeedRootComponent @AssistedInject constructor(
     ): FeedRootComponent.Child = when (config) {
         Config.Feed -> {
             val component = feedComponentFactory.create(
+                onOpenPetInfoClicked = {
+                    navigation.pushNew(
+                        Config.PetInfo(
+                            petString = "",
+                            lastPet = it
+                        )
+                    )
+                },
                 onScanQrCodeClicked = { navigation.pushNew(Config.QrCode) },
                 componentContext = componentContext
             )
@@ -63,7 +72,7 @@ class DefaultFeedRootComponent @AssistedInject constructor(
                     navigation.pop()
                 },
                 onQrCodeScanned = { petString ->
-                    navigation.replaceCurrent(Config.PetInfo(petString))
+                    navigation.replaceCurrent(Config.PetInfo(petString = petString))
                 },
                 componentContext = componentContext
             )
@@ -76,6 +85,7 @@ class DefaultFeedRootComponent @AssistedInject constructor(
                     navigation.pop()
                 },
                 petString = config.petString,
+                lastPet = config.lastPet,
                 componentContext = componentContext
             )
             FeedRootComponent.Child.PetInfo(component)
@@ -91,7 +101,10 @@ class DefaultFeedRootComponent @AssistedInject constructor(
         data object QrCode : Config
 
         @Serializable
-        data class PetInfo(val petString: String) : Config
+        data class PetInfo(
+            val petString: String,
+            val lastPet: Pet? = null
+        ) : Config
     }
 
     @AssistedFactory

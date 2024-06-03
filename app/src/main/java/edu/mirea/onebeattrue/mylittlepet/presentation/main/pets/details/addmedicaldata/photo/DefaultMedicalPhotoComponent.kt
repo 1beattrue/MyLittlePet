@@ -21,7 +21,7 @@ class DefaultMedicalPhotoComponent @AssistedInject constructor(
 
     @Assisted("medicalDataType") private val medicalDataType: MedicalDataType,
     @Assisted("medicalDataText") private val medicalDataText: String,
-    @Assisted("pet") private val pet: Pet,
+    @Assisted("lastPet") private val pet: Pet,
     @Assisted("onFinished") private val onFinished: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : MedicalPhotoComponent, ComponentContext by componentContext {
@@ -65,7 +65,7 @@ class DefaultMedicalPhotoComponent @AssistedInject constructor(
         fun create(
             @Assisted("medicalDataType") medicalDataType: MedicalDataType,
             @Assisted("medicalDataText") medicalDataText: String,
-            @Assisted("pet") pet: Pet,
+            @Assisted("lastPet") pet: Pet,
             @Assisted("onFinished") onFinished: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultMedicalPhotoComponent

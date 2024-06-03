@@ -7,6 +7,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddPetUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.SetLastScannedPetUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.petinfo.PetInfoStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.petinfo.PetInfoStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.petinfo.PetInfoStore.State
@@ -17,6 +18,7 @@ interface PetInfoStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
         data class AddPet(val pet: Pet) : Intent
+        data class SetLastScanned(val pet: Pet) : Intent
         data object ClickBack : Intent
     }
 
@@ -31,7 +33,8 @@ interface PetInfoStore : Store<Intent, State, Label> {
 
 class PetInfoStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
-    private val addPetUseCase: AddPetUseCase
+    private val addPetUseCase: AddPetUseCase,
+    private val setLastScannedPetUseCase: SetLastScannedPetUseCase
 ) {
 
     fun create(): PetInfoStore =
@@ -65,8 +68,15 @@ class PetInfoStoreFactory @Inject constructor(
                         dispatch(Msg.AddPet)
                     }
                 }
+
                 Intent.ClickBack -> {
                     publish(Label.ClickBack)
+                }
+
+                is Intent.SetLastScanned -> {
+                    scope.launch {
+                        setLastScannedPetUseCase(intent.pet)
+                    }
                 }
             }
         }

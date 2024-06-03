@@ -18,7 +18,7 @@ class DefaultNameComponent @AssistedInject constructor(
     private val storeFactory: NameStoreFactory,
 
     @Assisted("petType") private val petType: PetType,
-    @Assisted("pet") private val pet: Pet?,
+    @Assisted("lastPet") private val pet: Pet?,
     @Assisted("onNextClicked") private val onNextClicked: (PetType, String) -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : NameComponent, ComponentContext by componentContext {
@@ -51,7 +51,7 @@ class DefaultNameComponent @AssistedInject constructor(
     interface Factory {
         fun create(
             @Assisted("petType") petType: PetType,
-            @Assisted("pet") pet: Pet? = null,
+            @Assisted("lastPet") pet: Pet? = null,
             @Assisted("onNextClicked") onNextClicked: (PetType, String) -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultNameComponent

@@ -17,7 +17,7 @@ class DefaultEventDateComponent @AssistedInject constructor(
     @Assisted("eventText") private val eventText: String,
     @Assisted("eventTimeHours") private val eventTimeHours: Int,
     @Assisted("eventTimeMinutes") private val eventTimeMinutes: Int,
-    @Assisted("pet") private val pet: Pet,
+    @Assisted("lastPet") private val pet: Pet,
     @Assisted("onFinish") private val onFinish: () -> Unit,
 
     @Assisted("componentContext") componentContext: ComponentContext
@@ -53,7 +53,7 @@ class DefaultEventDateComponent @AssistedInject constructor(
             @Assisted("eventText") eventText: String,
             @Assisted("eventTimeHours") eventTimeHours: Int,
             @Assisted("eventTimeMinutes") eventTimeMinutes: Int,
-            @Assisted("pet") pet: Pet,
+            @Assisted("lastPet") pet: Pet,
             @Assisted("onFinish") onFinish: () -> Unit,
 
             @Assisted("componentContext") componentContext: ComponentContext
