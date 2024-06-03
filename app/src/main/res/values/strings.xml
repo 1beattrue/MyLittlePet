@@ -194,4 +194,6 @@
     <string name="pet_type">Pet type</string>
     <string name="unknown">Unknown</string>
     <string name="empty_medical_data">No medical data added</string>
+    <string name="add_pet">Add a pet</string>
+    <string name="successfully_added">Successfully added</string>
 </resources>

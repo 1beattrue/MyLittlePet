@@ -193,4 +193,6 @@
     <string name="pet_type">Тип питомца</string>
     <string name="unknown">Неизвестно</string>
     <string name="empty_medical_data">Медицинские данные не добавлены</string>
+    <string name="add_pet">Добавить питомца</string>
+    <string name="successfully_added">Успешно добавлен</string>
 </resources>

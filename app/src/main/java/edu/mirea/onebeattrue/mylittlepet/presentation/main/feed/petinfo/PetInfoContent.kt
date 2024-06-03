@@ -1,6 +1,9 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.feed.petinfo
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AddCircle
+import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,6 +30,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +52,7 @@ import edu.mirea.onebeattrue.mylittlepet.extensions.convertMillisToDayMonthYear
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
@@ -56,6 +63,8 @@ fun PetInfoContent(
     modifier: Modifier = Modifier,
     component: PetInfoComponent
 ) {
+    val state by component.state.collectAsState()
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -81,16 +90,21 @@ fun PetInfoContent(
                     }
                 },
                 actions = {
-                    IconButton(
-                        onClick = {
-                            component.addPet()
-                            component.onClickBack()
-                        },
+                    AnimatedVisibility(
+                        visible = !state.petWasAlreadyAdded && component.pet != null,
+                        enter = fadeIn(),
+                        exit = fadeOut()
                     ) {
-                        Icon(
-                            imageVector = Icons.Rounded.AddCircle,
-                            contentDescription = null
-                        )
+                        IconButton(
+                            onClick = {
+                                component.addPet()
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.AddCircle,
+                                contentDescription = null
+                            )
+                        }
                     }
                 }
             )
@@ -111,6 +125,13 @@ fun PetInfoContent(
                 }
 
                 else -> {
+
+                    if (state.petWasAlreadyAdded) {
+                        item {
+                            SuccessfullyAdded()
+                        }
+                    }
+
                     item {
                         PetCard(pet = pet)
                     }
@@ -151,7 +172,6 @@ fun PetInfoContent(
                             )
                         }
                     }
-
                 }
             }
         }
@@ -170,6 +190,24 @@ private fun Error(
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(R.string.something_went_wrong),
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun SuccessfullyAdded(
+    modifier: Modifier = Modifier,
+) {
+    CustomCardExtremeElevation(modifier = modifier) {
+        Icon(
+            imageVector = Icons.Rounded.Done,
+            contentDescription = null
+        )
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.successfully_added),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
         )
