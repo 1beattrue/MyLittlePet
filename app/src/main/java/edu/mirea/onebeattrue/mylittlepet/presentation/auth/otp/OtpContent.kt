@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -37,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomConfirmButton
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomResendButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomTextButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import kotlinx.coroutines.launch
 
@@ -162,10 +163,14 @@ fun OtpContent(
 
                 if (state.isLoading) LinearProgressIndicator()
             }
-            CustomResendButton(
+            CustomTextButton(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 32.dp)
+                    .padding(bottom = 32.dp),
+                text = stringResource(R.string.resend_code),
+                icon = {
+                    Icon(imageVector = Icons.Rounded.Refresh, contentDescription = null)
+                }
             ) {
                 component.onResendClicked()
             }

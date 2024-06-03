@@ -28,8 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -40,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomTextButton
 import kotlinx.coroutines.launch
 
 @Composable
@@ -76,21 +75,17 @@ fun OnboardingContent(
                 )
             }
         }
-        TextButton(
+        CustomTextButton(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(16.dp),
-            onClick = { component.skip() }
-        ) {
-            Text(
-                text = if (pagerState.currentPage != animals.size - 1) {
-                    stringResource(R.string.skip)
-                } else {
-                    stringResource(R.string.next)
-                },
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
+            onClick = { component.skip() },
+            text = if (pagerState.currentPage != animals.size - 1) {
+                stringResource(R.string.skip)
+            } else {
+                stringResource(R.string.next)
+            }
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()

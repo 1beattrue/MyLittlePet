@@ -8,11 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,7 +32,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -63,6 +60,7 @@ import edu.mirea.onebeattrue.mylittlepet.extensions.getName
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomTextButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
@@ -245,16 +243,13 @@ private fun DeletePastEventsCard(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End
     ) {
-        TextButton(
+        CustomTextButton(
             onClick = { onClick() },
-        ) {
-            Text(
-                text = stringResource(R.string.clear_old_events),
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
-        }
+            text = stringResource(R.string.clear_old_events),
+            icon = {
+                Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
+            }
+        )
     }
 }
 

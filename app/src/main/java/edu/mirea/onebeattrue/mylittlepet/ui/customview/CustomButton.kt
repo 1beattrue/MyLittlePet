@@ -13,10 +13,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
@@ -153,24 +155,22 @@ fun CustomReadyButton(
 }
 
 @Composable
-fun CustomResendButton(
+fun CustomTextButton(
     modifier: Modifier = Modifier,
+    text: String,
+    icon: @Composable () -> Unit = {},
     onClick: () -> Unit,
 ) {
-    Button(
+    TextButton(
         modifier = modifier,
         onClick = { onClick() },
-        shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0x00FFFFFF),
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
+        shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER)
     ) {
         Text(
-            text = stringResource(id = R.string.resend_code),
+            text = text,
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Icon(imageVector = Icons.Rounded.Refresh, contentDescription = null)
+        icon()
     }
 }
