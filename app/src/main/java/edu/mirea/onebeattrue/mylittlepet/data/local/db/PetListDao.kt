@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.data.pets
+package edu.mirea.onebeattrue.mylittlepet.data.local.db
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -6,11 +6,11 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.EventDbModel
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.FullPetDbModel
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.MedicalDataDbModel
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.NoteDbModel
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.PetDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.EventDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.FullPetDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.MedicalDataDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.NoteDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.PetDbModel
 import kotlinx.coroutines.flow.Flow
 
 @Dao

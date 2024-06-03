@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel
+package edu.mirea.onebeattrue.mylittlepet.data.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

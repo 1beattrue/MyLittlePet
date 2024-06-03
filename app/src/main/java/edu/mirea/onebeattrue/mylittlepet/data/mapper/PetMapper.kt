@@ -1,13 +1,13 @@
-package edu.mirea.onebeattrue.mylittlepet.data.pets
+package edu.mirea.onebeattrue.mylittlepet.data.mapper
 
 import android.app.Application
 import android.net.Uri
 import androidx.core.net.toUri
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.EventDbModel
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.FullPetDbModel
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.MedicalDataDbModel
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.NoteDbModel
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.PetDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.EventDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.FullPetDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.MedicalDataDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.NoteDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.PetDbModel
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note

@@ -33,7 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="edu.mirea.onebeattrue.mylittlepet.data.pets.AlarmReceiver" />
+        <receiver android:name="edu.mirea.onebeattrue.mylittlepet.data.AlarmReceiver" />
     </application>
 
 

@@ -1,12 +1,11 @@
-package edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel
+package edu.mirea.onebeattrue.mylittlepet.data.local.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalDataType
 
 @Entity(
-    tableName = "medical_data",
+    tableName = "notes",
     foreignKeys = [ForeignKey(
         entity = PetDbModel::class,
         parentColumns = ["id"],
@@ -14,12 +13,11 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalDataType
         onDelete = ForeignKey.CASCADE
     )]
 )
-data class MedicalDataDbModel(
+data class NoteDbModel(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val petId: Int,
 
-    val type: MedicalDataType,
-    val image: ByteArray?,
-    val text: String
+    val text: String,
+    val iconResId: Int,
 )

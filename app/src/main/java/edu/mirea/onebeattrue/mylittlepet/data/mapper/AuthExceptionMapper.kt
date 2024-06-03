@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.data.auth
+package edu.mirea.onebeattrue.mylittlepet.data.mapper
 
 import android.app.Application
 import android.util.Log

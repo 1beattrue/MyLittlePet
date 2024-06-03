@@ -1,7 +1,7 @@
-package edu.mirea.onebeattrue.mylittlepet.data.pets.repository
+package edu.mirea.onebeattrue.mylittlepet.data.repository
 
-import edu.mirea.onebeattrue.mylittlepet.data.pets.PetListDao
-import edu.mirea.onebeattrue.mylittlepet.data.pets.PetMapper
+import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.PetMapper
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
