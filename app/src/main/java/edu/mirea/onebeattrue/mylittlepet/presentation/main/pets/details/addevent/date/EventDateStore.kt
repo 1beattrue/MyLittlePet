@@ -9,7 +9,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddEventUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.date.EventDateStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.date.EventDateStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.date.EventDateStore.State
@@ -31,7 +31,7 @@ interface EventDateStore : Store<Intent, State, Label> {
 
 class EventDateStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
-    private val editPetUseCase: EditPetUseCase,
+    private val addEventUseCase: AddEventUseCase,
     private val alarmScheduler: AlarmScheduler
 ) {
 
@@ -39,15 +39,14 @@ class EventDateStoreFactory @Inject constructor(
         eventText: String,
         eventTimeHours: Int,
         eventTimeMinutes: Int,
-        pet: Pet,
-        eventList: List<Event>
+        pet: Pet
     ): EventDateStore =
         object : EventDateStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "EventDateStore",
+            name = STORE_NAME,
             initialState = State(Any()),
             bootstrapper = BootstrapperImpl(),
             executorFactory = {
-                ExecutorImpl(eventText, eventTimeHours, eventTimeMinutes, pet, eventList)
+                ExecutorImpl(eventText, eventTimeHours, eventTimeMinutes, pet)
             },
             reducer = ReducerImpl
         ) {}
@@ -65,8 +64,7 @@ class EventDateStoreFactory @Inject constructor(
         private val eventText: String,
         private val eventTimeHours: Int,
         private val eventTimeMinutes: Int,
-        private val pet: Pet,
-        private val eventList: List<Event>,
+        private val pet: Pet
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
@@ -81,8 +79,8 @@ class EventDateStoreFactory @Inject constructor(
                         val newEvent = Event(
                             time = triggerTime,
                             label = eventText,
-                            id = generateEventId(eventList),
-                            repeatable = false
+                            repeatable = false,
+                            petId = pet.id
                         )
 
                         if (triggerTime > currentTime) {
@@ -96,12 +94,7 @@ class EventDateStoreFactory @Inject constructor(
                             )
                         }
 
-                        val oldEventList = eventList
-                        val newEventList = oldEventList
-                            .toMutableList()
-                            .apply { add(newEvent) }
-                            .toList()
-                        editPetUseCase(pet = pet.copy(eventList = newEventList))
+                        addEventUseCase(newEvent)
                         publish(Label.Finish)
                     }
                 }
@@ -135,5 +128,9 @@ class EventDateStoreFactory @Inject constructor(
             if (it.id > maxId) maxId = it.id
         }
         return maxId + 1
+    }
+
+    companion object {
+        private const val STORE_NAME = "EventDateStore"
     }
 }

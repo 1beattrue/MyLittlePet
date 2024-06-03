@@ -20,7 +20,7 @@ class DefaultImageComponent @AssistedInject constructor(
 
     @Assisted("petType") override val petType: PetType,
     @Assisted("petName") private val petName: String,
-    @Assisted("pet") private val pet: Pet?,
+    @Assisted("lastPet") private val pet: Pet?,
     @Assisted("onFinished") private val onFinished: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : ImageComponent, ComponentContext by componentContext {
@@ -58,7 +58,7 @@ class DefaultImageComponent @AssistedInject constructor(
         fun create(
             @Assisted("petType") petType: PetType,
             @Assisted("petName") petName: String,
-            @Assisted("pet") pet: Pet? = null,
+            @Assisted("lastPet") pet: Pet? = null,
             @Assisted("onFinished") onFinished: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultImageComponent

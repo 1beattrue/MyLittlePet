@@ -11,7 +11,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddPetUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
-import edu.mirea.onebeattrue.mylittlepet.extensions.saveImageToInternalStorage
+import edu.mirea.onebeattrue.mylittlepet.extensions.ImageUtils.saveImageToInternalStorage
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.State

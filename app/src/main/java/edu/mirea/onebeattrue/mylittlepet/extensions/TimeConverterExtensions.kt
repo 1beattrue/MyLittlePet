@@ -33,6 +33,19 @@ fun Long.convertMillisToYearsAndMonths(): Pair<Int, Int> {
     return Pair(years, months)
 }
 
+fun Long.convertMillisToDayMonthYear(): Triple<Int, Month, Int> {
+    val birthDate = Instant.ofEpochMilli(this)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
+    val currentDate = LocalDate.now()
+
+    val day = birthDate.dayOfMonth
+    val year = birthDate.year
+    val month = birthDate.month
+
+    return Triple(day, month, year)
+}
+
 @Composable
 fun Month.getName() =
     when (this) {

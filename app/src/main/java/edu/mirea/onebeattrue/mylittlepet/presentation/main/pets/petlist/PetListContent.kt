@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,7 +37,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -55,8 +58,10 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MENU_ITEM_PADDING
@@ -100,21 +105,67 @@ fun PetListContent(
             ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(items = state.petList, key = { it.id }) { pet ->
-                PetCard(
-                    modifier = Modifier
-                        .animateItemPlacement(),
-                    pet = pet,
-                    deletePet = { component.deletePet(pet) },
-                    editPet = {
-                        component.editPet(pet)
-                    },
-                    openDetails = {
-                        component.openDetails(pet)
+            when (val screenState = state.screenState) {
+                PetListStore.State.ScreenState.Empty -> {
+                    item {
+                        AddFirstPetCard {
+                            component.addPet()
+                        }
                     }
-                )
+                }
+
+                is PetListStore.State.ScreenState.Loaded -> {
+                    items(items = screenState.petList, key = { it.id }) { pet ->
+                        PetCard(
+                            modifier = Modifier
+                                .animateItemPlacement(),
+                            pet = pet,
+                            deletePet = { component.deletePet(pet) },
+                            editPet = {
+                                component.editPet(pet)
+                            },
+                            openDetails = {
+                                component.openDetails(pet)
+                            }
+                        )
+                    }
+                }
+
+                PetListStore.State.ScreenState.Loading -> {
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun AddFirstPetCard(
+    modifier: Modifier = Modifier,
+    onAddClick: () -> Unit
+) {
+    CustomCardWithAddButton(
+        modifier = modifier,
+        onAddClick = { onAddClick() }
+    ) {
+        Text(
+            style = MaterialTheme.typography.titleLarge,
+            text = stringResource(R.string.add_your_first_pet)
+        )
+        val petImageId by remember { mutableIntStateOf(PetType.getTypes().random().getImageId()) }
+        Image(
+            modifier = Modifier.fillMaxWidth(),
+            contentScale = ContentScale.Crop,
+            painter = painterResource(petImageId),
+            contentDescription = null
+        )
     }
 }
 

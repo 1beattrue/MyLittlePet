@@ -4,8 +4,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Event(
-    val id: Int,
     val time: Long,
     val label: String,
-    val repeatable: Boolean
-)
+    val repeatable: Boolean,
+
+    val id: Int = UNDEFINED_ID,
+    val petId: Int
+) {
+    companion object {
+        const val UNDEFINED_ID = 0
+    }
+}

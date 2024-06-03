@@ -19,7 +19,7 @@ class DefaultEditPetComponent @AssistedInject constructor(
     private val nameComponentFactory: DefaultNameComponent.Factory,
     private val imageComponentFactory: DefaultImageComponent.Factory,
 
-    @Assisted("pet") private val pet: Pet,
+    @Assisted("lastPet") private val pet: Pet,
     @Assisted("onEditPetClosed") private val onEditPetClosed: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : EditPetComponent, ComponentContext by componentContext {
@@ -85,7 +85,7 @@ class DefaultEditPetComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("pet") pet: Pet,
+            @Assisted("lastPet") pet: Pet,
             @Assisted("onEditPetClosed") onEditPetClosed: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultEditPetComponent

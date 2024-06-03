@@ -60,10 +60,6 @@ fun ProfileContent(
 ) {
     val state by component.model.collectAsState()
 
-    if (state.isEnglishLanguage) {
-        Any()
-    } // TODO: костыль для перерисовки
-
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -73,10 +69,6 @@ fun ProfileContent(
                     titleContentColor = MaterialTheme.colorScheme.onSurface
                 ),
                 title = {
-                    if (state.isEnglishLanguage) {
-                        Any()
-                    } // TODO: костыль для перерисовки
-
                     Text(
                         style = MaterialTheme.typography.titleLarge,
                         text = stringResource(R.string.settings_app_bar_title)

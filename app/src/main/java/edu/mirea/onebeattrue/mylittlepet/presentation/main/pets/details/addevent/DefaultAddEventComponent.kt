@@ -20,7 +20,7 @@ class DefaultAddEventComponent @AssistedInject constructor(
     private val timeComponentFactory: DefaultEventTimeComponent.Factory,
     private val dateComponentFactory: DefaultEventDateComponent.Factory,
 
-    @Assisted("pet") private val pet: Pet,
+    @Assisted("lastPet") private val pet: Pet,
     @Assisted("onAddEventClosed") private val onAddEventClosed: () -> Unit,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : AddEventComponent, ComponentContext by componentContext {
@@ -52,7 +52,6 @@ class DefaultAddEventComponent @AssistedInject constructor(
 
         is Config.Time -> {
             val component = timeComponentFactory.create(
-                eventList = pet.eventList,
                 eventText = config.eventText,
                 pet = pet,
                 onNextClicked = { h, m ->
@@ -68,7 +67,6 @@ class DefaultAddEventComponent @AssistedInject constructor(
 
         is Config.Date -> {
             val component = dateComponentFactory.create(
-                eventList = pet.eventList,
                 eventText = config.eventText,
                 eventTimeHours = config.eventTimeHours,
                 eventTimeMinutes = config.eventTimeMinutes,
@@ -105,7 +103,7 @@ class DefaultAddEventComponent @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("pet") pet: Pet,
+            @Assisted("lastPet") pet: Pet,
             @Assisted("onAddEventClosed") onAddEventClosed: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultAddEventComponent

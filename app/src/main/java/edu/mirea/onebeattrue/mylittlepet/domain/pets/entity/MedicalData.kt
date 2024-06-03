@@ -4,8 +4,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MedicalData(
-    val id: Int,
     val type: MedicalDataType,
     val imageUri: String,
-    val text: String
-)
+    val text: String,
+
+    val id: Int = UNDEFINED_ID,
+    val petId: Int
+) {
+    companion object {
+        const val UNDEFINED_ID = 0
+    }
+}

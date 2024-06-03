@@ -33,7 +33,7 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
     private val medicalDataDetailsComponentFactory: DefaultMedicalDataDetailsComponent.Factory,
 
     @Assisted("onBackClick") private val onBackClick: () -> Unit,
-    @Assisted("pet") private val pet: Pet,
+    @Assisted("lastPet") private val pet: Pet,
     @Assisted("componentContext") componentContext: ComponentContext
 ) : DetailsRootComponent, ComponentContext by componentContext {
 
@@ -199,7 +199,7 @@ class DefaultDetailsRootComponent @AssistedInject constructor(
     interface Factory {
         fun create(
 
-            @Assisted("pet") pet: Pet,
+            @Assisted("lastPet") pet: Pet,
             @Assisted("onBackClick") onBackClick: () -> Unit,
             @Assisted("componentContext") componentContext: ComponentContext
         ): DefaultDetailsRootComponent

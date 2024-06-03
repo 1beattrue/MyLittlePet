@@ -4,20 +4,27 @@ import android.app.Application
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import edu.mirea.onebeattrue.mylittlepet.data.pets.Converters
-import edu.mirea.onebeattrue.mylittlepet.data.pets.PetDbModel
 import edu.mirea.onebeattrue.mylittlepet.data.pets.PetListDao
+import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.EventDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.MedicalDataDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.NoteDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.PetDbModel
 
-@Database(entities = [PetDbModel::class], version = 1, exportSchema = false)
-@TypeConverters(Converters::class)
+@Database(
+    entities = [
+        PetDbModel::class,
+        EventDbModel::class,
+        NoteDbModel::class,
+        MedicalDataDbModel::class
+    ], version = 1, exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun petListDao(): PetListDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null
         private val LOCK = Any()
-        private const val DB_NAME = "app-database.db"
+        private const val DB_NAME = "app_database.db"
 
         fun getInstance(application: Application): AppDatabase {
             INSTANCE?.let {

@@ -10,7 +10,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.EditPetUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddEventUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.time.EventTimeStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.time.EventTimeStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.time.EventTimeStore.State
@@ -36,13 +36,12 @@ interface EventTimeStore : Store<Intent, State, Label> {
 class EventTimeStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val alarmScheduler: AlarmScheduler,
-    private val editPetUseCase: EditPetUseCase
+    private val addEventUseCase: AddEventUseCase
 ) {
 
     fun create(
         eventText: String,
         pet: Pet,
-        eventList: List<Event>
     ): EventTimeStore =
         object : EventTimeStore, Store<Intent, State, Label> by storeFactory.create(
             name = STORE_NAME,
@@ -50,7 +49,7 @@ class EventTimeStoreFactory @Inject constructor(
                 isDaily = true
             ),
             bootstrapper = BootstrapperImpl(),
-            executorFactory = { ExecutorImpl(eventText, pet, eventList) },
+            executorFactory = { ExecutorImpl(eventText, pet) },
             reducer = ReducerImpl
         ) {}
 
@@ -67,8 +66,7 @@ class EventTimeStoreFactory @Inject constructor(
 
     private inner class ExecutorImpl(
         private val eventText: String,
-        private val pet: Pet,
-        private val eventList: List<Event>,
+        private val pet: Pet
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
@@ -89,8 +87,8 @@ class EventTimeStoreFactory @Inject constructor(
                             val newEvent = Event(
                                 time = triggerTime,
                                 label = eventText,
-                                id = generateEventId(eventList),
-                                repeatable = true
+                                repeatable = true,
+                                petId = pet.id
                             )
 
                             alarmScheduler.schedule(
@@ -102,12 +100,7 @@ class EventTimeStoreFactory @Inject constructor(
                                 )
                             )
 
-                            val oldEventList = eventList
-                            val newEventList = oldEventList
-                                .toMutableList()
-                                .apply { add(newEvent) }
-                                .toList()
-                            editPetUseCase(pet = pet.copy(eventList = newEventList))
+                            addEventUseCase(newEvent)
                             publish(Label.Finish)
                         } else {
                             publish(Label.GoNext(hours, minutes))

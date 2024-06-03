@@ -79,15 +79,15 @@
 
     <string name="select_image">Select image</string>
 
-    <string name="unknown_age">Enter</string>
-    <string name="unknown_weight">Enter</string>
+    <string name="enter_age">Enter</string>
+    <string name="enter_weight">Enter</string>
     <string name="age_title">Age</string>
     <string name="weight_title">Weight</string>
     <string name="error_weight">Incorrect format</string>
     <string name="weight_hint">Pet\'s weight</string>
     <string name="weight_suffix">kg</string>
     <string name="weight_format">%1\$s kg</string>
-    <string name="enter_weight">Enter weight</string>
+    <string name="enter_weight_hint">Enter weight</string>
 
 
     <string name="add_event_app_bar_title">Adding an event</string>
@@ -110,6 +110,7 @@
     <string name="error_note_text">Add note text</string>
 
     <string name="medical_data_list_app_bar_title">Medical data list</string>
+    <string name="medical_data_list_title">Medical data list:</string>
     <string name="add_medical_data">Add medical data</string>
 
     <string name="january">January</string>
@@ -155,6 +156,9 @@
     <string name="notification_permission_required">Permission is required to send notifications</string>
     <string name="notification_permission_denied">Permission to send notifications is denied. Open Settings</string>
 
+    <string name="camera_permission_required">Permission is required to use the camera</string>
+    <string name="camera_permission_denied">Permission to use the camera is denied. Open Settings</string>
+
     <string name="profile_app_bar_title">Profile</string>
     <string name="use_system_theme">Use system theme</string>
     <string name="use_system_lang">Use system language</string>
@@ -182,4 +186,14 @@
 
     <string name="qr_code_title">All information about your pet:</string>
     <string name="something_went_wrong">Something went wrong :(</string>
+    <string name="add_your_first_pet">Add your first pet!</string>
+    <string name="feed_app_bar_title">Feed</string>
+    <string name="open_qr_code_card_text">Find out more about the pet</string>
+    <string name="scanner_app_bar_title">Scan the QR code</string>
+    <string name="pet_info_app_bar_title">Pet information</string>
+    <string name="pet_type">Pet type</string>
+    <string name="unknown">Unknown</string>
+    <string name="empty_medical_data">No medical data added</string>
+    <string name="add_pet">Add a pet</string>
+    <string name="successfully_added">Successfully added</string>
 </resources>
