@@ -27,6 +27,24 @@ fun RootContent(
 
     LocaleUtils.setLocale(context, state.isEnglishLanguage)
 
+    when (state.isEnglishLanguage) { // TODO: костыль для перерисовки при изменении языка
+        true -> {
+            StatefulRootContent(modifier = modifier, component = component, state = state)
+        }
+
+        false -> {
+            StatefulRootContent(modifier = modifier, component = component, state = state)
+        }
+    }
+
+}
+
+@Composable
+private fun StatefulRootContent(
+    modifier: Modifier = Modifier,
+    component: RootComponent,
+    state: RootStore.State
+) {
     MyLittlePetTheme(
         darkTheme = state.isDarkTheme ?: isSystemInDarkTheme()
     ) {
@@ -42,7 +60,6 @@ fun RootContent(
             }
         }
     }
-
 }
 
 
