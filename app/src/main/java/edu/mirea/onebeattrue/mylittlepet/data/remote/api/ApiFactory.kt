@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 
 object ApiFactory {
-    private const val BASE_URL = "jdbc:postgresql://localhost:5432/postgres/api/v1/"
+    private const val BASE_URL = "http://localhost:8080/api/v1/"
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)

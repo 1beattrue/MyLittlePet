@@ -8,6 +8,8 @@ import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.PetMapper
+import edu.mirea.onebeattrue.mylittlepet.data.remote.api.ApiService
+import edu.mirea.onebeattrue.mylittlepet.data.remote.dto.PetDto
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
@@ -21,13 +23,27 @@ import javax.inject.Inject
 class PetRepositoryImpl @Inject constructor(
     private val petListDao: PetListDao,
     private val mapper: PetMapper,
-    private val alarmScheduler: AlarmScheduler
+    private val alarmScheduler: AlarmScheduler,
+    private val apiService: ApiService
 ) : PetRepository {
 
     private val lastPetScanned = MutableStateFlow<Pet?>(null)
 
     override suspend fun addPet(pet: Pet) {
         petListDao.addPet(mapper.mapPetEntityToDbModel(pet))
+        apiService.createPet(
+            petDto = PetDto(
+                id = pet.id,
+                name = pet.name,
+                type = pet.type,
+                image = byteArrayOf(),
+                dateOfBirth = pet.dateOfBirth,
+                weight = pet.weight,
+                eventList = listOf(),
+                noteList = listOf(),
+                medicalDataList = listOf()
+            )
+        )
     }
 
     override suspend fun deletePet(pet: Pet) {

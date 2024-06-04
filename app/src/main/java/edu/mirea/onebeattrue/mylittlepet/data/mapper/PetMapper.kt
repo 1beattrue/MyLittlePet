@@ -18,7 +18,7 @@ import javax.inject.Inject
 class PetMapper @Inject constructor(
     private val application: Application
 ) {
-    suspend fun mapPetEntityToDbModel(entity: Pet): PetDbModel = PetDbModel(
+    fun mapPetEntityToDbModel(entity: Pet): PetDbModel = PetDbModel(
         id = entity.id,
         type = entity.type,
         name = entity.name,
@@ -27,7 +27,7 @@ class PetMapper @Inject constructor(
         weight = entity.weight
     )
 
-    suspend fun mapPetDbModelToEntity(dbModel: FullPetDbModel): Pet = Pet(
+    fun mapPetDbModelToEntity(dbModel: FullPetDbModel): Pet = Pet(
         type = dbModel.petDbModel.type,
         name = dbModel.petDbModel.name,
         imageUri = mapImageToUri(
@@ -42,7 +42,7 @@ class PetMapper @Inject constructor(
         medicalDataList = dbModel.medicalDataList.map { mapMedicalDataDbModelToEntity(it) }
     )
 
-    suspend fun mapListDbModelToListEntity(
+    fun mapListDbModelToListEntity(
         listDbModel: List<FullPetDbModel>
     ): List<Pet> = listDbModel.map { petDbModel ->
         mapPetDbModelToEntity(petDbModel)
@@ -78,7 +78,7 @@ class PetMapper @Inject constructor(
         iconResId = dbModel.iconResId
     )
 
-    suspend fun mapMedicalDataEntityToDbModel(entity: MedicalData): MedicalDataDbModel =
+    fun mapMedicalDataEntityToDbModel(entity: MedicalData): MedicalDataDbModel =
         MedicalDataDbModel(
             id = entity.id,
             petId = entity.petId,
@@ -87,7 +87,7 @@ class PetMapper @Inject constructor(
             text = entity.text
         )
 
-    suspend fun mapMedicalDataDbModelToEntity(dbModel: MedicalDataDbModel): MedicalData =
+    fun mapMedicalDataDbModelToEntity(dbModel: MedicalDataDbModel): MedicalData =
         MedicalData(
             id = dbModel.id,
             petId = dbModel.petId,
@@ -100,12 +100,12 @@ class PetMapper @Inject constructor(
         )
 
 
-    private suspend fun mapImageToUri(image: ByteArray?, uniqueId: Int): Uri {
+    private fun mapImageToUri(image: ByteArray?, uniqueId: Int): Uri {
         return image?.let { ImageUtils.saveImageToInternalStorage(application, it, uniqueId) }
             ?: Uri.EMPTY
     }
 
-    private suspend fun mapUriToImage(uri: Uri): ByteArray? {
+    private fun mapUriToImage(uri: Uri): ByteArray? {
         return ImageUtils.uriToByteArray(application, uri)
     }
 }
