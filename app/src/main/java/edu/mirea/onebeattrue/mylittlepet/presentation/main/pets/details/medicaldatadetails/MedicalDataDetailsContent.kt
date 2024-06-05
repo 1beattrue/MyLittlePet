@@ -82,18 +82,6 @@ fun MedicalDataDetailsContent(
                             contentDescription = null
                         )
                     }
-                },
-                actions = {
-//                    IconButton(
-//                        onClick = {
-//                            component.downloadPhoto()
-//                        },
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Rounded.Download,
-//                            contentDescription = null
-//                        )
-//                    }
                 }
             )
         },
