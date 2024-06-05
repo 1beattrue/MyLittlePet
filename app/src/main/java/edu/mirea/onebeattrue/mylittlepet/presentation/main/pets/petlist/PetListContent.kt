@@ -184,7 +184,7 @@ private fun PetCard(
         modifier = modifier,
         elevation = EXTREME_ELEVATION,
         onClick = { openDetails() },
-        innerPadding = 0.dp
+        innerPadding = PaddingValues(0.dp)
     ) {
         Box(
             modifier = Modifier
