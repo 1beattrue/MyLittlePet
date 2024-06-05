@@ -43,7 +43,7 @@ fun EventTimeContent(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        contentPadding = PaddingValues(vertical = 16.dp)
+        contentPadding = PaddingValues(vertical = 16.dp),
     ) {
         item {
             CustomCard(
