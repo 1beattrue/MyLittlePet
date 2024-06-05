@@ -50,7 +50,7 @@ class PetListStoreFactory @Inject constructor(
         object : PetListStore, Store<Intent, State, Label> by storeFactory.create(
             name = STORE_NAME,
             initialState = State(
-                screenState = State.ScreenState.Empty
+                screenState = State.ScreenState.Loading
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
