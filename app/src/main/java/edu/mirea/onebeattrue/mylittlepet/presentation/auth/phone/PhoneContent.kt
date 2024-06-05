@@ -117,7 +117,7 @@ fun PhoneContent(
                     prefix = {
                         Row {
                             Text(stringResource(id = R.string.phone_number_prefix))
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
                         }
                     },
                     placeholder = {
