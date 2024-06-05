@@ -3,9 +3,11 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addmedi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
@@ -41,30 +43,33 @@ fun MedicalTypeContent(
 ) {
     val state by component.model.collectAsState()
 
-    Column(
+    LazyColumn(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        contentPadding = PaddingValues(vertical = 16.dp)
     ) {
-        CustomCardExtremeElevation {
+        item {
+            CustomCardExtremeElevation {
 
-            Text(
-                text = stringResource(id = R.string.select_medical_type),
-                style = MaterialTheme.typography.titleLarge
-            )
+                Text(
+                    text = stringResource(id = R.string.select_medical_type),
+                    style = MaterialTheme.typography.titleLarge
+                )
 
-            SelectedTypeField(
-                expanded = state.expanded,
-                selectedMedicalDataType = state.medicalDataType,
-                isIncorrect = state.isIncorrect,
-                changeExpanded = {
-                    component.changeDropdownMenuExpanded(it)
+                SelectedTypeField(
+                    expanded = state.expanded,
+                    selectedMedicalDataType = state.medicalDataType,
+                    isIncorrect = state.isIncorrect,
+                    changeExpanded = {
+                        component.changeDropdownMenuExpanded(it)
+                    }
+                ) { medicalDataType ->
+                    component.setType(medicalDataType)
                 }
-            ) { medicalDataType ->
-                component.setType(medicalDataType)
-            }
 
-            CustomNextButton(onClick = { component.next() })
+                CustomNextButton(onClick = { component.next() })
+            }
         }
     }
 }

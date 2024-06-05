@@ -1,9 +1,10 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.text
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomNextButton
@@ -31,27 +33,32 @@ fun EventTextContent(
 ) {
     val state by component.model.collectAsState()
 
-    Column(
+    LazyColumn(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        contentPadding = PaddingValues(
+            vertical = 16.dp
+        ),
     ) {
-        CustomCardExtremeElevation {
+        item {
+            CustomCardExtremeElevation {
 
-            Text(
-                text = stringResource(id = R.string.enter_event_title),
-                style = MaterialTheme.typography.titleLarge
-            )
+                Text(
+                    text = stringResource(id = R.string.enter_event_title),
+                    style = MaterialTheme.typography.titleLarge
+                )
 
-            EnteredTextField(
-                text = state.text,
-                onValueChange = { text ->
-                    component.onEventTextChanged(text)
-                },
-                isIncorrect = state.isIncorrect
-            )
+                EnteredTextField(
+                    text = state.text,
+                    onValueChange = { text ->
+                        component.onEventTextChanged(text)
+                    },
+                    isIncorrect = state.isIncorrect
+                )
 
-            CustomNextButton(onClick = { component.next() })
+                CustomNextButton(onClick = { component.next() })
+            }
         }
     }
 }

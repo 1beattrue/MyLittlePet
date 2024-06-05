@@ -1,11 +1,12 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -29,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
@@ -69,26 +71,29 @@ fun AddNoteContent(
             )
         },
     ) { paddingValues ->
-        Column(
-            modifier = modifier
+        LazyColumn(
+            modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            CustomCardExtremeElevation {
-                IconPicker(
-                    onIconClicked = { noteIcon ->
-                        component.iconChanged(noteIcon)
-                    },
-                    selectedIcon = state.selectedIcon
-                )
-                EnteredTextField(
-                    text = state.text,
-                    onValueChange = { component.noteTextChanged(it) },
-                    isIncorrect = state.isIncorrect
-                )
-                CustomReadyButton(onClick = { component.addNote() })
+            item {
+                CustomCardExtremeElevation {
+                    IconPicker(
+                        onIconClicked = { noteIcon ->
+                            component.iconChanged(noteIcon)
+                        },
+                        selectedIcon = state.selectedIcon
+                    )
+                    EnteredTextField(
+                        text = state.text,
+                        onValueChange = { component.noteTextChanged(it) },
+                        isIncorrect = state.isIncorrect
+                    )
+                    CustomReadyButton(onClick = { component.addNote() })
+                }
             }
         }
     }

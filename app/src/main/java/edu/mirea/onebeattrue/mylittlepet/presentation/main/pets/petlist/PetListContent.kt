@@ -46,7 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -185,7 +184,7 @@ private fun PetCard(
         modifier = modifier,
         elevation = EXTREME_ELEVATION,
         onClick = { openDetails() },
-        innerPadding = 0.dp
+        innerPadding = PaddingValues(0.dp)
     ) {
         Box(
             modifier = Modifier
@@ -202,7 +201,7 @@ private fun PetCard(
                         .rotate(-45f),
                     painter = painterResource(R.drawable.ic_pets),
                     contentDescription = null,
-                    tint = Color.Red
+                    tint = MaterialTheme.colorScheme.error
                 )
             }
 
@@ -309,8 +308,8 @@ private fun PetCard(
                                 )
                             },
                             colors = MenuDefaults.itemColors(
-                                textColor = Color.Red,
-                                trailingIconColor = Color.Red
+                                textColor = MaterialTheme.colorScheme.error,
+                                trailingIconColor = MaterialTheme.colorScheme.error
                             ),
                             onClick = {
                                 expanded = false
@@ -374,7 +373,7 @@ private fun DeletePetDialog(
             Icon(
                 imageVector = Icons.Rounded.Warning,
                 contentDescription = null,
-                tint = Color.Red
+                tint = MaterialTheme.colorScheme.error
             )
         },
         title = {
@@ -394,7 +393,7 @@ private fun DeletePetDialog(
             ) {
                 Text(
                     text = stringResource(R.string.delete),
-                    color = Color.Red
+                    color = MaterialTheme.colorScheme.error
                 )
             }
         },

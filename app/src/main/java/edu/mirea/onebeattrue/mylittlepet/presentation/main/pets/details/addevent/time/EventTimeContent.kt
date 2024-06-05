@@ -2,7 +2,6 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addeven
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,9 +24,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,11 +43,19 @@ fun EventTimeContent(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        contentPadding = PaddingValues(vertical = 16.dp)
+        contentPadding = PaddingValues(vertical = 16.dp),
     ) {
         item {
-            CustomCardExtremeElevation {
+            CustomCard(
+                elevation = EXTREME_ELEVATION,
+                innerPadding = PaddingValues(
+                    vertical = 32.dp
+                )
+            ) {
                 Text(
+                    modifier = Modifier.padding(
+                        horizontal = 32.dp
+                    ),
                     text = stringResource(id = R.string.set_event_time_title),
                     style = MaterialTheme.typography.titleLarge
                 )
@@ -57,6 +65,7 @@ fun EventTimeContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 32.dp)
                         .clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
                         .clickable {
                             component.onPeriodChanged(!state.isDaily)
@@ -77,6 +86,7 @@ fun EventTimeContent(
 
 
                 CustomReadyButton(
+                    modifier = Modifier.padding(horizontal = 32.dp),
                     onClick = { component.next(timePickerState.hour, timePickerState.minute) }
                 )
             }

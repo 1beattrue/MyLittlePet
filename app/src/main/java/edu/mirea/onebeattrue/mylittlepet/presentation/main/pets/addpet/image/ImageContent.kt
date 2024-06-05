@@ -3,8 +3,10 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,35 +31,40 @@ fun ImageContent(
 ) {
     val state by component.model.collectAsState()
 
-    Column(
+    LazyColumn(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        contentPadding = PaddingValues(
+            vertical = 16.dp
+        ),
     ) {
-        CustomCardExtremeElevation {
+        item {
+            CustomCardExtremeElevation {
 
-            Text(
-                text = stringResource(id = R.string.add_pet_photo),
-                style = MaterialTheme.typography.titleLarge
-            )
+                Text(
+                    text = stringResource(id = R.string.add_pet_photo),
+                    style = MaterialTheme.typography.titleLarge
+                )
 
-            CustomImagePicker(
-                uri = state.imageUri,
-                onImagePicked = {
-                    component.setPetImage(it)
-                },
-                onImageDeleted = { component.deletePetImage() }
-            ) {
-               Image(
-                   modifier = Modifier
-                       .fillMaxSize()
-                       .padding(8.dp),
-                   painter = painterResource(id = component.petType.getImageId()),
-                   contentDescription = null
-               )
+                CustomImagePicker(
+                    uri = state.imageUri,
+                    onImagePicked = {
+                        component.setPetImage(it)
+                    },
+                    onImageDeleted = { component.deletePetImage() }
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        painter = painterResource(id = component.petType.getImageId()),
+                        contentDescription = null
+                    )
+                }
+
+                CustomReadyButton(onClick = { component.finish() })
             }
-
-            CustomReadyButton(onClick = { component.finish() })
         }
     }
 }

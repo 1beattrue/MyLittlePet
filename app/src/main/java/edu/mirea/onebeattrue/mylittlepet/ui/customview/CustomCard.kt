@@ -41,6 +41,7 @@ fun CustomCard(
     modifier: Modifier = Modifier,
     elevation: Dp,
     paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp),
+    innerPadding: PaddingValues = PaddingValues(32.dp),
     cardColors: CardColors = CardDefaults.cardColors(
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface
@@ -63,7 +64,7 @@ fun CustomCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp),
+                    .padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -80,7 +81,7 @@ fun ClickableCustomCard(
     modifier: Modifier = Modifier,
     elevation: Dp,
     paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp),
-    innerPadding: Dp = 32.dp,
+    innerPadding: PaddingValues = PaddingValues(32.dp),
     cardColors: CardColors = CardDefaults.elevatedCardColors(
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface
