@@ -332,7 +332,7 @@ private fun PetWeightCard(
             val weightText = if (weight == null) {
                 stringResource(R.string.unknown)
             } else {
-                "${weight} ${stringResource(R.string.weight_suffix)}"
+                "$weight ${stringResource(R.string.weight_suffix)}"
             }
             Text(text = weightText)
         }
