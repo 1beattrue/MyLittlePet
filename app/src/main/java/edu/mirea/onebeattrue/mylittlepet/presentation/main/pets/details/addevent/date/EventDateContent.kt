@@ -3,6 +3,7 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addeven
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,7 +34,7 @@ fun EventDateContent(
     val datePickerState = rememberDatePickerState()
 
     LazyColumn(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         contentPadding = PaddingValues(vertical = 16.dp)
