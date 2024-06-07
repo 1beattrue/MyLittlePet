@@ -10,6 +10,8 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.AuthExceptionMapper
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.UserMapper
+import edu.mirea.onebeattrue.mylittlepet.data.remote.api.ApiService
 import edu.mirea.onebeattrue.mylittlepet.di.ApplicationScope
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
@@ -24,7 +26,9 @@ import javax.inject.Inject
 @ApplicationScope
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val authExceptionMapper: AuthExceptionMapper
+    private val authExceptionMapper: AuthExceptionMapper,
+    private val apiService: ApiService,
+    private val userMapper: UserMapper
 ) : AuthRepository {
     override val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
@@ -121,6 +125,8 @@ class AuthRepositoryImpl @Inject constructor(
                 )
             }
 
+        hell()
+
         awaitClose {
             close()
         }
@@ -134,6 +140,15 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun signOut() {
         firebaseAuth.signOut()
+    }
+
+    private suspend fun hell() {
+        while (true) {
+            if (currentUser != null) {
+                Log.d("AuthRepositoryImpl", currentUser!!.uid)
+                apiService.createUser(userMapper.mapUserEntityToDto(currentUser!!)).code()
+            }
+        }
     }
 
     companion object {
