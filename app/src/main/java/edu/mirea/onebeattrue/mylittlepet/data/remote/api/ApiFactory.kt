@@ -4,13 +4,12 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 object ApiFactory {
     private const val BASE_URL = "https://petserver-um2a.onrender.com/api/v1/"
 
     private val interceptor = HttpLoggingInterceptor().apply {
-        setLevel(HttpLoggingInterceptor.Level.BASIC)
+        setLevel(HttpLoggingInterceptor.Level.BODY)
     }
 
     private val okHttpClient = OkHttpClient.Builder()
@@ -23,6 +22,11 @@ object ApiFactory {
         .client(okHttpClient)
         .build()
 
+    val userService: UserService by lazy {
+        retrofit.create(UserService::class.java)
+    }
 
-    val apiService: ApiService = retrofit.create()
+    val petService: PetService by lazy {
+        retrofit.create(PetService::class.java)
+    }
 }

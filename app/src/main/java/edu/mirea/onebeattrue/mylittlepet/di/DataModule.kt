@@ -5,12 +5,13 @@ import com.google.firebase.auth.FirebaseAuth
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import edu.mirea.onebeattrue.mylittlepet.data.repository.AuthRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.AppDatabase
-import edu.mirea.onebeattrue.mylittlepet.data.repository.AlarmSchedulerImpl
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
 import edu.mirea.onebeattrue.mylittlepet.data.remote.api.ApiFactory
-import edu.mirea.onebeattrue.mylittlepet.data.remote.api.ApiService
+import edu.mirea.onebeattrue.mylittlepet.data.remote.api.PetService
+import edu.mirea.onebeattrue.mylittlepet.data.remote.api.UserService
+import edu.mirea.onebeattrue.mylittlepet.data.repository.AlarmSchedulerImpl
+import edu.mirea.onebeattrue.mylittlepet.data.repository.AuthRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.data.repository.EventRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.data.repository.MedicalDataRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.data.repository.NoteRepositoryImpl
@@ -48,7 +49,11 @@ interface DataModule {
     companion object {
         @ApplicationScope
         @Provides
-        fun provideApiService(): ApiService = ApiFactory.apiService
+        fun providePetService(): PetService = ApiFactory.petService
+
+        @ApplicationScope
+        @Provides
+        fun provideUserService(): UserService = ApiFactory.userService
 
         @ApplicationScope
         @Provides

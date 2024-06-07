@@ -1,20 +1,16 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
 import com.arkivanov.decompose.defaultComponentContext
-import edu.mirea.onebeattrue.mylittlepet.data.remote.api.ApiFactory
 import edu.mirea.onebeattrue.mylittlepet.presentation.root.DefaultRootComponent
 import edu.mirea.onebeattrue.mylittlepet.presentation.root.RootContent
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MyLittlePetTheme
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
@@ -27,15 +23,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val component = rootComponentFactory.create(
-            componentContext =  defaultComponentContext()
+            componentContext = defaultComponentContext()
         )
-
-        val apiService = ApiFactory.apiService
-
-        lifecycleScope.launch {
-
-            Log.d("MainActivity", apiService.getUserList().toString())
-        }
 
         setContent {
             MyLittlePetTheme {
