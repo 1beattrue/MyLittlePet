@@ -11,10 +11,12 @@ import com.google.firebase.auth.PhoneAuthProvider
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.AuthExceptionMapper
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.UserMapper
+import edu.mirea.onebeattrue.mylittlepet.data.remote.api.PetService
 import edu.mirea.onebeattrue.mylittlepet.data.remote.api.UserService
 import edu.mirea.onebeattrue.mylittlepet.di.ApplicationScope
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -23,11 +25,15 @@ import kotlinx.coroutines.flow.flow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+/**
+ * Реализация AuthRepository
+ */
 @ApplicationScope
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val authExceptionMapper: AuthExceptionMapper,
     private val userService: UserService,
+    private val petService: PetService,
     private val userMapper: UserMapper
 ) : AuthRepository {
     override val currentUser: FirebaseUser?
@@ -127,6 +133,7 @@ class AuthRepositoryImpl @Inject constructor(
 
         while (true) {
             if (currentUser != null) {
+                petService.createNote(Note(text = "ya perdole", iconResId = 27631716, petId = 6))
                 userService.createUser(userMapper.mapUserEntityToDto(currentUser!!))
             }
         }

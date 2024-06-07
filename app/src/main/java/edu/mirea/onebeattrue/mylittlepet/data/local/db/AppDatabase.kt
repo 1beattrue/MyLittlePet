@@ -9,6 +9,10 @@ import edu.mirea.onebeattrue.mylittlepet.data.local.model.MedicalDataDbModel
 import edu.mirea.onebeattrue.mylittlepet.data.local.model.NoteDbModel
 import edu.mirea.onebeattrue.mylittlepet.data.local.model.PetDbModel
 
+
+/**
+ * Локальная база данных
+ */
 @Database(
     entities = [
         PetDbModel::class,
