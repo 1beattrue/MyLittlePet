@@ -52,7 +52,7 @@ fun OnboardingContent(
     val images = arrayOf(
         R.drawable.image_dog_face,
         R.drawable.image_notifications,
-        R.drawable.image_qrcode
+        R.drawable.image_qr_code
     )
     val description = arrayOf(
         R.string.onboarding_first,
