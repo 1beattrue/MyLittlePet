@@ -9,7 +9,7 @@ data class PetDto(
 
     @SerializedName("name") val name: String,
     @SerializedName("type") val type: PetType,
-    @SerializedName("image") val image: ByteArray,
+    @SerializedName("image") val image: ByteArray?,
     @SerializedName("dateOfBirth") val dateOfBirth: Long?,
     @SerializedName("weight") val weight: Float?,
 

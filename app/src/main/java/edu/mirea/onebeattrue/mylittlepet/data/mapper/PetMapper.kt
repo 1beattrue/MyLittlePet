@@ -8,6 +8,7 @@ import edu.mirea.onebeattrue.mylittlepet.data.local.model.FullPetDbModel
 import edu.mirea.onebeattrue.mylittlepet.data.local.model.MedicalDataDbModel
 import edu.mirea.onebeattrue.mylittlepet.data.local.model.NoteDbModel
 import edu.mirea.onebeattrue.mylittlepet.data.local.model.PetDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.remote.dto.PetDto
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
@@ -99,6 +100,32 @@ class PetMapper @Inject constructor(
             text = dbModel.text
         )
 
+    fun mapPetEntityToDto(entity: Pet): PetDto = PetDto(
+        id = entity.id,
+        type = entity.type,
+        name = entity.name,
+        image = mapUriToImage(entity.imageUri.toUri()),
+        dateOfBirth = entity.dateOfBirth,
+        weight = entity.weight,
+        eventList = listOf(),
+        noteList = listOf(),
+        medicalDataList = listOf()
+    )
+
+    fun mapPetDtoToEntity(dto: PetDto): Pet = Pet(
+        type = dto.type,
+        name = dto.name,
+        imageUri = mapImageToUri(
+            dto.image,
+            dto.id
+        ).toString(),
+        id = dto.id,
+        dateOfBirth = dto.dateOfBirth,
+        weight = dto.weight,
+        eventList = listOf(),
+        noteList = listOf(),
+        medicalDataList = listOf()
+    )
 
     private fun mapImageToUri(image: ByteArray?, uniqueId: Int): Uri {
         return image?.let { ImageUtils.saveImageToInternalStorage(application, it, uniqueId) }
