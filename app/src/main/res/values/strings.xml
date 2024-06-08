@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">My Little Pet</string>
 
+
+    <string name="onboarding_first">Welcome to our app for taking care of your pets!</string>
+    <string name="onboarding_second">Set up notifications and never miss important moments in your pet\'s life!</string>
+    <string name="onboarding_third">Scan QR codes to quickly access information about your pet</string>
+
     <string name="enter_phone_number">Enter your phone number</string>
     <string name="error_phone_number">Invalid phone number</string>
     <string name="phone_number_hint">(XXX) XXX-XX XX</string>

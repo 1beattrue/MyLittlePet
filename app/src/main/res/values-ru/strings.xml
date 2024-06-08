@@ -2,6 +2,10 @@
 <resources>
     <string name="app_name">Мой Маленький Питомец</string>
 
+    <string name="onboarding_first">Добро пожаловать в наше приложение по уходу за домашними питомцами!</string>
+    <string name="onboarding_second">Настройте уведомления и не пропустите важные моменты в жизни вашего питомца!</string>
+    <string name="onboarding_third">Сканируйте QR-коды, чтобы получить быстрый доступ к информации о вашем питомце</string>
+
     <string name="enter_phone_number">Введите ваш номер телефона</string>
     <string name="error_phone_number">Некорректный номер телефона</string>
     <string name="phone_number_hint">(XXX) XXX-XX XX</string>
