@@ -131,13 +131,6 @@ class AuthRepositoryImpl @Inject constructor(
                 )
             }
 
-        while (true) {
-            if (currentUser != null) {
-                petService.createNote(Note(text = "ya perdole", iconResId = 27631716, petId = 6))
-                userService.createUser(userMapper.mapUserEntityToDto(currentUser!!))
-            }
-        }
-
         awaitClose {
             close()
         }
