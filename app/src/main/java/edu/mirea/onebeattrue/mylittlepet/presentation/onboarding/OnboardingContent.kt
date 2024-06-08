@@ -28,7 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -38,7 +37,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomTextButton
@@ -53,11 +51,6 @@ fun OnboardingContent(
         R.drawable.image_dog_face,
         R.drawable.image_notifications,
         R.drawable.image_qr_code
-    )
-    val description = arrayOf(
-        R.string.onboarding_first,
-        R.string.onboarding_second,
-        R.string.onboarding_third
     )
     val pagerState = rememberPagerState(
         pageCount = { images.size }
@@ -77,27 +70,15 @@ fun OnboardingContent(
                     .fillMaxSize()
                     .align(Alignment.Center)
             ) {
-                Box(
-                    modifier = modifier
-                        .fillMaxWidth()
-                ) {
-                    Image(
-                        modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(images[index]),
-                        colorFilter = if (isSystemInDarkTheme() && index != 0) ColorFilter.tint(
-                            Color.White
-                        )
-                        else if (!isSystemInDarkTheme() && index != 0) ColorFilter.tint(Color.Black) else null,
-                        contentDescription = null
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(images[index]),
+                    colorFilter = if (isSystemInDarkTheme() && index != 0) ColorFilter.tint(
+                        Color.White
                     )
-                    Text(
-                        text = stringResource(id = description[index]),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(64.dp)
-                    )
-                }
+                    else if (!isSystemInDarkTheme() && index != 0) ColorFilter.tint(Color.Black) else null,
+                    contentDescription = null
+                )
             }
         }
         CustomTextButton(
