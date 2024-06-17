@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel
+package edu.mirea.onebeattrue.mylittlepet.data.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -11,7 +11,7 @@ data class PetDbModel(
 
     val type: PetType,
     val name: String,
-    val image: ByteArray?,
+    val imageBase64: String?,
     val dateOfBirth: Long?,
     val weight: Float?
 )

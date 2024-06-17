@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.data.auth
+package edu.mirea.onebeattrue.mylittlepet.data.repository
 
 import android.app.Activity
 import android.util.Log
@@ -9,6 +9,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import edu.mirea.onebeattrue.mylittlepet.R
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.AuthExceptionMapper
 import edu.mirea.onebeattrue.mylittlepet.di.ApplicationScope
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository

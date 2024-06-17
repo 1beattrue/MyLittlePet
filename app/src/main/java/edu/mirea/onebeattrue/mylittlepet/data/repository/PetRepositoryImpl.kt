@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.data.pets.repository
+package edu.mirea.onebeattrue.mylittlepet.data.repository
 
 import android.graphics.Bitmap
 import com.google.gson.Gson
@@ -6,8 +6,8 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
-import edu.mirea.onebeattrue.mylittlepet.data.pets.PetListDao
-import edu.mirea.onebeattrue.mylittlepet.data.pets.PetMapper
+import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.PetMapper
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet

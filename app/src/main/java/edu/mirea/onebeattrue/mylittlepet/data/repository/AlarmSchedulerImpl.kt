@@ -1,10 +1,11 @@
-package edu.mirea.onebeattrue.mylittlepet.data.pets
+package edu.mirea.onebeattrue.mylittlepet.data.repository
 
 import android.app.AlarmManager
 import android.app.Application
 import android.app.PendingIntent
 import android.content.Intent
 import android.util.Log
+import edu.mirea.onebeattrue.mylittlepet.data.utils.AlarmReceiver
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import javax.inject.Inject

@@ -2,12 +2,11 @@ package edu.mirea.onebeattrue.mylittlepet.extensions
 
 import android.content.Context
 import android.net.Uri
+import android.util.Base64
 import androidx.core.net.toUri
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
 
 object ImageUtils {
 
@@ -30,10 +29,11 @@ object ImageUtils {
 
     fun saveImageToInternalStorage(
         context: Context,
-        imageBytes: ByteArray,
+        base64String: String,
         uniqueId: Int = 0
     ): Uri {
         return try {
+            val imageBytes = Base64.decode(base64String, Base64.DEFAULT)
             val fileName = "${System.currentTimeMillis()}_${uniqueId}.jpg"
             val file = File(context.filesDir, fileName)
 
@@ -48,22 +48,15 @@ object ImageUtils {
         }
     }
 
-    fun uriToByteArray(context: Context, uri: Uri): ByteArray? {
-        var inputStream: InputStream? = null
+    fun uriToBase64(context: Context, uri: Uri): String? {
         return try {
-            inputStream = context.contentResolver.openInputStream(uri)
-            val byteBuffer = ByteArrayOutputStream()
-            val buffer = ByteArray(1024)
-            var len: Int
-            while (inputStream!!.read(buffer).also { len = it } != -1) {
-                byteBuffer.write(buffer, 0, len)
-            }
-            byteBuffer.toByteArray()
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val bytes = inputStream?.readBytes()
+            inputStream?.close()
+            bytes?.let { Base64.encodeToString(it, Base64.DEFAULT) }
         } catch (e: Exception) {
             e.printStackTrace()
             null
-        } finally {
-            inputStream?.close()
         }
     }
 }

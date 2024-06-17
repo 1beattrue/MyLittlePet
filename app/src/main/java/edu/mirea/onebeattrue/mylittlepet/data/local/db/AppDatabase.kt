@@ -1,14 +1,13 @@
-package edu.mirea.onebeattrue.mylittlepet.data.database
+package edu.mirea.onebeattrue.mylittlepet.data.local.db
 
 import android.app.Application
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import edu.mirea.onebeattrue.mylittlepet.data.pets.PetListDao
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.EventDbModel
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.MedicalDataDbModel
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.NoteDbModel
-import edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel.PetDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.EventDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.MedicalDataDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.NoteDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.local.model.PetDbModel
 
 @Database(
     entities = [

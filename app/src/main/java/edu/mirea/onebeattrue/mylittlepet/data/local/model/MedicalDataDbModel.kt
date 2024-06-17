@@ -1,4 +1,4 @@
-package edu.mirea.onebeattrue.mylittlepet.data.pets.dbmodel
+package edu.mirea.onebeattrue.mylittlepet.data.local.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -20,6 +20,6 @@ data class MedicalDataDbModel(
     val petId: Int,
 
     val type: MedicalDataType,
-    val image: ByteArray?,
+    val imageBase64: String?,
     val text: String
 )
