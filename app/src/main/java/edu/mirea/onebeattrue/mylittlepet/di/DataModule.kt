@@ -6,7 +6,10 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.AppDatabase
-import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
+import edu.mirea.onebeattrue.mylittlepet.data.local.db.EventDao
+import edu.mirea.onebeattrue.mylittlepet.data.local.db.MedicalDataDao
+import edu.mirea.onebeattrue.mylittlepet.data.local.db.NoteDao
+import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetDao
 import edu.mirea.onebeattrue.mylittlepet.data.network.api.ApiFactory
 import edu.mirea.onebeattrue.mylittlepet.data.network.api.EventApiService
 import edu.mirea.onebeattrue.mylittlepet.data.network.api.MedicalDataApiService
@@ -65,9 +68,24 @@ interface DataModule {
         fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
         @[Provides ApplicationScope]
-        fun providePetListDao(
+        fun providePetDao(
             application: Application
-        ): PetListDao = AppDatabase.getInstance(application).petListDao()
+        ): PetDao = AppDatabase.getInstance(application).petDao()
+
+        @[Provides ApplicationScope]
+        fun provideEventDao(
+            application: Application
+        ): EventDao = AppDatabase.getInstance(application).eventDao()
+
+        @[Provides ApplicationScope]
+        fun provideNoteDao(
+            application: Application
+        ): NoteDao = AppDatabase.getInstance(application).noteDao()
+
+        @[Provides ApplicationScope]
+        fun provideMedicalDataDao(
+            application: Application
+        ): MedicalDataDao = AppDatabase.getInstance(application).medicalDataDao()
 
         @[Provides ApplicationScope]
         fun provideAlarmScheduler(

@@ -18,7 +18,10 @@ import edu.mirea.onebeattrue.mylittlepet.data.local.model.PetDbModel
     ], version = 1, exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun petListDao(): PetListDao
+    abstract fun petDao(): PetDao
+    abstract fun eventDao(): EventDao
+    abstract fun noteDao(): NoteDao
+    abstract fun medicalDataDao(): MedicalDataDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null

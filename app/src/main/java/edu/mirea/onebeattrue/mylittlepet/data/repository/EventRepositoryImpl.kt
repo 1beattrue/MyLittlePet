@@ -1,6 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.data.repository
 
-import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
+import edu.mirea.onebeattrue.mylittlepet.data.local.db.EventDao
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelListToEntities
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDbModel
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class EventRepositoryImpl @Inject constructor(
-    private val petListDao: PetListDao,
+    private val petListDao: EventDao,
     private val alarmScheduler: AlarmScheduler
 ) : EventRepository {
     override suspend fun addEvent(event: Event) {

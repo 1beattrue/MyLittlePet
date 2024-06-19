@@ -1,6 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.data.repository
 
-import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
+import edu.mirea.onebeattrue.mylittlepet.data.local.db.MedicalDataDao
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.ImageMapper
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelListToEntities
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDbModel
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class MedicalDataRepositoryImpl @Inject constructor(
-    private val petListDao: PetListDao,
+    private val petListDao: MedicalDataDao,
     private val imageMapper: ImageMapper
 ) : MedicalDataRepository {
 

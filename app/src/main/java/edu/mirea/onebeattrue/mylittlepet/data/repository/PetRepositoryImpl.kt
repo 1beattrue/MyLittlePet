@@ -6,7 +6,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
-import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
+import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetDao
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.ImageMapper
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelListToEntities
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelToEntity
@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class PetRepositoryImpl @Inject constructor(
-    private val petListDao: PetListDao,
+    private val petListDao: PetDao,
     private val alarmScheduler: AlarmScheduler,
     private val imageMapper: ImageMapper
 ) : PetRepository {

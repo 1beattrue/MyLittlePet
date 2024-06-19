@@ -1,6 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.data.repository
 
-import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
+import edu.mirea.onebeattrue.mylittlepet.data.local.db.NoteDao
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelListToEntities
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDbModel
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class NoteRepositoryImpl @Inject constructor(
-    private val petListDao: PetListDao,
+    private val petListDao: NoteDao,
 ) : NoteRepository {
     override suspend fun addNote(note: Note) {
         petListDao.addNote(note.mapEntityToDbModel())
