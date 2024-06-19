@@ -1,7 +1,9 @@
 package edu.mirea.onebeattrue.mylittlepet.data.repository
 
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
-import edu.mirea.onebeattrue.mylittlepet.data.mapper.PetMapper
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.ImageMapper
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelListToEntities
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDbModel
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalData
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.repository.MedicalDataRepository
 import kotlinx.coroutines.flow.Flow
@@ -10,11 +12,11 @@ import javax.inject.Inject
 
 class MedicalDataRepositoryImpl @Inject constructor(
     private val petListDao: PetListDao,
-    private val mapper: PetMapper
+    private val imageMapper: ImageMapper
 ) : MedicalDataRepository {
 
     override suspend fun addMedicalData(medicalData: MedicalData) {
-        petListDao.addMedicalData(mapper.mapMedicalDataEntityToDbModel(medicalData))
+        petListDao.addMedicalData(medicalData.mapEntityToDbModel(imageMapper))
     }
 
     override suspend fun deleteMedicalData(medicalData: MedicalData) {
@@ -25,8 +27,8 @@ class MedicalDataRepositoryImpl @Inject constructor(
     }
 
     override fun getMedicalDataList(petId: Int): Flow<List<MedicalData>> =
-        petListDao.getMedicalDataList(petId).map { listDbModel ->
-            listDbModel.map { mapper.mapMedicalDataDbModelToEntity(it) }
+        petListDao.getMedicalDataList(petId).map {
+            it.mapDbModelListToEntities(imageMapper)
         }
 
 }

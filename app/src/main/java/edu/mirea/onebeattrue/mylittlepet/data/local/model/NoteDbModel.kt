@@ -8,13 +8,13 @@ import androidx.room.PrimaryKey
     tableName = "notes",
     foreignKeys = [ForeignKey(
         entity = PetDbModel::class,
-        parentColumns = ["id"],
-        childColumns = ["petId"],
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("petId"),
         onDelete = ForeignKey.CASCADE
     )]
 )
 data class NoteDbModel(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Int,
     val petId: Int,
 

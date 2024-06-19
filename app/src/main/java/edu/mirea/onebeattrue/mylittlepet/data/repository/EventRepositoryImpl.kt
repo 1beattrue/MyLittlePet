@@ -1,7 +1,8 @@
 package edu.mirea.onebeattrue.mylittlepet.data.repository
 
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
-import edu.mirea.onebeattrue.mylittlepet.data.mapper.PetMapper
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelListToEntities
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDbModel
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
@@ -12,11 +13,10 @@ import javax.inject.Inject
 
 class EventRepositoryImpl @Inject constructor(
     private val petListDao: PetListDao,
-    private val mapper: PetMapper,
     private val alarmScheduler: AlarmScheduler
 ) : EventRepository {
     override suspend fun addEvent(event: Event) {
-        petListDao.addEvent(mapper.mapEventEntityToDbModel(event))
+        petListDao.addEvent(event.mapEntityToDbModel())
     }
 
     override suspend fun deleteEvent(petName: String, event: Event) {
@@ -37,7 +37,7 @@ class EventRepositoryImpl @Inject constructor(
 
     override fun getEventList(petId: Int): Flow<List<Event>> =
         petListDao.getEventList(petId).map { listDbModel ->
-            listDbModel.map { mapper.mapEventDbModelToEntity(it) }
+            listDbModel.mapDbModelListToEntities()
         }
 
 }

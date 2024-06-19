@@ -9,13 +9,13 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.MedicalDataType
     tableName = "medical_data",
     foreignKeys = [ForeignKey(
         entity = PetDbModel::class,
-        parentColumns = ["id"],
-        childColumns = ["petId"],
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("petId"),
         onDelete = ForeignKey.CASCADE
     )]
 )
 data class MedicalDataDbModel(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Int,
     val petId: Int,
 

@@ -6,9 +6,8 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 
 @Entity(tableName = "pets")
 data class PetDbModel(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Int,
-
     val type: PetType,
     val name: String,
     val imageBase64: String?,

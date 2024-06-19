@@ -54,6 +54,13 @@ android {
 }
 
 dependencies {
+
+    val retrofitVersion = "2.11.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+    val okHttpVersion = "4.11.0"
+    implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
+
     val cameraxVersion = "1.4.0-beta02"
     implementation("androidx.camera:camera-core:$cameraxVersion")
     implementation("androidx.camera:camera-camera2:$cameraxVersion")
@@ -67,7 +74,7 @@ dependencies {
 
     val dataStoreVersion = "1.1.1"
     implementation("androidx.datastore:datastore-preferences:$dataStoreVersion")
-    
+
     val accompanistVersion = "0.35.1-alpha"
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
 

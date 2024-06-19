@@ -7,7 +7,10 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
-import edu.mirea.onebeattrue.mylittlepet.data.mapper.PetMapper
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.ImageMapper
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelListToEntities
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelToEntity
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDbModel
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
@@ -20,14 +23,14 @@ import javax.inject.Inject
 
 class PetRepositoryImpl @Inject constructor(
     private val petListDao: PetListDao,
-    private val mapper: PetMapper,
-    private val alarmScheduler: AlarmScheduler
+    private val alarmScheduler: AlarmScheduler,
+    private val imageMapper: ImageMapper
 ) : PetRepository {
 
     private val lastPetScanned = MutableStateFlow<Pet?>(null)
 
     override suspend fun addPet(pet: Pet) {
-        petListDao.addPet(mapper.mapPetEntityToDbModel(pet))
+        petListDao.addPet(pet.mapEntityToDbModel(imageMapper))
     }
 
     override suspend fun deletePet(pet: Pet) {
@@ -46,15 +49,15 @@ class PetRepositoryImpl @Inject constructor(
     }
 
     override suspend fun editPet(pet: Pet) {
-        petListDao.updatePet(mapper.mapPetEntityToDbModel(pet))
+        petListDao.updatePet(pet.mapEntityToDbModel(imageMapper))
     }
 
     override fun getPetList(): Flow<List<Pet>> = petListDao.getPetList().map {
-        mapper.mapListDbModelToListEntity(it)
+        it.mapDbModelListToEntities(imageMapper)
     }
 
     override fun getPetById(petId: Int): Flow<Pet> = petListDao.getPetById(petId).map {
-        mapper.mapPetDbModelToEntity(it)
+        it.mapDbModelToEntity(imageMapper)
     }
 
     override suspend fun generateQrCode(pet: Pet): Bitmap {

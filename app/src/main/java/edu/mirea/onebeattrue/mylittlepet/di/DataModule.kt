@@ -5,10 +5,16 @@ import com.google.firebase.auth.FirebaseAuth
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import edu.mirea.onebeattrue.mylittlepet.data.repository.AuthRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.AppDatabase
-import edu.mirea.onebeattrue.mylittlepet.data.repository.AlarmSchedulerImpl
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetListDao
+import edu.mirea.onebeattrue.mylittlepet.data.network.api.ApiFactory
+import edu.mirea.onebeattrue.mylittlepet.data.network.api.EventApiService
+import edu.mirea.onebeattrue.mylittlepet.data.network.api.MedicalDataApiService
+import edu.mirea.onebeattrue.mylittlepet.data.network.api.NoteApiService
+import edu.mirea.onebeattrue.mylittlepet.data.network.api.PetApiService
+import edu.mirea.onebeattrue.mylittlepet.data.network.api.UserApiService
+import edu.mirea.onebeattrue.mylittlepet.data.repository.AlarmSchedulerImpl
+import edu.mirea.onebeattrue.mylittlepet.data.repository.AuthRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.data.repository.EventRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.data.repository.MedicalDataRepositoryImpl
 import edu.mirea.onebeattrue.mylittlepet.data.repository.NoteRepositoryImpl
@@ -23,39 +29,47 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.repository.PetRepository
 @Module
 interface DataModule {
 
-    @ApplicationScope
-    @Binds
+    @[Binds ApplicationScope]
     fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
 
-    @ApplicationScope
-    @Binds
+    @[Binds ApplicationScope]
     fun bindPetRepository(impl: PetRepositoryImpl): PetRepository
 
-    @ApplicationScope
-    @Binds
+    @[Binds ApplicationScope]
     fun bindEventRepository(impl: EventRepositoryImpl): EventRepository
 
-    @ApplicationScope
-    @Binds
+    @[Binds ApplicationScope]
     fun bindNoteRepository(impl: NoteRepositoryImpl): NoteRepository
 
-    @ApplicationScope
-    @Binds
+    @[Binds ApplicationScope]
     fun bindMedicalDataRepository(impl: MedicalDataRepositoryImpl): MedicalDataRepository
 
     companion object {
-        @ApplicationScope
-        @Provides
+
+        @[Provides ApplicationScope]
+        fun provideUserApiService(): UserApiService = ApiFactory.userApiService
+
+        @[Provides ApplicationScope]
+        fun providePetApiService(): PetApiService = ApiFactory.petApiService
+
+        @[Provides ApplicationScope]
+        fun provideEventApiService(): EventApiService = ApiFactory.eventApiService
+
+        @[Provides ApplicationScope]
+        fun provideNoteApiService(): NoteApiService = ApiFactory.noteApiService
+
+        @[Provides ApplicationScope]
+        fun provideMedicalDataApiService(): MedicalDataApiService = ApiFactory.medicalDataApiService
+
+        @[Provides ApplicationScope]
         fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
-        @ApplicationScope
-        @Provides
+        @[Provides ApplicationScope]
         fun providePetListDao(
             application: Application
         ): PetListDao = AppDatabase.getInstance(application).petListDao()
 
-        @ApplicationScope
-        @Provides
+        @[Provides ApplicationScope]
         fun provideAlarmScheduler(
             application: Application
         ): AlarmScheduler = AlarmSchedulerImpl(application)

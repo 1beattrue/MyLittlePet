@@ -8,13 +8,13 @@ import androidx.room.PrimaryKey
     tableName = "events",
     foreignKeys = [ForeignKey(
         entity = PetDbModel::class,
-        parentColumns = ["id"],
-        childColumns = ["petId"],
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("petId"),
         onDelete = ForeignKey.CASCADE
     )]
 )
 data class EventDbModel(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Int,
     val petId: Int,
 
