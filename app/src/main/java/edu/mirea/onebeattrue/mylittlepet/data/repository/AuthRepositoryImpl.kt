@@ -9,7 +9,9 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import edu.mirea.onebeattrue.mylittlepet.R
-import edu.mirea.onebeattrue.mylittlepet.data.mapper.AuthExceptionMapper
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.FirebaseExceptionMapper
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDto
+import edu.mirea.onebeattrue.mylittlepet.data.network.api.UserApiService
 import edu.mirea.onebeattrue.mylittlepet.di.ApplicationScope
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.AuthState
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
@@ -24,7 +26,8 @@ import javax.inject.Inject
 @ApplicationScope
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val authExceptionMapper: AuthExceptionMapper
+    private val firebaseExceptionMapper: FirebaseExceptionMapper,
+    private val userApiService: UserApiService
 ) : AuthRepository {
     override val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
@@ -66,7 +69,13 @@ class AuthRepositoryImpl @Inject constructor(
             override fun onVerificationFailed(e: FirebaseException) {
                 Log.d("AuthRepositoryImpl", "$e")
 
-                trySend(AuthState.Failure(authExceptionMapper.mapFirebaseExceptionToAuthException(e)))
+                trySend(
+                    AuthState.Failure(
+                        firebaseExceptionMapper.mapFirebaseExceptionToAuthException(
+                            e
+                        )
+                    )
+                )
             }
 
             override fun onCodeSent(code: String, token: PhoneAuthProvider.ForceResendingToken) {
@@ -114,7 +123,7 @@ class AuthRepositoryImpl @Inject constructor(
             .addOnFailureListener {
                 trySend(
                     AuthState.Failure(
-                        authExceptionMapper.mapFirebaseExceptionToAuthException(
+                        firebaseExceptionMapper.mapFirebaseExceptionToAuthException(
                             it
                         )
                     )
@@ -134,6 +143,14 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun signOut() {
         firebaseAuth.signOut()
+    }
+
+    override suspend fun synchronizeWithServer() {
+        try {
+            userApiService.getUserByToken(currentUser!!.mapEntityToDto().token)
+        } catch (_: Exception) {
+            userApiService.createUser(currentUser!!.mapEntityToDto())
+        }
     }
 
     companion object {

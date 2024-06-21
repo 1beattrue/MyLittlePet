@@ -5,13 +5,18 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.usecase.SynchronizeUserWithServerUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.DeletePetUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GetPetListUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.SynchronizePetsWithServerUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListStore.State
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface PetListStore : Store<Intent, State, Label> {
@@ -21,10 +26,12 @@ interface PetListStore : Store<Intent, State, Label> {
         data class EditPet(val pet: Pet) : Intent
         data class DeletePet(val pet: Pet) : Intent
         data class OpenDetails(val pet: Pet) : Intent
+        data object Synchronize : Intent
     }
 
     data class State(
-        val screenState: ScreenState
+        val screenState: ScreenState,
+        val isSyncError: Boolean
     ) {
         sealed interface ScreenState {
             data object Empty : ScreenState
@@ -43,14 +50,17 @@ interface PetListStore : Store<Intent, State, Label> {
 class PetListStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val getPetListUseCase: GetPetListUseCase,
-    private val deletePetUseCase: DeletePetUseCase
+    private val deletePetUseCase: DeletePetUseCase,
+    private val synchronizeUserWithServerUseCase: SynchronizeUserWithServerUseCase,
+    private val synchronizePetsWithServerUseCase: SynchronizePetsWithServerUseCase
 ) {
 
     fun create(): PetListStore =
         object : PetListStore, Store<Intent, State, Label> by storeFactory.create(
             name = STORE_NAME,
             initialState = State(
-                screenState = State.ScreenState.Loading
+                screenState = State.ScreenState.Loading,
+                isSyncError = false
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -60,20 +70,32 @@ class PetListStoreFactory @Inject constructor(
     private sealed interface Action {
         data object Loading : Action
         data class PetListLoaded(val petList: List<Pet>) : Action
+        data class SyncResult(val isError: Boolean) : Action
     }
 
     private sealed interface Msg {
         data object Loading : Msg
         data object Empty : Msg
         data class PetListUpdated(val petList: List<Pet>) : Msg
+        data class SyncResult(val isError: Boolean) : Msg
     }
 
     private inner class BootstrapperImpl : CoroutineBootstrapper<Action>() {
         override fun invoke() {
             scope.launch {
                 dispatch(Action.Loading)
-                getPetListUseCase().collect { petList ->
-                    dispatch(Action.PetListLoaded(petList = petList))
+                try {
+                    withContext(Dispatchers.IO) {
+                        synchronizeUserWithServerUseCase()
+                        synchronizePetsWithServerUseCase()
+                    }
+                    dispatch(Action.SyncResult(isError = false))
+                } catch (_: Exception) {
+                    dispatch(Action.SyncResult(isError = true))
+                } finally {
+                    getPetListUseCase().collect { petList ->
+                        dispatch(Action.PetListLoaded(petList = petList))
+                    }
                 }
             }
         }
@@ -99,6 +121,21 @@ class PetListStoreFactory @Inject constructor(
                 is Intent.OpenDetails -> {
                     publish(Label.OpenDetails(intent.pet))
                 }
+
+                Intent.Synchronize -> {
+                    scope.launch {
+                        dispatch(Msg.Loading)
+                        try {
+                            withContext(Dispatchers.IO) {
+                                synchronizeUserWithServerUseCase()
+                                synchronizePetsWithServerUseCase()
+                            }
+                            dispatch(Msg.SyncResult(isError = false))
+                        } catch (_: Exception) {
+                            dispatch(Msg.PetListUpdated(getPetListUseCase().first()))
+                        }
+                    }
+                }
             }
         }
 
@@ -115,6 +152,10 @@ class PetListStoreFactory @Inject constructor(
                 Action.Loading -> {
                     dispatch(Msg.Loading)
                 }
+
+                is Action.SyncResult -> {
+                    dispatch(Msg.SyncResult(action.isError))
+                }
             }
         }
     }
@@ -125,6 +166,7 @@ class PetListStoreFactory @Inject constructor(
                 is Msg.PetListUpdated -> copy(screenState = State.ScreenState.Loaded(msg.petList))
                 Msg.Loading -> copy(screenState = State.ScreenState.Loading)
                 Msg.Empty -> copy(screenState = State.ScreenState.Empty)
+                is Msg.SyncResult -> copy(isSyncError = msg.isError)
             }
     }
 

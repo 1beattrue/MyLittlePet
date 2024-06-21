@@ -65,6 +65,10 @@ class DefaultPetListComponent @AssistedInject constructor(
         store.accept(PetListStore.Intent.OpenDetails(pet))
     }
 
+    override fun synchronize() {
+        store.accept(PetListStore.Intent.Synchronize)
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(

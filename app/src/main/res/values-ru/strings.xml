@@ -199,4 +199,6 @@
     <string name="empty_medical_data">Медицинские данные не добавлены</string>
     <string name="add_pet">Добавить питомца</string>
     <string name="successfully_added">Успешно добавлен</string>
+    <string name="synchronization_error">Ошибка синхронизации</string>
+    <string name="retry">Повторить попытку</string>
 </resources>

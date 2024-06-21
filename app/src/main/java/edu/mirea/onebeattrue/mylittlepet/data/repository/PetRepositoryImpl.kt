@@ -10,7 +10,11 @@ import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetDao
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.ImageMapper
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelListToEntities
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelToEntity
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDtoToEntity
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDto
+import edu.mirea.onebeattrue.mylittlepet.data.network.api.PetApiService
+import edu.mirea.onebeattrue.mylittlepet.domain.auth.repository.AuthRepository
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
@@ -24,7 +28,9 @@ import javax.inject.Inject
 class PetRepositoryImpl @Inject constructor(
     private val petListDao: PetDao,
     private val alarmScheduler: AlarmScheduler,
-    private val imageMapper: ImageMapper
+    private val imageMapper: ImageMapper,
+    private val petApiService: PetApiService,
+    private val authRepository: AuthRepository
 ) : PetRepository {
 
     private val lastPetScanned = MutableStateFlow<Pet?>(null)
@@ -77,6 +83,17 @@ class PetRepositoryImpl @Inject constructor(
     }
 
     override fun getLastPetScanned(): Flow<Pet?> = lastPetScanned.asStateFlow()
+
+    override suspend fun synchronizeWithServer() {
+        val userToken = authRepository.currentUser?.mapEntityToDto()?.token
+            ?: throw RuntimeException("User == null")
+
+        val petDtoList = petApiService.getPetsByUserToken(userToken)
+
+        petDtoList.forEach { petDto ->
+            addPet(petDto.mapDtoToEntity(imageMapper))
+        }
+    }
 
 
     companion object {

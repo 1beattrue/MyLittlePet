@@ -12,7 +12,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.TooManyRequestsAuthE
 import edu.mirea.onebeattrue.mylittlepet.domain.auth.entity.UnknownAuthException
 import javax.inject.Inject
 
-class AuthExceptionMapper @Inject constructor(
+class FirebaseExceptionMapper @Inject constructor(
     private val application: Application
 ) {
     fun mapFirebaseExceptionToAuthException(exception: Exception): Exception {

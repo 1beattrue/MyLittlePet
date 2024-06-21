@@ -8,7 +8,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface UserApiService {
-    @POST("users")
+    @POST("users/create")
     suspend fun createUser(@Body user: UserDto): UserDto
 
     @GET("users/{token}")

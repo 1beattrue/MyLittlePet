@@ -10,4 +10,5 @@ interface PetListComponent {
     fun editPet(pet: Pet)
     fun deletePet(pet: Pet)
     fun openDetails(pet: Pet)
+    fun synchronize()
 }

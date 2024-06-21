@@ -10,7 +10,7 @@ object ApiFactory {
     private const val BASE_URL = "https://mylittlepetserver.onrender.com/api/v1/"
 
     private val interceptor = HttpLoggingInterceptor().apply {
-        setLevel(HttpLoggingInterceptor.Level.BASIC)
+        setLevel(HttpLoggingInterceptor.Level.BODY)
     }
 
     private val okHttpClient = OkHttpClient.Builder()

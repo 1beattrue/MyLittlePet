@@ -201,4 +201,6 @@
     <string name="empty_medical_data">No medical data added</string>
     <string name="add_pet">Add a pet</string>
     <string name="successfully_added">Successfully added</string>
+    <string name="synchronization_error">Synchronization error</string>
+    <string name="retry">Retry</string>
 </resources>

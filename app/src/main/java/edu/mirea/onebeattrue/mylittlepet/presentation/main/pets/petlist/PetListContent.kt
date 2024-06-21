@@ -61,6 +61,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCardWithRetryButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MENU_ITEM_PADDING
@@ -114,6 +115,14 @@ fun PetListContent(
                 }
 
                 is PetListStore.State.ScreenState.Loaded -> {
+                    if (state.isSyncError) {
+                        item {
+                            ErrorCardWithRetryButton(
+                                message = stringResource(R.string.synchronization_error),
+                                onRetryClick = { component.synchronize() }
+                            )
+                        }
+                    }
                     items(items = screenState.petList, key = { it.id }) { pet ->
                         PetCard(
                             modifier = Modifier

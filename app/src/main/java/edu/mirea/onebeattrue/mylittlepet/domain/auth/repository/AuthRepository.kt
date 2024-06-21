@@ -24,4 +24,5 @@ interface AuthRepository {
 
     fun signOut()
 
+    suspend fun synchronizeWithServer()
 }
