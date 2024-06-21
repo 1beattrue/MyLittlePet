@@ -14,7 +14,6 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListS
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListStore.State
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -30,15 +29,10 @@ interface PetListStore : Store<Intent, State, Label> {
     }
 
     data class State(
-        val screenState: ScreenState,
-        val isSyncError: Boolean
-    ) {
-        sealed interface ScreenState {
-            data object Empty : ScreenState
-            data object Loading : ScreenState
-            data class Loaded(val petList: List<Pet>) : ScreenState
-        }
-    }
+        val isLoading: Boolean,
+        val isError: Boolean,
+        val petList: List<Pet>
+    )
 
     sealed interface Label {
         data object AddPet : Label
@@ -59,8 +53,9 @@ class PetListStoreFactory @Inject constructor(
         object : PetListStore, Store<Intent, State, Label> by storeFactory.create(
             name = STORE_NAME,
             initialState = State(
-                screenState = State.ScreenState.Loading,
-                isSyncError = false
+                isLoading = false,
+                isError = false,
+                petList = listOf()
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -75,7 +70,6 @@ class PetListStoreFactory @Inject constructor(
 
     private sealed interface Msg {
         data object Loading : Msg
-        data object Empty : Msg
         data class PetListUpdated(val petList: List<Pet>) : Msg
         data class SyncResult(val isError: Boolean) : Msg
     }
@@ -94,7 +88,11 @@ class PetListStoreFactory @Inject constructor(
                     dispatch(Action.SyncResult(isError = true))
                 } finally {
                     getPetListUseCase().collect { petList ->
-                        dispatch(Action.PetListLoaded(petList = petList))
+                        dispatch(
+                            Action.PetListLoaded(
+                                petList = petList
+                            )
+                        )
                     }
                 }
             }
@@ -132,7 +130,7 @@ class PetListStoreFactory @Inject constructor(
                             }
                             dispatch(Msg.SyncResult(isError = false))
                         } catch (_: Exception) {
-                            dispatch(Msg.PetListUpdated(getPetListUseCase().first()))
+                            dispatch(Msg.SyncResult(isError = true))
                         }
                     }
                 }
@@ -142,11 +140,7 @@ class PetListStoreFactory @Inject constructor(
         override fun executeAction(action: Action, getState: () -> State) {
             when (action) {
                 is Action.PetListLoaded -> {
-                    if (action.petList.isEmpty()) {
-                        dispatch(Msg.Empty)
-                    } else {
-                        dispatch(Msg.PetListUpdated(petList = action.petList))
-                    }
+                    dispatch(Msg.PetListUpdated(petList = action.petList))
                 }
 
                 Action.Loading -> {
@@ -163,10 +157,13 @@ class PetListStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.PetListUpdated -> copy(screenState = State.ScreenState.Loaded(msg.petList))
-                Msg.Loading -> copy(screenState = State.ScreenState.Loading)
-                Msg.Empty -> copy(screenState = State.ScreenState.Empty)
-                is Msg.SyncResult -> copy(isSyncError = msg.isError)
+                is Msg.PetListUpdated -> copy(
+                    isLoading = false,
+                    petList = msg.petList
+                )
+
+                Msg.Loading -> copy(isLoading = true)
+                is Msg.SyncResult -> copy(isError = msg.isError, isLoading = false)
             }
     }
 

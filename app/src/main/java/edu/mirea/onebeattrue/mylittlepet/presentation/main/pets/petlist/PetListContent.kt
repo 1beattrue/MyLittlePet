@@ -3,14 +3,11 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -20,7 +17,6 @@ import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,7 +57,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCardWithRetryButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomPullToRefreshLazyColumn
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MENU_ITEM_PADDING
@@ -98,59 +94,36 @@ fun PetListContent(
             )
         },
     ) { paddingValues ->
-        LazyColumn(
+
+        CustomPullToRefreshLazyColumn(
             modifier = Modifier.padding(paddingValues),
-            contentPadding = PaddingValues(
-                vertical = 16.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            when (val screenState = state.screenState) {
-                PetListStore.State.ScreenState.Empty -> {
-                    item {
-                        AddFirstPetCard {
-                            component.addPet()
-                        }
-                    }
+            items = state.petList,
+            key = { it.id },
+            isRefreshing = state.isLoading,
+            onRefresh = { component.synchronize() },
+            isError = state.isError,
+            errorText = stringResource(R.string.synchronization_error),
+            isEmpty = state.petList.isEmpty(),
+            emptyContent = {
+                AddFirstPetCard {
+                    component.addPet()
                 }
-
-                is PetListStore.State.ScreenState.Loaded -> {
-                    if (state.isSyncError) {
-                        item {
-                            ErrorCardWithRetryButton(
-                                message = stringResource(R.string.synchronization_error),
-                                onRetryClick = { component.synchronize() }
-                            )
-                        }
+            },
+            itemContent = { pet ->
+                PetCard(
+                    modifier = Modifier
+                        .animateItemPlacement(),
+                    pet = pet,
+                    deletePet = { component.deletePet(pet) },
+                    editPet = {
+                        component.editPet(pet)
+                    },
+                    openDetails = {
+                        component.openDetails(pet)
                     }
-                    items(items = screenState.petList, key = { it.id }) { pet ->
-                        PetCard(
-                            modifier = Modifier
-                                .animateItemPlacement(),
-                            pet = pet,
-                            deletePet = { component.deletePet(pet) },
-                            editPet = {
-                                component.editPet(pet)
-                            },
-                            openDetails = {
-                                component.openDetails(pet)
-                            }
-                        )
-                    }
-                }
-
-                PetListStore.State.ScreenState.Loading -> {
-                    item {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                }
+                )
             }
-        }
+        )
     }
 }
 
