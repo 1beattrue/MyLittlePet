@@ -21,7 +21,12 @@ class ImageMapper @Inject constructor(
     suspend fun mapUriToBase64(uriString: String): String? {
         return withContext(Dispatchers.IO) {
             val uri = uriString.toUri()
-            ImageUtils.uriToBase64(application, uri)
+
+            if (uri == Uri.EMPTY) {
+                null
+            } else {
+                ImageUtils.uriToBase64(application, uri)
+            }
         }
     }
 }
