@@ -79,10 +79,7 @@ class PetListStoreFactory @Inject constructor(
             scope.launch {
                 dispatch(Action.Loading)
                 try {
-                    withContext(Dispatchers.IO) {
-                        synchronizeUserWithServerUseCase()
-                        synchronizePetsWithServerUseCase()
-                    }
+                    synchronize()
                     dispatch(Action.SyncResult(isError = false))
                 } catch (_: Exception) {
                     dispatch(Action.SyncResult(isError = true))
@@ -124,10 +121,7 @@ class PetListStoreFactory @Inject constructor(
                     scope.launch {
                         dispatch(Msg.Loading)
                         try {
-                            withContext(Dispatchers.IO) {
-                                synchronizeUserWithServerUseCase()
-                                synchronizePetsWithServerUseCase()
-                            }
+                            synchronize()
                             dispatch(Msg.SyncResult(isError = false))
                         } catch (_: Exception) {
                             dispatch(Msg.SyncResult(isError = true))
@@ -165,6 +159,13 @@ class PetListStoreFactory @Inject constructor(
                 Msg.Loading -> copy(isLoading = true)
                 is Msg.SyncResult -> copy(isError = msg.isError, isLoading = false)
             }
+    }
+
+    private suspend fun synchronize() {
+        withContext(Dispatchers.IO) {
+            synchronizeUserWithServerUseCase()
+            synchronizePetsWithServerUseCase()
+        }
     }
 
     companion object {
