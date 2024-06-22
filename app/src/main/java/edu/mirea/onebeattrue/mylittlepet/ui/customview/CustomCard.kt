@@ -33,6 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -95,6 +97,8 @@ fun ClickableCustomCard(
     onClick: () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
+    val hapticFeedback = LocalHapticFeedback.current
+
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val pressedPadding by remember {
@@ -102,6 +106,9 @@ fun ClickableCustomCard(
     }
 
     LaunchedEffect(pressed) {
+        if (pressed) {
+            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+        }
         pressedPadding.animateTo(
             targetValue = if (pressed) 4f else 0f,
             animationSpec = spring(
