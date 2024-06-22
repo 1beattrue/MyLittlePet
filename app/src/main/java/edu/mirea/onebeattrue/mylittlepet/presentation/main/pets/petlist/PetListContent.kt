@@ -1,13 +1,22 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -17,6 +26,7 @@ import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,10 +42,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -57,10 +69,12 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.PetType
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomPullToRefreshLazyColumn
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomFab
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCardWithRetryButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MENU_ITEM_PADDING
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -69,6 +83,15 @@ fun PetListContent(
     component: PetListComponent
 ) {
     val state by component.model.collectAsState()
+
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    val showButton by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 0
+        }
+    }
 
     Scaffold(
         modifier = modifier,
@@ -93,23 +116,79 @@ fun PetListContent(
                 }
             )
         },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = showButton,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                CustomFab {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(index = 0)
+                    }
+                }
+            }
+        }
     ) { paddingValues ->
 
-        CustomPullToRefreshLazyColumn(
+        LazyColumn(
             modifier = Modifier.padding(paddingValues),
-            items = state.petList,
-            key = { it.id },
-            isRefreshing = state.isLoading,
-            onRefresh = { component.synchronize() },
-            isError = state.isError,
-            errorText = stringResource(R.string.synchronization_error),
-            isEmpty = state.petList.isEmpty(),
-            emptyContent = {
-                AddFirstPetCard {
-                    component.addPet()
+            contentPadding = PaddingValues(
+                top = 16.dp,
+                bottom = 32.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            state = listState
+        ) {
+
+            item {
+                AnimatedVisibility(
+                    modifier = Modifier.animateItemPlacement(),
+                    visible = state.isLoading,
+                    enter = slideInVertically(),
+                    exit = slideOutVertically()
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            },
-            itemContent = { pet ->
+            }
+
+            item {
+                AnimatedVisibility(
+                    modifier = Modifier.animateItemPlacement(),
+                    visible = state.isError,
+                    enter = slideInVertically(),
+                    exit = slideOutVertically()
+                ) {
+                    ErrorCardWithRetryButton(
+                        message = stringResource(R.string.synchronization_error)
+                    ) {
+                        component.synchronize()
+                    }
+                }
+            }
+
+            item {
+                AnimatedVisibility(
+                    modifier = Modifier.animateItemPlacement(),
+                    visible = state.petList.isEmpty(),
+                    enter = slideInVertically(),
+                    exit = slideOutVertically()
+                ) {
+                    AddFirstPetCard {
+                        component.addPet()
+                    }
+                }
+            }
+
+            items(
+                items = state.petList,
+                key = { it.id }
+            ) { pet ->
                 PetCard(
                     modifier = Modifier
                         .animateItemPlacement(),
@@ -123,7 +202,7 @@ fun PetListContent(
                     }
                 )
             }
-        )
+        }
     }
 }
 
