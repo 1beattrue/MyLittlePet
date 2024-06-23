@@ -15,7 +15,9 @@ import edu.mirea.onebeattrue.mylittlepet.extensions.ImageUtils.saveImageToIntern
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image.ImageStore.State
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface ImageStore : Store<Intent, State, Label> {
@@ -27,8 +29,14 @@ interface ImageStore : Store<Intent, State, Label> {
     }
 
     data class State(
-        val imageUri: Uri
-    )
+        val imageUri: Uri,
+        val failure: Failure?
+    ) {
+        sealed interface Failure {
+            data object AddPetFailure : Failure
+            data object EditPetFailure : Failure
+        }
+    }
 
     sealed interface Label {
         data object AddPet : Label
@@ -54,7 +62,8 @@ class ImageStoreFactory @Inject constructor(
                     Uri.EMPTY
                 } else {
                     Uri.parse(pet.imageUri)
-                }
+                },
+                failure = null
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = { ExecutorImpl(petType = petType, petName = petName, pet = pet) },
@@ -66,6 +75,9 @@ class ImageStoreFactory @Inject constructor(
     private sealed interface Msg {
         data class SetPetImage(val imageUri: Uri) : Msg
         data object DeletePetImage : Msg
+
+        data object FailureAddingPet : Msg
+        data object FailureEdditingPet : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -86,23 +98,35 @@ class ImageStoreFactory @Inject constructor(
                         val localUri = saveImageToInternalStorage(application, imageUri)
 
                         if (pet == null) {
-                            addPetUseCase(
-                                Pet(
-                                    type = petType,
-                                    name = petName,
-                                    imageUri = localUri.toString()
-                                )
-                            )
+                            try {
+                                withContext(Dispatchers.IO) {
+                                    addPetUseCase(
+                                        Pet(
+                                            type = petType,
+                                            name = petName,
+                                            imageUri = localUri.toString()
+                                        )
+                                    )
+                                }
+                                publish(Label.AddPet)
+                            } catch (_: Exception) {
+                                dispatch(Msg.FailureAddingPet)
+                            }
                         } else {
-                            editPetUseCase(
-                                pet.copy(
-                                    name = petName,
-                                    imageUri = localUri.toString()
-                                )
-                            )
+                            try {
+                                withContext(Dispatchers.IO) {
+                                    editPetUseCase(
+                                        pet.copy(
+                                            name = petName,
+                                            imageUri = localUri.toString()
+                                        )
+                                    )
+                                }
+                                publish(Label.AddPet)
+                            } catch (_: Exception) {
+                                dispatch(Msg.FailureEdditingPet)
+                            }
                         }
-
-                        publish(Label.AddPet)
                     }
                 }
 
@@ -115,8 +139,23 @@ class ImageStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.SetPetImage -> copy(imageUri = msg.imageUri)
-                Msg.DeletePetImage -> copy(imageUri = Uri.EMPTY)
+                is Msg.SetPetImage -> copy(
+                    imageUri = msg.imageUri,
+                    failure = null
+                )
+
+                Msg.DeletePetImage -> copy(
+                    imageUri = Uri.EMPTY,
+                    failure = null
+                )
+
+                Msg.FailureAddingPet -> copy(
+                    failure = State.Failure.AddPetFailure
+                )
+
+                Msg.FailureEdditingPet -> copy(
+                    failure = State.Failure.EditPetFailure
+                )
             }
     }
 }

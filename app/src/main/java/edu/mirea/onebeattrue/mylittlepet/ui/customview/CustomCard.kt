@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 
@@ -54,6 +55,7 @@ fun CustomCard(
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface
     ),
+    shape: RoundedCornerShape = RoundedCornerShape(CORNER_RADIUS_SURFACE),
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
@@ -64,7 +66,7 @@ fun CustomCard(
                 .fillMaxWidth()
                 .padding(paddingValues),
             colors = cardColors,
-            shape = RoundedCornerShape(CORNER_RADIUS_SURFACE),
+            shape = shape,
             elevation = CardDefaults.cardElevation(
                 defaultElevation = elevation,
             )
@@ -219,7 +221,7 @@ fun CustomCardWithAddButton(
 }
 
 @Composable
-fun ErrorCardWithRetryButton(
+fun ErrorCustomCardWithRetryButton(
     modifier: Modifier = Modifier,
     message: String,
     onRetryClick: () -> Unit
@@ -244,5 +246,28 @@ fun ErrorCardWithRetryButton(
         ) {
             onRetryClick()
         }
+    }
+}
+
+@Composable
+fun ErrorCustomCard(
+    modifier: Modifier = Modifier,
+    message: String
+) {
+    CustomCard(
+        modifier = modifier,
+        elevation = 0.dp,
+        cardColors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer
+        ),
+        innerPadding = PaddingValues(16.dp),
+        paddingValues =  PaddingValues(0.dp),
+        shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER)
+    ) {
+        Text(
+            text = message,
+            textAlign = TextAlign.Center
+        )
     }
 }

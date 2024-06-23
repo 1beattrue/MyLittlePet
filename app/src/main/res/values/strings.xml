@@ -204,4 +204,6 @@
     <string name="synchronization_error">Synchronization error</string>
     <string name="retry">Retry</string>
     <string name="error_deleting_pet">Error deleting pet</string>
+    <string name="error_adding_pet">Error adding pet</string>
+    <string name="error_editing_pet">Error editing pet</string>
 </resources>

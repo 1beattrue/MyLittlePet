@@ -11,7 +11,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -72,7 +71,8 @@ import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomFab
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCardWithRetryButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCard
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCardWithRetryButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MENU_ITEM_PADDING
@@ -167,7 +167,7 @@ fun PetListContent(
                     enter = slideInVertically(),
                     exit = slideOutVertically()
                 ) {
-                    ErrorCardWithRetryButton(
+                    ErrorCustomCardWithRetryButton(
                         message = stringResource(R.string.synchronization_error)
                     ) {
                         component.synchronize()
@@ -419,21 +419,14 @@ private fun PetCard(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            Column(
-                modifier.padding(
+            ErrorCustomCard(
+                modifier = Modifier.padding(
                     start = 32.dp,
                     end = 32.dp,
-                    top = 16.dp,
                     bottom = 32.dp
-                )
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(R.string.error_deleting_pet),
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
+                ),
+                message = stringResource(R.string.error_deleting_pet)
+            )
         }
     }
 

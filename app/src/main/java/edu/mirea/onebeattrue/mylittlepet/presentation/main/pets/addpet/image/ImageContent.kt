@@ -1,8 +1,10 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,12 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomImagePicker
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCard
 
 @Composable
 fun ImageContent(
@@ -61,6 +63,25 @@ fun ImageContent(
                         painter = painterResource(id = component.petType.getImageId()),
                         contentDescription = null
                     )
+                }
+
+                AnimatedVisibility(
+                    visible = state.failure != null,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    state.failure?.let { failure ->
+                        ErrorCustomCard(
+                            message = when (failure) {
+                                ImageStore.State.Failure.AddPetFailure -> {
+                                    stringResource(R.string.error_adding_pet)
+                                }
+                                ImageStore.State.Failure.EditPetFailure -> {
+                                    stringResource(R.string.error_editing_pet)
+                                }
+                            }
+                        )
+                    }
                 }
 
                 CustomReadyButton(onClick = { component.finish() })

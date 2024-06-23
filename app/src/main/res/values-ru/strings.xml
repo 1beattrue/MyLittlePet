@@ -202,4 +202,6 @@
     <string name="synchronization_error">Ошибка синхронизации</string>
     <string name="retry">Повторить попытку</string>
     <string name="error_deleting_pet">Ошибка удаления питомца</string>
+    <string name="error_adding_pet">Ошибка добавления питомца</string>
+    <string name="error_editing_pet">Ошибка изменения питомца</string>
 </resources>
