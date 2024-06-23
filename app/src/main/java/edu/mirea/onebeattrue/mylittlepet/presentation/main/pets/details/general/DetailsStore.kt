@@ -48,12 +48,14 @@ interface DetailsStore : Store<Intent, State, Label> {
         val qrCode: QrCode
     ) {
         data class AgeState(
+            val isError: Boolean,
             val years: Int?,
             val months: Int?,
             val datePickerDialogState: Boolean
         )
 
         data class WeightState(
+            val isError: Boolean,
             val value: Float?,
             val changeableValue: String,
             val isIncorrect: Boolean,
@@ -88,17 +90,20 @@ class DetailsStoreFactory @Inject constructor(
                 age = if (pet.dateOfBirth == null) State.AgeState(
                     years = null,
                     months = null,
-                    datePickerDialogState = false
+                    datePickerDialogState = false,
+                    isError = false
                 ) else State.AgeState(
                     years = pet.dateOfBirth.convertMillisToYearsAndMonths().first,
                     months = pet.dateOfBirth.convertMillisToYearsAndMonths().second,
-                    datePickerDialogState = false
+                    datePickerDialogState = false,
+                    isError = false
                 ),
                 weight = State.WeightState(
                     value = pet.weight,
                     changeableValue = pet.weight?.toString() ?: "",
                     isIncorrect = false,
-                    bottomSheetState = false
+                    bottomSheetState = false,
+                    isError = false
                 ),
                 bottomSheetMustBeClosed = false,
                 qrCode = State.QrCode(
@@ -126,6 +131,9 @@ class DetailsStoreFactory @Inject constructor(
         data object OnIncorrectWeight : Msg
         data class SetWeight(val weight: Float) : Msg
         data object CloseBottomSheet : Msg
+
+        data object EditAgeError : Msg
+        data object EditWeightError : Msg
 
         data class ShowQrCode(
             val bitmap: Bitmap
@@ -162,11 +170,17 @@ class DetailsStoreFactory @Inject constructor(
 
                 Intent.OpenDatePickerDialog -> dispatch(Msg.OpenDatePickerDialog)
                 Intent.CloseDatePickerDialog -> dispatch(Msg.CloseDatePickerDialog)
+
                 is Intent.SetAge -> {
                     scope.launch {
                         val pet = getState().pet
-                        editPetUseCase(pet.copy(dateOfBirth = intent.dateOfBirth))
-                        dispatch(Msg.SetAge(intent.dateOfBirth))
+
+                        try {
+                            editPetUseCase(pet.copy(dateOfBirth = intent.dateOfBirth))
+                            dispatch(Msg.SetAge(intent.dateOfBirth))
+                        } catch (_: Exception) {
+                            dispatch(Msg.EditAgeError)
+                        }
                     }
                 }
 
@@ -184,13 +198,18 @@ class DetailsStoreFactory @Inject constructor(
                 Intent.SetWeight -> {
                     scope.launch {
                         val weight = getState().weight.changeableValue
-                        if (isCorrectWeight(weight)) {
-                            val roundedWeight = roundedWeight(weight.toFloat())
-                            val pet = getState().pet
-                            editPetUseCase(pet.copy(weight = roundedWeight))
-                            dispatch(Msg.SetWeight(roundedWeight))
-                        } else {
-                            dispatch(Msg.OnIncorrectWeight)
+
+                        try {
+                            if (isCorrectWeight(weight)) {
+                                val roundedWeight = roundedWeight(weight.toFloat())
+                                val pet = getState().pet
+                                editPetUseCase(pet.copy(weight = roundedWeight))
+                                dispatch(Msg.SetWeight(roundedWeight))
+                            } else {
+                                dispatch(Msg.OnIncorrectWeight)
+                            }
+                        } catch (_: Exception) {
+                            dispatch(Msg.EditWeightError)
                         }
                     }
                 }
@@ -250,7 +269,8 @@ class DetailsStoreFactory @Inject constructor(
                 is Msg.OnWeightChanged -> copy(
                     weight = weight.copy(
                         changeableValue = msg.weight,
-                        isIncorrect = false
+                        isIncorrect = false,
+                        isError = false
                     )
                 )
 
@@ -262,20 +282,26 @@ class DetailsStoreFactory @Inject constructor(
 
                 is Msg.SetWeight -> copy(
                     weight = weight.copy(
-                        value = msg.weight
+                        value = msg.weight,
+                        isError = false
                     ),
                     bottomSheetMustBeClosed = true
                 )
 
                 Msg.CloseBottomSheet -> copy(
                     bottomSheetMustBeClosed = false,
-                    weight = weight.copy(bottomSheetState = false),
+                    weight = weight.copy(
+                        bottomSheetState = false,
+                        isError = false
+                    ),
                 )
 
                 is Msg.ShowQrCode -> copy(qrCode = State.QrCode(isOpen = true, bitmap = msg.bitmap))
 
                 Msg.HideQrCode -> copy(qrCode = qrCode.copy(isOpen = false, bitmap = null))
                 is Msg.UpdatePet -> copy(pet = msg.pet)
+                Msg.EditAgeError -> copy(age = age.copy(isError = true))
+                Msg.EditWeightError -> copy(weight = weight.copy(isError = true))
             }
     }
 

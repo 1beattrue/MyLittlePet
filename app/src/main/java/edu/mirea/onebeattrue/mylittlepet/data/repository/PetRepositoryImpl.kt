@@ -10,7 +10,7 @@ import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetDao
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.ImageMapper
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelListToEntities
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelToEntity
-import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDtoToEntity
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDtoToDbModel
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDbModel
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDto
 import edu.mirea.onebeattrue.mylittlepet.data.network.api.PetApiService
@@ -67,7 +67,7 @@ class PetRepositoryImpl @Inject constructor(
 
         petApiService.updatePet(pet.id, pet.mapEntityToDto(userToken, imageMapper))
 
-        petListDao.updatePet(pet.mapEntityToDbModel(imageMapper))
+        petListDao.addPet(pet.mapEntityToDbModel(imageMapper))
     }
 
     override fun getPetList(): Flow<List<Pet>> = petListDao.getPetList().map {
@@ -101,7 +101,7 @@ class PetRepositoryImpl @Inject constructor(
         val petDtoList = petApiService.getPetsByUserToken(userToken)
 
         petDtoList.forEach { petDto ->
-            addPet(petDto.mapDtoToEntity(imageMapper))
+            petListDao.addPet(petDto.mapDtoToDbModel())
         }
     }
 

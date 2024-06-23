@@ -3,6 +3,9 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.general
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,6 +68,7 @@ import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
@@ -167,6 +171,7 @@ fun DetailsContent(
 
     CustomDatePickerDialog(
         state = state.age.datePickerDialogState,
+        isError = state.age.isError,
         onDismissRequest = { component.closeDatePickerDialog() },
         onDatePicked = { date ->
             component.setAge(date)
@@ -177,12 +182,13 @@ fun DetailsContent(
         isExpanded = state.weight.bottomSheetState,
         onCloseBottomSheet = { component.onCloseBottomSheetClick() },
         weightInput = state.weight.changeableValue,
-        isError = state.weight.isIncorrect,
+        isIncorrect = state.weight.isIncorrect,
         onChangeWeight = { weight ->
             component.onWeightChanges(weight)
         },
         onSetWeight = { component.setWeight() },
-        mustBeClosed = state.bottomSheetMustBeClosed
+        mustBeClosed = state.bottomSheetMustBeClosed,
+        isError = state.weight.isError
     )
 
     if (state.qrCode.isOpen) {
@@ -289,11 +295,12 @@ private fun MedicalDataListCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WeightBottomSheet(
+    isError: Boolean,
     modifier: Modifier = Modifier,
     isExpanded: Boolean,
     onCloseBottomSheet: () -> Unit,
     weightInput: String,
-    isError: Boolean,
+    isIncorrect: Boolean,
     onChangeWeight: (String) -> Unit,
     onSetWeight: () -> Unit,
     mustBeClosed: Boolean
@@ -330,14 +337,14 @@ private fun WeightBottomSheet(
                     onValueChange = {
                         onChangeWeight(it)
                     },
-                    isError = isError,
+                    isError = isIncorrect,
                     supportingText = {
-                        if (isError) {
+                        if (isIncorrect) {
                             Text(text = stringResource(id = R.string.error_weight))
                         }
                     },
                     trailingIcon = {
-                        if (isError) {
+                        if (isIncorrect) {
                             Icon(
                                 imageVector = Icons.Rounded.Warning,
                                 contentDescription = null
@@ -354,6 +361,16 @@ private fun WeightBottomSheet(
                         Text(stringResource(R.string.weight_suffix))
                     }
                 )
+
+                AnimatedVisibility(
+                    visible = isError,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    ErrorCustomCard(
+                        message = stringResource(R.string.error_editing_pet)
+                    )
+                }
 
                 CustomReadyButton(onClick = {
                     onSetWeight()
@@ -507,41 +524,60 @@ private fun WeightCard(
 @Composable
 private fun CustomDatePickerDialog(
     state: Boolean,
+    isError: Boolean,
     onDismissRequest: () -> Unit,
-    onDatePicked: (Long) -> Unit
+    onDatePicked: (Long) -> Unit,
 ) {
     if (state) {
         val datePickerState = rememberDatePickerState()
         val confirmEnabled by derivedStateOf { datePickerState.selectedDateMillis != null }
 
         MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(surfaceTint = Color.White)) {
-            DatePickerDialog(
-                onDismissRequest = { onDismissRequest() },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            onDatePicked(datePickerState.selectedDateMillis ?: 0)
-                        },
-                        enabled = confirmEnabled
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                item {
+                    AnimatedVisibility(
+                        visible = isError,
+                        enter = fadeIn(),
+                        exit = fadeOut()
                     ) {
-                        Text(text = stringResource(id = R.string.ok))
+                        ErrorCustomCard(
+                            message = stringResource(R.string.error_editing_pet)
+                        )
                     }
                 }
-            ) {
-                DatePicker(
-                    title = {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.titleMedium,
-                            text = stringResource(R.string.date_picker_title),
-                            color = MaterialTheme.colorScheme.primary
+
+                item {
+                    DatePickerDialog(
+                        onDismissRequest = { onDismissRequest() },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    onDatePicked(datePickerState.selectedDateMillis ?: 0)
+                                },
+                                enabled = confirmEnabled
+                            ) {
+                                Text(text = stringResource(id = R.string.ok))
+                            }
+                        }
+                    ) {
+
+                        DatePicker(
+                            title = {
+                                Text(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    text = stringResource(R.string.date_picker_title),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            state = datePickerState
                         )
-                    },
-                    state = datePickerState
-                )
+                    }
+                }
             }
         }
     }

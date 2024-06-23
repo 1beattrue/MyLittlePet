@@ -42,6 +42,15 @@ suspend fun PetDto.mapDtoToEntity(imageMapper: ImageMapper): Pet = Pet(
     weight = weight
 )
 
+fun PetDto.mapDtoToDbModel(): PetDbModel = PetDbModel(
+    id = id,
+    type = type.mapToPetType(),
+    name = name,
+    imageBase64 = imageUrl,
+    dateOfBirth = dateOfBirth,
+    weight = weight
+)
+
 suspend fun List<PetDbModel>.mapDbModelListToEntities(imageMapper: ImageMapper): List<Pet> =
     map { it.mapDbModelToEntity(imageMapper) }
 
