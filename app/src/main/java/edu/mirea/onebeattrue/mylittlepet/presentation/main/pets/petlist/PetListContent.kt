@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -10,6 +11,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -76,6 +78,7 @@ import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.MENU_ITEM_PADDING
 import kotlinx.coroutines.launch
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PetListContent(
@@ -160,7 +163,7 @@ fun PetListContent(
             item {
                 AnimatedVisibility(
                     modifier = Modifier.animateItemPlacement(),
-                    visible = state.isError,
+                    visible = state.syncError,
                     enter = slideInVertically(),
                     exit = slideOutVertically()
                 ) {
@@ -175,7 +178,7 @@ fun PetListContent(
             item {
                 AnimatedVisibility(
                     modifier = Modifier.animateItemPlacement(),
-                    visible = state.petList.isEmpty(),
+                    visible = state.petList.isEmpty() && !state.isLoading,
                     enter = slideInVertically(),
                     exit = slideOutVertically()
                 ) {
@@ -193,6 +196,7 @@ fun PetListContent(
                     modifier = Modifier
                         .animateItemPlacement(),
                     pet = pet,
+                    deleteError = pet.id == state.deletePetErrorId,
                     deletePet = { component.deletePet(pet) },
                     editPet = {
                         component.editPet(pet)
@@ -233,6 +237,7 @@ private fun AddFirstPetCard(
 @Composable
 private fun PetCard(
     modifier: Modifier = Modifier,
+    deleteError: Boolean,
     pet: Pet,
     deletePet: () -> Unit,
     editPet: () -> Unit,
@@ -387,7 +392,7 @@ private fun PetCard(
                 .padding(
                     start = 32.dp,
                     end = 32.dp,
-                    bottom = 32.dp
+                    bottom = if (deleteError) 0.dp else 32.dp
                 )
                 .clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
         ) {
@@ -405,6 +410,28 @@ private fun PetCard(
                         .aspectRatio(1f),
                     model = pet.imageUri,
                     contentDescription = null
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = deleteError,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Column(
+                modifier.padding(
+                    start = 32.dp,
+                    end = 32.dp,
+                    top = 16.dp,
+                    bottom = 32.dp
+                )
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.error_deleting_pet),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.error
                 )
             }
         }

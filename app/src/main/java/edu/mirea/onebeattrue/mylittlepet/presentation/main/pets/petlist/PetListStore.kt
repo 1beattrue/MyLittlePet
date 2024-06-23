@@ -30,7 +30,8 @@ interface PetListStore : Store<Intent, State, Label> {
 
     data class State(
         val isLoading: Boolean,
-        val isError: Boolean,
+        val syncError: Boolean,
+        val deletePetErrorId: Int?,
         val petList: List<Pet>
     )
 
@@ -53,8 +54,9 @@ class PetListStoreFactory @Inject constructor(
         object : PetListStore, Store<Intent, State, Label> by storeFactory.create(
             name = STORE_NAME,
             initialState = State(
-                isLoading = false,
-                isError = false,
+                isLoading = true,
+                syncError = false,
+                deletePetErrorId = null,
                 petList = listOf()
             ),
             bootstrapper = BootstrapperImpl(),
@@ -72,6 +74,7 @@ class PetListStoreFactory @Inject constructor(
         data object Loading : Msg
         data class PetListUpdated(val petList: List<Pet>) : Msg
         data class SyncResult(val isError: Boolean) : Msg
+        data class DeletePetError(val petId: Int) : Msg
     }
 
     private inner class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -105,7 +108,11 @@ class PetListStoreFactory @Inject constructor(
 
                 is Intent.DeletePet -> {
                     scope.launch {
-                        deletePetUseCase(intent.pet)
+                        try {
+                            withContext(Dispatchers.IO) { deletePetUseCase(intent.pet) }
+                        } catch (_: Exception) {
+                            dispatch(Msg.DeletePetError(intent.pet.id))
+                        }
                     }
                 }
 
@@ -153,11 +160,24 @@ class PetListStoreFactory @Inject constructor(
             when (msg) {
                 is Msg.PetListUpdated -> copy(
                     isLoading = false,
-                    petList = msg.petList
+                    petList = msg.petList,
+                    deletePetErrorId = null
                 )
 
-                Msg.Loading -> copy(isLoading = true)
-                is Msg.SyncResult -> copy(isError = msg.isError, isLoading = false)
+                Msg.Loading -> copy(
+                    isLoading = true,
+                    deletePetErrorId = null
+                )
+
+                is Msg.SyncResult -> copy(
+                    syncError = msg.isError,
+                    isLoading = false,
+                    deletePetErrorId = null
+                )
+
+                is Msg.DeletePetError -> copy(
+                    deletePetErrorId = msg.petId
+                )
             }
     }
 

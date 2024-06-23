@@ -40,6 +40,9 @@ class PetRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deletePet(pet: Pet) {
+
+        petApiService.deletePet(pet.id)
+
         pet.eventList.forEach { event ->
             alarmScheduler.cancel(
                 AlarmItem(
