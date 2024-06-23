@@ -34,9 +34,15 @@ class PetRepositoryImpl @Inject constructor(
 ) : PetRepository {
 
     private val lastPetScanned = MutableStateFlow<Pet?>(null)
+    private val userToken: String
+        get() = authRepository.currentUser?.mapEntityToDto()?.token
+            ?: throw RuntimeException("User == null")
 
     override suspend fun addPet(pet: Pet) {
-        petListDao.addPet(pet.mapEntityToDbModel(imageMapper))
+
+        val petId = petApiService.createPet(pet.mapEntityToDto(userToken, imageMapper))
+
+        petListDao.addPet(pet.mapEntityToDbModel(imageMapper).copy(id = petId))
     }
 
     override suspend fun deletePet(pet: Pet) {
@@ -58,6 +64,9 @@ class PetRepositoryImpl @Inject constructor(
     }
 
     override suspend fun editPet(pet: Pet) {
+
+        petApiService.updatePet(pet.id, pet.mapEntityToDto(userToken, imageMapper))
+
         petListDao.updatePet(pet.mapEntityToDbModel(imageMapper))
     }
 
@@ -88,8 +97,6 @@ class PetRepositoryImpl @Inject constructor(
     override fun getLastPetScanned(): Flow<Pet?> = lastPetScanned.asStateFlow()
 
     override suspend fun synchronizeWithServer() {
-        val userToken = authRepository.currentUser?.mapEntityToDto()?.token
-            ?: throw RuntimeException("User == null")
 
         val petDtoList = petApiService.getPetsByUserToken(userToken)
 
@@ -97,7 +104,6 @@ class PetRepositoryImpl @Inject constructor(
             addPet(petDto.mapDtoToEntity(imageMapper))
         }
     }
-
 
     companion object {
         private const val QR_CODE_WIDTH = 1080
