@@ -32,7 +32,8 @@ interface PetListStore : Store<Intent, State, Label> {
         val isLoading: Boolean,
         val syncError: Boolean,
         val deletePetErrorId: Int?,
-        val petList: PetListState
+        val petList: PetListState,
+        val nowDeletingId: Int?
     ) {
         sealed interface PetListState {
             data object Initial : PetListState
@@ -63,7 +64,8 @@ class PetListStoreFactory @Inject constructor(
                 isLoading = true,
                 syncError = false,
                 deletePetErrorId = null,
-                petList = State.PetListState.Initial
+                petList = State.PetListState.Initial,
+                nowDeletingId = null
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -81,6 +83,7 @@ class PetListStoreFactory @Inject constructor(
         data class PetListUpdated(val petList: List<Pet>) : Msg
         data class SyncResult(val isError: Boolean) : Msg
         data class DeletePetError(val petId: Int) : Msg
+        data class DeletingPet(val id: Int) : Msg
     }
 
     private inner class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -115,6 +118,7 @@ class PetListStoreFactory @Inject constructor(
                 is Intent.DeletePet -> {
                     scope.launch {
                         try {
+                            dispatch(Msg.DeletingPet(intent.pet.id))
                             withContext(Dispatchers.IO) { deletePetUseCase(intent.pet) }
                         } catch (_: Exception) {
                             dispatch(Msg.DeletePetError(intent.pet.id))
@@ -173,7 +177,7 @@ class PetListStoreFactory @Inject constructor(
                             msg.petList
                         )
                     },
-                    deletePetErrorId = null
+                    deletePetErrorId = null,
                 )
 
                 Msg.Loading -> copy(
@@ -188,8 +192,11 @@ class PetListStoreFactory @Inject constructor(
                 )
 
                 is Msg.DeletePetError -> copy(
-                    deletePetErrorId = msg.petId
+                    deletePetErrorId = msg.petId,
+                    nowDeletingId = null
                 )
+
+                is Msg.DeletingPet -> copy(nowDeletingId = msg.id)
             }
     }
 

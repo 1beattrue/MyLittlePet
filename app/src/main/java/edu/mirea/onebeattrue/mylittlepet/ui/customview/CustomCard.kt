@@ -89,6 +89,7 @@ private fun Float.formattedPadding(): Float = if (this < 0) 0f else this
 @Composable
 fun ClickableCustomCard(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     elevation: Dp,
     paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp),
     innerPadding: PaddingValues = PaddingValues(32.dp),
@@ -124,6 +125,7 @@ fun ClickableCustomCard(
         colorScheme = MaterialTheme.colorScheme.copy(surfaceTint = Color(0x00FFFFFF))
     ) {
         ElevatedCard(
+            enabled = enabled,
             modifier = modifier
                 .fillMaxWidth()
                 .padding(paddingValues)
@@ -132,7 +134,8 @@ fun ClickableCustomCard(
             shape = RoundedCornerShape(CORNER_RADIUS_SURFACE),
             elevation = CardDefaults.elevatedCardElevation(
                 defaultElevation = elevation,
-                pressedElevation = elevation / 4
+                pressedElevation = elevation / 4,
+                disabledElevation = 0.dp
             ),
             onClick = {
                 onClick()

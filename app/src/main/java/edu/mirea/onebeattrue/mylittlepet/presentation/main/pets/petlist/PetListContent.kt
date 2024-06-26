@@ -187,6 +187,7 @@ fun PetListContent(
                         PetCard(
                             modifier = Modifier
                                 .animateItemPlacement(),
+                            isDeleting = state.nowDeletingId == pet.id,
                             pet = pet,
                             deleteError = pet.id == state.deletePetErrorId,
                             deletePet = { component.deletePet(pet) },
@@ -233,6 +234,7 @@ private fun PetCard(
     modifier: Modifier = Modifier,
     deleteError: Boolean,
     pet: Pet,
+    isDeleting: Boolean,
     deletePet: () -> Unit,
     editPet: () -> Unit,
     openDetails: () -> Unit
@@ -244,7 +246,8 @@ private fun PetCard(
         modifier = modifier,
         elevation = EXTREME_ELEVATION,
         onClick = { openDetails() },
-        innerPadding = PaddingValues(0.dp)
+        innerPadding = PaddingValues(0.dp),
+        enabled = !isDeleting
     ) {
         Box(
             modifier = Modifier
@@ -290,6 +293,7 @@ private fun PetCard(
                     )
             ) {
                 IconButton(
+                    enabled = !isDeleting,
                     modifier = Modifier
                         .align(Alignment.CenterStart),
                     onClick = { expanded = !expanded }
@@ -386,7 +390,7 @@ private fun PetCard(
                 .padding(
                     start = 32.dp,
                     end = 32.dp,
-                    bottom = if (deleteError) 0.dp else 32.dp
+                    bottom = if (deleteError && !isDeleting) 0.dp else 32.dp
                 )
                 .clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
         ) {
@@ -409,7 +413,7 @@ private fun PetCard(
         }
 
         AnimatedVisibility(
-            visible = deleteError,
+            visible = deleteError && !isDeleting,
             enter = fadeIn(),
             exit = fadeOut()
         ) {
