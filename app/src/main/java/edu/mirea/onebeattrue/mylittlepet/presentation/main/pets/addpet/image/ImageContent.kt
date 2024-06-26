@@ -5,8 +5,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +25,7 @@ import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomImagePicker
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomProgressButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCard
 
 @Composable
@@ -66,7 +68,7 @@ fun ImageContent(
                 }
 
                 AnimatedVisibility(
-                    visible = state.failure != null,
+                    visible = state.failure != null && !state.progress,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
@@ -76,6 +78,7 @@ fun ImageContent(
                                 ImageStore.State.Failure.AddPetFailure -> {
                                     stringResource(R.string.error_adding_pet)
                                 }
+
                                 ImageStore.State.Failure.EditPetFailure -> {
                                     stringResource(R.string.error_editing_pet)
                                 }
@@ -84,7 +87,16 @@ fun ImageContent(
                     }
                 }
 
-                CustomReadyButton(onClick = { component.finish() })
+                Box(
+                    modifier = modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    CustomProgressButton(
+                        text = stringResource(R.string.ready),
+                        inProgress = state.progress,
+                        onClick = { component.finish() }
+                    )
+                }
             }
         }
     }

@@ -30,7 +30,8 @@ interface ImageStore : Store<Intent, State, Label> {
 
     data class State(
         val imageUri: Uri,
-        val failure: Failure?
+        val failure: Failure?,
+        val progress: Boolean
     ) {
         sealed interface Failure {
             data object AddPetFailure : Failure
@@ -56,14 +57,15 @@ class ImageStoreFactory @Inject constructor(
         pet: Pet?
     ): ImageStore =
         object : ImageStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "ImageStore",
+            name = STORE_NAME,
             initialState = State(
                 imageUri = if (pet == null) {
                     Uri.EMPTY
                 } else {
                     Uri.parse(pet.imageUri)
                 },
-                failure = null
+                failure = null,
+                progress = false
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = { ExecutorImpl(petType = petType, petName = petName, pet = pet) },
@@ -78,6 +80,8 @@ class ImageStoreFactory @Inject constructor(
 
         data object FailureAddingPet : Msg
         data object FailureEdditingPet : Msg
+
+        data object AddingPet : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -94,6 +98,8 @@ class ImageStoreFactory @Inject constructor(
             when (intent) {
                 Intent.AddPet -> {
                     scope.launch {
+                        dispatch(Msg.AddingPet)
+
                         val imageUri = getState().imageUri
                         val localUri = saveImageToInternalStorage(application, imageUri)
 
@@ -150,12 +156,20 @@ class ImageStoreFactory @Inject constructor(
                 )
 
                 Msg.FailureAddingPet -> copy(
-                    failure = State.Failure.AddPetFailure
+                    failure = State.Failure.AddPetFailure,
+                    progress = false
                 )
 
                 Msg.FailureEdditingPet -> copy(
-                    failure = State.Failure.EditPetFailure
+                    failure = State.Failure.EditPetFailure,
+                    progress = false
                 )
+
+                Msg.AddingPet -> copy(progress = true)
             }
+    }
+
+    companion object {
+        private const val STORE_NAME = "ImageStore"
     }
 }
