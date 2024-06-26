@@ -201,12 +201,11 @@ class DetailsStoreFactory @Inject constructor(
 
                 Intent.SetWeight -> {
                     scope.launch {
-                        dispatch(Msg.Loading)
-
                         val weight = getState().weight.changeableValue
 
                         try {
                             if (isCorrectWeight(weight)) {
+                                dispatch(Msg.Loading)
                                 val roundedWeight = roundedWeight(weight.toFloat())
                                 val pet = getState().pet
                                 editPetUseCase(pet.copy(weight = roundedWeight))

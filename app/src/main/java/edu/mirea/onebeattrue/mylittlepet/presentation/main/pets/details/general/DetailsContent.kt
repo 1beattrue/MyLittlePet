@@ -365,9 +365,7 @@ private fun WeightBottomSheet(
                 )
 
                 AnimatedVisibility(
-                    visible = isError,
-                    enter = fadeIn(),
-                    exit = fadeOut()
+                    visible = isError
                 ) {
                     ErrorCustomCard(
                         message = stringResource(R.string.error_editing_pet)
