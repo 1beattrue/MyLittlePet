@@ -105,8 +105,10 @@ class ProfileStoreFactory @Inject constructor(
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
                 Intent.SignOut -> {
-                    signOutUseCase()
-                    publish(Label.SignOut)
+                    scope.launch {
+                        signOutUseCase()
+                        publish(Label.SignOut)
+                    }
                 }
 
                 Intent.SendEmail -> {

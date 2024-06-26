@@ -9,6 +9,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import edu.mirea.onebeattrue.mylittlepet.R
+import edu.mirea.onebeattrue.mylittlepet.data.local.db.PetDao
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.FirebaseExceptionMapper
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDto
 import edu.mirea.onebeattrue.mylittlepet.data.network.api.UserApiService
@@ -27,7 +28,8 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firebaseExceptionMapper: FirebaseExceptionMapper,
-    private val userApiService: UserApiService
+    private val userApiService: UserApiService,
+    private val petDao: PetDao
 ) : AuthRepository {
     override val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
@@ -141,7 +143,8 @@ class AuthRepositoryImpl @Inject constructor(
             lastActivity!!
         )
 
-    override fun signOut() {
+    override suspend fun signOut() {
+        petDao.deleteAllPets()
         firebaseAuth.signOut()
     }
 

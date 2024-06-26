@@ -20,4 +20,7 @@ interface PetDao {
 
     @Query("SELECT * FROM pets WHERE id = :petId")
     fun getPetById(petId: Int): Flow<PetDbModel>
+
+    @Query("DELETE FROM pets")
+    suspend fun deleteAllPets()
 }

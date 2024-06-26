@@ -22,7 +22,7 @@ interface AuthRepository {
 
     suspend fun resendVerificationCode(): Flow<AuthState>
 
-    fun signOut()
+    suspend fun signOut()
 
     suspend fun synchronizeWithServer()
 }
