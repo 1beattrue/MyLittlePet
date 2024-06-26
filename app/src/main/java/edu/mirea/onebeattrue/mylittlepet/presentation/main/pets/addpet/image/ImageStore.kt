@@ -165,7 +165,7 @@ class ImageStoreFactory @Inject constructor(
                     progress = false
                 )
 
-                Msg.AddingPet -> copy(progress = true)
+                Msg.AddingPet -> copy(progress = true, failure = null)
             }
     }
 

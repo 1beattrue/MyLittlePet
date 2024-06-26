@@ -1,8 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.addpet.image
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -68,9 +66,7 @@ fun ImageContent(
                 }
 
                 AnimatedVisibility(
-                    visible = state.failure != null && !state.progress,
-                    enter = fadeIn(),
-                    exit = fadeOut()
+                    visible = state.failure != null
                 ) {
                     state.failure?.let { failure ->
                         ErrorCustomCard(
