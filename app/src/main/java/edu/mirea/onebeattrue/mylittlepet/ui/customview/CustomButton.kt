@@ -1,11 +1,15 @@
 package edu.mirea.onebeattrue.mylittlepet.ui.customview
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -166,5 +170,33 @@ fun CustomTextButton(
         )
         Spacer(modifier = Modifier.width(4.dp))
         icon()
+    }
+}
+
+@Composable
+fun CustomProgressButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    inProgress: Boolean,
+    onClick: () -> Unit
+) {
+    Button(
+        modifier = modifier,
+        onClick = { onClick() },
+        shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
+        enabled = !inProgress
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge
+        )
+        AnimatedVisibility(visible = inProgress) {
+            Row {
+                Spacer(modifier = Modifier.width(8.dp))
+                CircularProgressIndicator(
+                    Modifier.size(24.dp)
+                )
+            }
+        }
     }
 }
