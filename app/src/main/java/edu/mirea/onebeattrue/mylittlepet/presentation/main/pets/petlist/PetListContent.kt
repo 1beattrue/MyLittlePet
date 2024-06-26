@@ -5,8 +5,6 @@ import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -144,30 +142,24 @@ fun PetListContent(
             state = listState
         ) {
 
-            item {
-                AnimatedVisibility(
-                    modifier = Modifier.animateItemPlacement(),
-                    visible = state.isLoading,
-                    enter = slideInVertically(),
-                    exit = slideOutVertically()
-                ) {
+            if (state.isLoading) {
+                item {
                     Box(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateItemPlacement(),
                         contentAlignment = Alignment.TopCenter
                     ) {
                         CircularProgressIndicator()
                     }
+
                 }
             }
 
-            item {
-                AnimatedVisibility(
-                    modifier = Modifier.animateItemPlacement(),
-                    visible = state.syncError,
-                    enter = slideInVertically(),
-                    exit = slideOutVertically()
-                ) {
+            if (state.syncError) {
+                item {
                     ErrorCustomCardWithRetryButton(
+                        modifier = Modifier.animateItemPlacement(),
                         message = stringResource(R.string.synchronization_error)
                     ) {
                         component.synchronize()
@@ -175,36 +167,38 @@ fun PetListContent(
                 }
             }
 
-            item {
-                AnimatedVisibility(
-                    modifier = Modifier.animateItemPlacement(),
-                    visible = state.petList.isEmpty() && !state.isLoading,
-                    enter = slideInVertically(),
-                    exit = slideOutVertically()
-                ) {
-                    AddFirstPetCard {
-                        component.addPet()
+            when (val petListState = state.petList) {
+                PetListStore.State.PetListState.Initial -> {}
+                PetListStore.State.PetListState.Empty -> {
+                    item {
+                        AddFirstPetCard(
+                            modifier = Modifier.animateItemPlacement()
+                        ) {
+                            component.addPet()
+                        }
                     }
                 }
-            }
 
-            items(
-                items = state.petList,
-                key = { it.id }
-            ) { pet ->
-                PetCard(
-                    modifier = Modifier
-                        .animateItemPlacement(),
-                    pet = pet,
-                    deleteError = pet.id == state.deletePetErrorId,
-                    deletePet = { component.deletePet(pet) },
-                    editPet = {
-                        component.editPet(pet)
-                    },
-                    openDetails = {
-                        component.openDetails(pet)
+                is PetListStore.State.PetListState.HasData -> {
+                    items(
+                        items = petListState.pets,
+                        key = { it.id }
+                    ) { pet ->
+                        PetCard(
+                            modifier = Modifier
+                                .animateItemPlacement(),
+                            pet = pet,
+                            deleteError = pet.id == state.deletePetErrorId,
+                            deletePet = { component.deletePet(pet) },
+                            editPet = {
+                                component.editPet(pet)
+                            },
+                            openDetails = {
+                                component.openDetails(pet)
+                            }
+                        )
                     }
-                )
+                }
             }
         }
     }

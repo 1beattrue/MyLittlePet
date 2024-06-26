@@ -32,8 +32,14 @@ interface PetListStore : Store<Intent, State, Label> {
         val isLoading: Boolean,
         val syncError: Boolean,
         val deletePetErrorId: Int?,
-        val petList: List<Pet>
-    )
+        val petList: PetListState
+    ) {
+        sealed interface PetListState {
+            data object Initial : PetListState
+            data class HasData(val pets: List<Pet>) : PetListState
+            data object Empty : PetListState
+        }
+    }
 
     sealed interface Label {
         data object AddPet : Label
@@ -57,7 +63,7 @@ class PetListStoreFactory @Inject constructor(
                 isLoading = true,
                 syncError = false,
                 deletePetErrorId = null,
-                petList = listOf()
+                petList = State.PetListState.Initial
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = ::ExecutorImpl,
@@ -160,7 +166,13 @@ class PetListStoreFactory @Inject constructor(
             when (msg) {
                 is Msg.PetListUpdated -> copy(
                     isLoading = false,
-                    petList = msg.petList,
+                    petList = if (msg.petList.isEmpty()) {
+                        State.PetListState.Empty
+                    } else {
+                        State.PetListState.HasData(
+                            msg.petList
+                        )
+                    },
                     deletePetErrorId = null
                 )
 
