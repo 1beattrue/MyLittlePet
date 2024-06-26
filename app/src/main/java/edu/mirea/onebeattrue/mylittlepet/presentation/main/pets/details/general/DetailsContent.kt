@@ -67,7 +67,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.extensions.getImageId
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ClickableCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomProgressButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
@@ -188,7 +188,8 @@ fun DetailsContent(
         },
         onSetWeight = { component.setWeight() },
         mustBeClosed = state.bottomSheetMustBeClosed,
-        isError = state.weight.isError
+        isError = state.weight.isError,
+        progress = state.progress
     )
 
     if (state.qrCode.isOpen) {
@@ -303,7 +304,8 @@ private fun WeightBottomSheet(
     isIncorrect: Boolean,
     onChangeWeight: (String) -> Unit,
     onSetWeight: () -> Unit,
-    mustBeClosed: Boolean
+    mustBeClosed: Boolean,
+    progress: Boolean
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -372,9 +374,16 @@ private fun WeightBottomSheet(
                     )
                 }
 
-                CustomReadyButton(onClick = {
-                    onSetWeight()
-                })
+                Box(
+                    modifier = modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    CustomProgressButton(
+                        text = stringResource(R.string.ready),
+                        inProgress = progress,
+                        onClick = { onSetWeight() }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(64.dp))

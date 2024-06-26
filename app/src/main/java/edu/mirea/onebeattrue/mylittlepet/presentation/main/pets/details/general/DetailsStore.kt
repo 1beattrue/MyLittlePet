@@ -45,7 +45,8 @@ interface DetailsStore : Store<Intent, State, Label> {
         val age: AgeState,
         val weight: WeightState,
         val bottomSheetMustBeClosed: Boolean,
-        val qrCode: QrCode
+        val qrCode: QrCode,
+        val progress: Boolean
     ) {
         data class AgeState(
             val isError: Boolean,
@@ -110,7 +111,8 @@ class DetailsStoreFactory @Inject constructor(
                     isOpen = false,
                     bitmap = null
                 ),
-                pet = pet
+                pet = pet,
+                progress = false
             ),
             bootstrapper = BootstrapperImpl(pet),
             executorFactory = ::ExecutorImpl,
@@ -142,6 +144,8 @@ class DetailsStoreFactory @Inject constructor(
         data object HideQrCode : Msg
 
         data class UpdatePet(val pet: Pet) : Msg
+
+        data object Loading : Msg
     }
 
     private inner class BootstrapperImpl(
@@ -197,6 +201,8 @@ class DetailsStoreFactory @Inject constructor(
 
                 Intent.SetWeight -> {
                     scope.launch {
+                        dispatch(Msg.Loading)
+
                         val weight = getState().weight.changeableValue
 
                         try {
@@ -285,7 +291,8 @@ class DetailsStoreFactory @Inject constructor(
                         value = msg.weight,
                         isError = false
                     ),
-                    bottomSheetMustBeClosed = true
+                    bottomSheetMustBeClosed = true,
+                    progress = false
                 )
 
                 Msg.CloseBottomSheet -> copy(
@@ -301,7 +308,8 @@ class DetailsStoreFactory @Inject constructor(
                 Msg.HideQrCode -> copy(qrCode = qrCode.copy(isOpen = false, bitmap = null))
                 is Msg.UpdatePet -> copy(pet = msg.pet)
                 Msg.EditAgeError -> copy(age = age.copy(isError = true))
-                Msg.EditWeightError -> copy(weight = weight.copy(isError = true))
+                Msg.EditWeightError -> copy(weight = weight.copy(isError = true), progress = false)
+                Msg.Loading -> copy(progress = true, weight = weight.copy(isError = false))
             }
     }
 
