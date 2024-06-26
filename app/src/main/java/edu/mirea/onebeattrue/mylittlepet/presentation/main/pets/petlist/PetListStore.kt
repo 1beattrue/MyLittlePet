@@ -14,6 +14,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListS
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.petlist.PetListStore.State
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -121,6 +122,7 @@ class PetListStoreFactory @Inject constructor(
                             dispatch(Msg.DeletingPet(intent.pet.id))
                             withContext(Dispatchers.IO) { deletePetUseCase(intent.pet) }
                         } catch (_: Exception) {
+                            delay(500)
                             dispatch(Msg.DeletePetError(intent.pet.id))
                         }
                     }
@@ -196,7 +198,10 @@ class PetListStoreFactory @Inject constructor(
                     nowDeletingId = null
                 )
 
-                is Msg.DeletingPet -> copy(nowDeletingId = msg.id)
+                is Msg.DeletingPet -> copy(
+                    nowDeletingId = msg.id,
+                    deletePetErrorId = null
+                )
             }
     }
 

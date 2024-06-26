@@ -390,7 +390,7 @@ private fun PetCard(
                 .padding(
                     start = 32.dp,
                     end = 32.dp,
-                    bottom = if (deleteError && !isDeleting) 0.dp else 32.dp
+                    bottom = if (deleteError) 0.dp else 32.dp
                 )
                 .clip(RoundedCornerShape(CORNER_RADIUS_CONTAINER))
         ) {
@@ -413,9 +413,7 @@ private fun PetCard(
         }
 
         AnimatedVisibility(
-            visible = deleteError && !isDeleting,
-            enter = fadeIn(),
-            exit = fadeOut()
+            visible = deleteError
         ) {
             ErrorCustomCard(
                 modifier = Modifier.padding(
