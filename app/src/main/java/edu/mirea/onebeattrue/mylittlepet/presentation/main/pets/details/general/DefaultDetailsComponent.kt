@@ -69,8 +69,12 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.SetWeight)
     }
 
-    override fun onCloseBottomSheetClick() {
-        store.accept(DetailsStore.Intent.CloseBottomSheet)
+    override fun onCloseWeightBottomSheetClick() {
+        store.accept(DetailsStore.Intent.CloseWeightBottomSheet)
+    }
+
+    override fun onCloseAgeBottomSheetClick() {
+        store.accept(DetailsStore.Intent.CloseAgeBottomSheet)
     }
 
     override fun onBackClicked() {

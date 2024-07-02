@@ -28,7 +28,8 @@ interface DetailsStore : Store<Intent, State, Label> {
         data class OnWeightChanged(val weight: String) : Intent
         data object SetWeight : Intent
 
-        data object CloseBottomSheet : Intent
+        data object CloseWeightBottomSheet : Intent
+        data object CloseAgeBottomSheet : Intent
 
         data object ClickBack : Intent
         data object OpenEventList : Intent
@@ -43,7 +44,6 @@ interface DetailsStore : Store<Intent, State, Label> {
         val pet: Pet,
         val age: AgeState,
         val weight: WeightState,
-        val bottomSheetMustBeClosed: Boolean,
         val qrCode: QrCode,
         val progress: Boolean
     ) {
@@ -51,7 +51,8 @@ interface DetailsStore : Store<Intent, State, Label> {
             val isError: Boolean,
             val years: Int?,
             val months: Int?,
-            val bottomSheetState: Boolean
+            val bottomSheetState: Boolean,
+            val bottomSheetMustBeClosed: Boolean,
         )
 
         data class WeightState(
@@ -59,7 +60,8 @@ interface DetailsStore : Store<Intent, State, Label> {
             val value: Float?,
             val changeableValue: String,
             val isIncorrect: Boolean,
-            val bottomSheetState: Boolean
+            val bottomSheetState: Boolean,
+            val bottomSheetMustBeClosed: Boolean,
         )
 
         data class QrCode(
@@ -91,11 +93,13 @@ class DetailsStoreFactory @Inject constructor(
                     years = null,
                     months = null,
                     bottomSheetState = false,
+                    bottomSheetMustBeClosed = false,
                     isError = false
                 ) else State.AgeState(
                     years = pet.dateOfBirth.convertMillisToYearsAndMonths().first,
                     months = pet.dateOfBirth.convertMillisToYearsAndMonths().second,
                     bottomSheetState = false,
+                    bottomSheetMustBeClosed = false,
                     isError = false
                 ),
                 weight = State.WeightState(
@@ -103,9 +107,9 @@ class DetailsStoreFactory @Inject constructor(
                     changeableValue = pet.weight?.toString() ?: "",
                     isIncorrect = false,
                     bottomSheetState = false,
+                    bottomSheetMustBeClosed = false,
                     isError = false
                 ),
-                bottomSheetMustBeClosed = false,
                 qrCode = State.QrCode(
                     isOpen = false,
                     bitmap = null
@@ -131,7 +135,8 @@ class DetailsStoreFactory @Inject constructor(
         data object OnIncorrectWeight : Msg
         data class SetWeight(val weight: Float) : Msg
 
-        data object CloseBottomSheet : Msg
+        data object CloseWeightBottomSheet : Msg
+        data object CloseAgeBottomSheet : Msg
 
         data object EditAgeError : Msg
         data object EditWeightError : Msg
@@ -168,7 +173,8 @@ class DetailsStoreFactory @Inject constructor(
 
         override fun executeIntent(intent: Intent, getState: () -> State) {
             when (intent) {
-                Intent.CloseBottomSheet -> dispatch(Msg.CloseBottomSheet)
+                Intent.CloseWeightBottomSheet -> dispatch(Msg.CloseWeightBottomSheet)
+                Intent.CloseAgeBottomSheet -> dispatch(Msg.CloseAgeBottomSheet)
 
                 Intent.OnChangeAgeClick -> {
                     dispatch(Msg.OpenAgeBottomSheet)
@@ -285,29 +291,34 @@ class DetailsStoreFactory @Inject constructor(
 
                 is Msg.SetWeight -> copy(
                     weight = weight.copy(
-                        value = msg.weight
+                        value = msg.weight,
+                        bottomSheetMustBeClosed = true
                     ),
-                    bottomSheetMustBeClosed = true
                 )
 
                 is Msg.SetAge -> copy(
                     age = age.copy(
                         years = msg.age.convertMillisToYearsAndMonths().first,
-                        months = msg.age.convertMillisToYearsAndMonths().second
-                    ),
-                    bottomSheetMustBeClosed = true
+                        months = msg.age.convertMillisToYearsAndMonths().second,
+                        bottomSheetMustBeClosed = true
+                    )
                 )
 
-                Msg.CloseBottomSheet -> copy(
-                    bottomSheetMustBeClosed = false,
+                Msg.CloseWeightBottomSheet -> copy(
                     weight = weight.copy(
                         isIncorrect = false,
                         bottomSheetState = false,
-                        isError = false
+                        isError = false,
+                        bottomSheetMustBeClosed = false
                     ),
+                    progress = false
+                )
+
+                Msg.CloseAgeBottomSheet -> copy(
                     age = age.copy(
                         bottomSheetState = false,
-                        isError = false
+                        isError = false,
+                        bottomSheetMustBeClosed = false
                     ),
                     progress = false
                 )

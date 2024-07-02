@@ -15,7 +15,8 @@ interface DetailsComponent {
 
     fun onWeightChanges(weight: String)
 
-    fun onCloseBottomSheetClick()
+    fun onCloseWeightBottomSheetClick()
+    fun onCloseAgeBottomSheetClick()
 
     fun onClickEventList()
     fun onClickNoteList()

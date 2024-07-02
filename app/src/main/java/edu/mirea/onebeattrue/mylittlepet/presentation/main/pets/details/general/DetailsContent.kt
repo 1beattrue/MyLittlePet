@@ -39,10 +39,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -168,22 +168,22 @@ fun DetailsContent(
     AgeBottomSheet(
         isError = state.age.isError,
         isExpanded = state.age.bottomSheetState,
-        closeBottomSheet = { component.onCloseBottomSheetClick() },
+        closeBottomSheet = { component.onCloseAgeBottomSheetClick() },
         setAge = { component.setAge(it) },
-        mustBeClosed = state.bottomSheetMustBeClosed,
+        mustBeClosed = state.age.bottomSheetMustBeClosed,
         progress = state.progress
     )
 
     WeightBottomSheet(
         isExpanded = state.weight.bottomSheetState,
-        closeBottomSheet = { component.onCloseBottomSheetClick() },
+        closeBottomSheet = { component.onCloseWeightBottomSheetClick() },
         weightInput = state.weight.changeableValue,
         isIncorrect = state.weight.isIncorrect,
         onChangeWeight = { weight ->
             component.onWeightChanges(weight)
         },
         setWeight = { component.setWeight() },
-        mustBeClosed = state.bottomSheetMustBeClosed,
+        mustBeClosed = state.weight.bottomSheetMustBeClosed,
         isError = state.weight.isError,
         progress = state.progress
     )
@@ -305,14 +305,11 @@ private fun WeightBottomSheet(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    val scope = rememberCoroutineScope()
 
-    scope.launch {
-        if (mustBeClosed) {
-            scope.launch { sheetState.hide() }.invokeOnCompletion {
-                if (!sheetState.isVisible) {
-                    closeBottomSheet()
-                }
+    LaunchedEffect(mustBeClosed) {
+        launch { sheetState.hide() }.invokeOnCompletion {
+            if (!sheetState.isVisible) {
+                closeBottomSheet()
             }
         }
     }
@@ -386,7 +383,7 @@ private fun WeightBottomSheet(
     }
 }
 
-@SuppressLint("CoroutineCreationDuringComposition", "UnrememberedMutableState")
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AgeBottomSheet(
@@ -400,16 +397,13 @@ private fun AgeBottomSheet(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    val scope = rememberCoroutineScope()
     val datePickerState = rememberDatePickerState()
     val confirmEnabled by derivedStateOf { datePickerState.selectedDateMillis != null }
 
-    scope.launch {
-        if (mustBeClosed) {
-            scope.launch { sheetState.hide() }.invokeOnCompletion {
-                if (!sheetState.isVisible) {
-                    closeBottomSheet()
-                }
+    LaunchedEffect(mustBeClosed) {
+        launch { sheetState.hide() }.invokeOnCompletion {
+            if (!sheetState.isVisible) {
+                closeBottomSheet()
             }
         }
     }
