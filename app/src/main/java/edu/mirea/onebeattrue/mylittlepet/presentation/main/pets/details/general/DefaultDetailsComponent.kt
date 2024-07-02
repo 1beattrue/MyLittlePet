@@ -77,12 +77,8 @@ class DefaultDetailsComponent @AssistedInject constructor(
         store.accept(DetailsStore.Intent.ClickBack)
     }
 
-    override fun openDatePickerDialog() {
-        store.accept(DetailsStore.Intent.OpenDatePickerDialog)
-    }
-
-    override fun closeDatePickerDialog() {
-        store.accept(DetailsStore.Intent.CloseDatePickerDialog)
+    override fun onChangeAgeClick() {
+        store.accept(DetailsStore.Intent.OnChangeAgeClick)
     }
 
     override fun onClickEventList() {

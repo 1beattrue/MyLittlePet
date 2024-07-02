@@ -9,12 +9,13 @@ interface DetailsComponent {
 
     fun setAge(age: Long)
     fun setWeight()
+
     fun onChangeWeightClick()
+    fun onChangeAgeClick()
+
     fun onWeightChanges(weight: String)
+
     fun onCloseBottomSheetClick()
-    fun onBackClicked()
-    fun openDatePickerDialog()
-    fun closeDatePickerDialog()
 
     fun onClickEventList()
     fun onClickNoteList()
@@ -22,4 +23,6 @@ interface DetailsComponent {
 
     fun showQrCode()
     fun hideQrCode()
+
+    fun onBackClicked()
 }

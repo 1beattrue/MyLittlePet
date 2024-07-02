@@ -176,6 +176,7 @@ fun CustomTextButton(
 @Composable
 fun CustomProgressButton(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     text: String,
     inProgress: Boolean,
     onClick: () -> Unit
@@ -184,7 +185,7 @@ fun CustomProgressButton(
         modifier = modifier,
         onClick = { onClick() },
         shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
-        enabled = !inProgress
+        enabled = !inProgress && enabled
     ) {
         Text(
             text = text,

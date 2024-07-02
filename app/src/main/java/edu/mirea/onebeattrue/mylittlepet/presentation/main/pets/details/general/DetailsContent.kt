@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +25,6 @@ import androidx.compose.material.icons.rounded.QrCode
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,7 +46,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -141,7 +137,7 @@ fun DetailsContent(
                         modifier = Modifier.weight(0.5f),
                         age = state.age
                     ) {
-                        component.openDatePickerDialog()
+                        component.onChangeAgeClick()
                     }
                     WeightCard(
                         modifier = Modifier.weight(0.5f),
@@ -169,13 +165,13 @@ fun DetailsContent(
         }
     }
 
-    CustomDatePickerDialog(
-        state = state.age.datePickerDialogState,
+    AgeBottomSheet(
         isError = state.age.isError,
-        onDismissRequest = { component.closeDatePickerDialog() },
-        onDatePicked = { date ->
-            component.setAge(date)
-        }
+        isExpanded = state.age.bottomSheetState,
+        onCloseBottomSheet = { component.onCloseBottomSheetClick() },
+        onSetAge = { component.setAge(it) },
+        mustBeClosed = state.bottomSheetMustBeClosed,
+        progress = state.progress
     )
 
     WeightBottomSheet(
@@ -297,7 +293,6 @@ private fun MedicalDataListCard(
 @Composable
 private fun WeightBottomSheet(
     isError: Boolean,
-    modifier: Modifier = Modifier,
     isExpanded: Boolean,
     onCloseBottomSheet: () -> Unit,
     weightInput: String,
@@ -329,12 +324,12 @@ private fun WeightBottomSheet(
         ) {
             CustomCard(elevation = STRONG_ELEVATION) {
                 Text(
-                    text = stringResource(id = R.string.enter_weight_hint),
+                    text = stringResource(id = R.string.enter_weight_title),
                     style = MaterialTheme.typography.titleLarge
                 )
 
                 OutlinedTextField(
-                    modifier = modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     value = weightInput,
                     onValueChange = {
                         onChangeWeight(it)
@@ -373,13 +368,94 @@ private fun WeightBottomSheet(
                 }
 
                 Box(
-                    modifier = modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     CustomProgressButton(
                         text = stringResource(R.string.ready),
                         inProgress = progress,
                         onClick = { onSetWeight() }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(64.dp))
+        }
+    }
+}
+
+@SuppressLint("CoroutineCreationDuringComposition", "UnrememberedMutableState")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AgeBottomSheet(
+    isError: Boolean,
+    isExpanded: Boolean,
+    onCloseBottomSheet: () -> Unit,
+    onSetAge: (Long) -> Unit,
+    mustBeClosed: Boolean,
+    progress: Boolean
+) {
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    val datePickerState = rememberDatePickerState()
+    val confirmEnabled by derivedStateOf { datePickerState.selectedDateMillis != null }
+
+    scope.launch {
+        if (mustBeClosed) {
+            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                if (!sheetState.isVisible) {
+                    onCloseBottomSheet()
+                }
+            }
+        }
+    }
+
+    if (isExpanded) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                onCloseBottomSheet()
+            },
+            sheetState = sheetState
+        ) {
+            CustomCard(
+                elevation = STRONG_ELEVATION,
+                innerPadding = PaddingValues(
+                    vertical = 32.dp
+                )
+            ) {
+                Text(
+                    modifier = Modifier.padding(
+                        horizontal = 32.dp
+                    ),
+                    text = stringResource(id = R.string.enter_age_title),
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                DatePicker(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = datePickerState
+                )
+
+                AnimatedVisibility(
+                    modifier = Modifier.padding(horizontal = 32.dp),
+                    visible = isError
+                ) {
+                    ErrorCustomCard(
+                        message = stringResource(R.string.error_editing_pet)
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    CustomProgressButton(
+                        enabled = confirmEnabled,
+                        text = stringResource(R.string.ready),
+                        inProgress = progress,
+                        onClick = { onSetAge(datePickerState.selectedDateMillis!!) }
                     )
                 }
             }
@@ -522,70 +598,6 @@ private fun WeightCard(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-        }
-    }
-}
-
-@SuppressLint("UnrememberedMutableState")
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun CustomDatePickerDialog(
-    state: Boolean,
-    isError: Boolean,
-    onDismissRequest: () -> Unit,
-    onDatePicked: (Long) -> Unit,
-) {
-    if (state) {
-        val datePickerState = rememberDatePickerState()
-        val confirmEnabled by derivedStateOf { datePickerState.selectedDateMillis != null }
-
-        MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(surfaceTint = Color.White)) {
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                item {
-                    AnimatedVisibility(
-                        visible = isError,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        ErrorCustomCard(
-                            message = stringResource(R.string.error_editing_pet)
-                        )
-                    }
-                }
-
-                item {
-                    DatePickerDialog(
-                        onDismissRequest = { onDismissRequest() },
-                        confirmButton = {
-                            TextButton(
-                                onClick = {
-                                    onDatePicked(datePickerState.selectedDateMillis ?: 0)
-                                },
-                                enabled = confirmEnabled
-                            ) {
-                                Text(text = stringResource(id = R.string.ok))
-                            }
-                        }
-                    ) {
-
-                        DatePicker(
-                            title = {
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    textAlign = TextAlign.Center,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    text = stringResource(R.string.date_picker_title),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            },
-                            state = datePickerState
-                        )
-                    }
-                }
-            }
         }
     }
 }

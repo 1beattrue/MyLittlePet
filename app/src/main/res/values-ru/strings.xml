@@ -90,7 +90,8 @@
     <string name="weight_hint">Вес питомца</string>
     <string name="weight_suffix">кг</string>
     <string name="weight_format">%1\$s кг</string>
-    <string name="enter_weight_hint">Введите вес</string>
+    <string name="enter_weight_title">Введите вес</string>
+    <string name="enter_age_title">Введите дату рождения</string>
 
     <string name="add_event_app_bar_title">Добавление события</string>
     <string name="event_list_app_bar_title">События</string>

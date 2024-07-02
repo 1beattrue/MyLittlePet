@@ -21,8 +21,7 @@ import javax.inject.Inject
 interface DetailsStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
-        data object OpenDatePickerDialog : Intent
-        data object CloseDatePickerDialog : Intent
+        data object OnChangeAgeClick : Intent
         data class SetAge(val dateOfBirth: Long) : Intent
 
         data object OnChangeWeightClick : Intent
@@ -52,7 +51,7 @@ interface DetailsStore : Store<Intent, State, Label> {
             val isError: Boolean,
             val years: Int?,
             val months: Int?,
-            val datePickerDialogState: Boolean
+            val bottomSheetState: Boolean
         )
 
         data class WeightState(
@@ -91,12 +90,12 @@ class DetailsStoreFactory @Inject constructor(
                 age = if (pet.dateOfBirth == null) State.AgeState(
                     years = null,
                     months = null,
-                    datePickerDialogState = false,
+                    bottomSheetState = false,
                     isError = false
                 ) else State.AgeState(
                     years = pet.dateOfBirth.convertMillisToYearsAndMonths().first,
                     months = pet.dateOfBirth.convertMillisToYearsAndMonths().second,
-                    datePickerDialogState = false,
+                    bottomSheetState = false,
                     isError = false
                 ),
                 weight = State.WeightState(
@@ -124,14 +123,14 @@ class DetailsStoreFactory @Inject constructor(
     }
 
     private sealed interface Msg {
-        data object OpenDatePickerDialog : Msg
-        data object CloseDatePickerDialog : Msg
+        data object OpenAgeBottomSheet : Msg
         data class SetAge(val age: Long) : Msg
 
         data class OpenWeightBottomSheet(val weight: String) : Msg
         data class OnWeightChanged(val weight: String) : Msg
         data object OnIncorrectWeight : Msg
         data class SetWeight(val weight: Float) : Msg
+
         data object CloseBottomSheet : Msg
 
         data object EditAgeError : Msg
@@ -171,23 +170,9 @@ class DetailsStoreFactory @Inject constructor(
             when (intent) {
                 Intent.CloseBottomSheet -> dispatch(Msg.CloseBottomSheet)
 
-
-                Intent.OpenDatePickerDialog -> dispatch(Msg.OpenDatePickerDialog)
-                Intent.CloseDatePickerDialog -> dispatch(Msg.CloseDatePickerDialog)
-
-                is Intent.SetAge -> {
-                    scope.launch {
-                        val pet = getState().pet
-
-                        try {
-                            editPetUseCase(pet.copy(dateOfBirth = intent.dateOfBirth))
-                            dispatch(Msg.SetAge(intent.dateOfBirth))
-                        } catch (_: Exception) {
-                            dispatch(Msg.EditAgeError)
-                        }
-                    }
+                Intent.OnChangeAgeClick -> {
+                    dispatch(Msg.OpenAgeBottomSheet)
                 }
-
 
                 Intent.OnChangeWeightClick -> {
                     val weight = getState().weight.value?.toString() ?: ""
@@ -199,15 +184,29 @@ class DetailsStoreFactory @Inject constructor(
                     dispatch(Msg.OnWeightChanged(weight))
                 }
 
+                is Intent.SetAge -> {
+                    scope.launch {
+                        val pet = getState().pet
+
+                        try {
+                            dispatch(Msg.Loading)
+                            editPetUseCase(pet.copy(dateOfBirth = intent.dateOfBirth))
+                            dispatch(Msg.SetAge(intent.dateOfBirth))
+                        } catch (_: Exception) {
+                            dispatch(Msg.EditAgeError)
+                        }
+                    }
+                }
+
                 Intent.SetWeight -> {
                     scope.launch {
+                        val pet = getState().pet
                         val weight = getState().weight.changeableValue
 
                         try {
                             if (isCorrectWeight(weight)) {
                                 dispatch(Msg.Loading)
                                 val roundedWeight = roundedWeight(weight.toFloat())
-                                val pet = getState().pet
                                 editPetUseCase(pet.copy(weight = roundedWeight))
                                 dispatch(Msg.SetWeight(roundedWeight))
                             } else {
@@ -220,6 +219,7 @@ class DetailsStoreFactory @Inject constructor(
                 }
 
                 Intent.ClickBack -> publish(Label.ClickBack)
+
                 Intent.OpenEventList -> {
                     val pet = getState().pet
                     publish(Label.OpenEventList(pet))
@@ -246,6 +246,7 @@ class DetailsStoreFactory @Inject constructor(
                 Intent.HideQrCode -> {
                     dispatch(Msg.HideQrCode)
                 }
+
             }
         }
     }
@@ -253,21 +254,18 @@ class DetailsStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                Msg.OpenDatePickerDialog -> copy(age = age.copy(datePickerDialogState = true))
-                Msg.CloseDatePickerDialog -> copy(age = age.copy(datePickerDialogState = false))
-                is Msg.SetAge -> copy(
-                    age = age.copy(
-                        years = msg.age.convertMillisToYearsAndMonths().first,
-                        months = msg.age.convertMillisToYearsAndMonths().second,
-                        datePickerDialogState = false
-                    )
-                )
 
                 is Msg.OpenWeightBottomSheet -> copy(
                     weight = weight.copy(
                         bottomSheetState = true,
                         changeableValue = msg.weight,
                         isIncorrect = false
+                    )
+                )
+
+                Msg.OpenAgeBottomSheet -> copy(
+                    age = age.copy(
+                        bottomSheetState = true,
                     )
                 )
 
@@ -294,21 +292,41 @@ class DetailsStoreFactory @Inject constructor(
                     progress = false
                 )
 
+                is Msg.SetAge -> copy(
+                    age = age.copy(
+                        years = msg.age.convertMillisToYearsAndMonths().first,
+                        months = msg.age.convertMillisToYearsAndMonths().second,
+                        isError = false
+                    ),
+                    bottomSheetMustBeClosed = true,
+                    progress = false
+                )
+
                 Msg.CloseBottomSheet -> copy(
                     bottomSheetMustBeClosed = false,
                     weight = weight.copy(
                         bottomSheetState = false,
                         isError = false
                     ),
+                    age = age.copy(
+                        bottomSheetState = false,
+                        isError = false
+                    )
                 )
 
                 is Msg.ShowQrCode -> copy(qrCode = State.QrCode(isOpen = true, bitmap = msg.bitmap))
 
                 Msg.HideQrCode -> copy(qrCode = qrCode.copy(isOpen = false, bitmap = null))
                 is Msg.UpdatePet -> copy(pet = msg.pet)
-                Msg.EditAgeError -> copy(age = age.copy(isError = true))
+
+                Msg.EditAgeError -> copy(age = age.copy(isError = true), progress = false)
                 Msg.EditWeightError -> copy(weight = weight.copy(isError = true), progress = false)
-                Msg.Loading -> copy(progress = true, weight = weight.copy(isError = false))
+
+                Msg.Loading -> copy(
+                    progress = true,
+                    weight = weight.copy(isError = false),
+                    age = age.copy(isError = false)
+                )
             }
     }
 
