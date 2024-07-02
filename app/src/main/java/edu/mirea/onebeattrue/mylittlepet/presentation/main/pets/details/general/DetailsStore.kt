@@ -285,33 +285,31 @@ class DetailsStoreFactory @Inject constructor(
 
                 is Msg.SetWeight -> copy(
                     weight = weight.copy(
-                        value = msg.weight,
-                        isError = false
+                        value = msg.weight
                     ),
-                    bottomSheetMustBeClosed = true,
-                    progress = false
+                    bottomSheetMustBeClosed = true
                 )
 
                 is Msg.SetAge -> copy(
                     age = age.copy(
                         years = msg.age.convertMillisToYearsAndMonths().first,
-                        months = msg.age.convertMillisToYearsAndMonths().second,
-                        isError = false
+                        months = msg.age.convertMillisToYearsAndMonths().second
                     ),
-                    bottomSheetMustBeClosed = true,
-                    progress = false
+                    bottomSheetMustBeClosed = true
                 )
 
                 Msg.CloseBottomSheet -> copy(
                     bottomSheetMustBeClosed = false,
                     weight = weight.copy(
+                        isIncorrect = false,
                         bottomSheetState = false,
                         isError = false
                     ),
                     age = age.copy(
                         bottomSheetState = false,
                         isError = false
-                    )
+                    ),
+                    progress = false
                 )
 
                 is Msg.ShowQrCode -> copy(qrCode = State.QrCode(isOpen = true, bitmap = msg.bitmap))

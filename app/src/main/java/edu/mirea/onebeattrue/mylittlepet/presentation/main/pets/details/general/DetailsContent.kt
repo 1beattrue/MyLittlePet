@@ -168,21 +168,21 @@ fun DetailsContent(
     AgeBottomSheet(
         isError = state.age.isError,
         isExpanded = state.age.bottomSheetState,
-        onCloseBottomSheet = { component.onCloseBottomSheetClick() },
-        onSetAge = { component.setAge(it) },
+        closeBottomSheet = { component.onCloseBottomSheetClick() },
+        setAge = { component.setAge(it) },
         mustBeClosed = state.bottomSheetMustBeClosed,
         progress = state.progress
     )
 
     WeightBottomSheet(
         isExpanded = state.weight.bottomSheetState,
-        onCloseBottomSheet = { component.onCloseBottomSheetClick() },
+        closeBottomSheet = { component.onCloseBottomSheetClick() },
         weightInput = state.weight.changeableValue,
         isIncorrect = state.weight.isIncorrect,
         onChangeWeight = { weight ->
             component.onWeightChanges(weight)
         },
-        onSetWeight = { component.setWeight() },
+        setWeight = { component.setWeight() },
         mustBeClosed = state.bottomSheetMustBeClosed,
         isError = state.weight.isError,
         progress = state.progress
@@ -294,22 +294,24 @@ private fun MedicalDataListCard(
 private fun WeightBottomSheet(
     isError: Boolean,
     isExpanded: Boolean,
-    onCloseBottomSheet: () -> Unit,
+    closeBottomSheet: () -> Unit,
     weightInput: String,
     isIncorrect: Boolean,
     onChangeWeight: (String) -> Unit,
-    onSetWeight: () -> Unit,
+    setWeight: () -> Unit,
     mustBeClosed: Boolean,
     progress: Boolean
 ) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
     val scope = rememberCoroutineScope()
 
     scope.launch {
         if (mustBeClosed) {
             scope.launch { sheetState.hide() }.invokeOnCompletion {
                 if (!sheetState.isVisible) {
-                    onCloseBottomSheet()
+                    closeBottomSheet()
                 }
             }
         }
@@ -318,7 +320,7 @@ private fun WeightBottomSheet(
     if (isExpanded) {
         ModalBottomSheet(
             onDismissRequest = {
-                onCloseBottomSheet()
+                closeBottomSheet()
             },
             sheetState = sheetState
         ) {
@@ -374,7 +376,7 @@ private fun WeightBottomSheet(
                     CustomProgressButton(
                         text = stringResource(R.string.ready),
                         inProgress = progress,
-                        onClick = { onSetWeight() }
+                        onClick = { setWeight() }
                     )
                 }
             }
@@ -390,12 +392,14 @@ private fun WeightBottomSheet(
 private fun AgeBottomSheet(
     isError: Boolean,
     isExpanded: Boolean,
-    onCloseBottomSheet: () -> Unit,
-    onSetAge: (Long) -> Unit,
+    closeBottomSheet: () -> Unit,
+    setAge: (Long) -> Unit,
     mustBeClosed: Boolean,
     progress: Boolean
 ) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
     val scope = rememberCoroutineScope()
     val datePickerState = rememberDatePickerState()
     val confirmEnabled by derivedStateOf { datePickerState.selectedDateMillis != null }
@@ -404,7 +408,7 @@ private fun AgeBottomSheet(
         if (mustBeClosed) {
             scope.launch { sheetState.hide() }.invokeOnCompletion {
                 if (!sheetState.isVisible) {
-                    onCloseBottomSheet()
+                    closeBottomSheet()
                 }
             }
         }
@@ -413,7 +417,7 @@ private fun AgeBottomSheet(
     if (isExpanded) {
         ModalBottomSheet(
             onDismissRequest = {
-                onCloseBottomSheet()
+                closeBottomSheet()
             },
             sheetState = sheetState
         ) {
@@ -455,7 +459,11 @@ private fun AgeBottomSheet(
                         enabled = confirmEnabled,
                         text = stringResource(R.string.ready),
                         inProgress = progress,
-                        onClick = { onSetAge(datePickerState.selectedDateMillis!!) }
+                        onClick = {
+                            setAge(datePickerState.selectedDateMillis!!)
+
+
+                        }
                     )
                 }
             }
