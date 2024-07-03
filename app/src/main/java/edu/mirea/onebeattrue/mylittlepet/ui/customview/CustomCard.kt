@@ -120,7 +120,12 @@ fun ClickableCustomCard(
                     delay(100)
                 }
 
-                is PressInteraction.Release, is PressInteraction.Cancel -> {
+                is PressInteraction.Release -> {
+                    isPressed = false
+                    onClick()
+                }
+
+                is PressInteraction.Cancel -> {
                     isPressed = false
                 }
             }
@@ -143,7 +148,7 @@ fun ClickableCustomCard(
                 pressedElevation = elevation / 4,
                 disabledElevation = 0.dp
             ),
-            onClick = onClick,
+            onClick = {},
             interactionSource = interactionSource
         ) {
             Column(
