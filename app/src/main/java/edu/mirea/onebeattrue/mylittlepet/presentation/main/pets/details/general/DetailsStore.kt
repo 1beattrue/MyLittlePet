@@ -51,6 +51,7 @@ interface DetailsStore : Store<Intent, State, Label> {
             val isError: Boolean,
             val years: Int?,
             val months: Int?,
+            val value: Long?,
             val bottomSheetState: Boolean,
             val bottomSheetMustBeClosed: Boolean,
         )
@@ -94,13 +95,15 @@ class DetailsStoreFactory @Inject constructor(
                     months = null,
                     bottomSheetState = false,
                     bottomSheetMustBeClosed = false,
-                    isError = false
+                    isError = false,
+                    value = pet.dateOfBirth
                 ) else State.AgeState(
                     years = pet.dateOfBirth.convertMillisToYearsAndMonths().first,
                     months = pet.dateOfBirth.convertMillisToYearsAndMonths().second,
                     bottomSheetState = false,
                     bottomSheetMustBeClosed = false,
-                    isError = false
+                    isError = false,
+                    value = pet.dateOfBirth
                 ),
                 weight = State.WeightState(
                     value = pet.weight,
@@ -128,7 +131,7 @@ class DetailsStoreFactory @Inject constructor(
 
     private sealed interface Msg {
         data object OpenAgeBottomSheet : Msg
-        data class SetAge(val age: Long) : Msg
+        data class SetAge(val dateOfBirth: Long) : Msg
 
         data class OpenWeightBottomSheet(val weight: String) : Msg
         data class OnWeightChanged(val weight: String) : Msg
@@ -298,8 +301,9 @@ class DetailsStoreFactory @Inject constructor(
 
                 is Msg.SetAge -> copy(
                     age = age.copy(
-                        years = msg.age.convertMillisToYearsAndMonths().first,
-                        months = msg.age.convertMillisToYearsAndMonths().second,
+                        years = msg.dateOfBirth.convertMillisToYearsAndMonths().first,
+                        months = msg.dateOfBirth.convertMillisToYearsAndMonths().second,
+                        value = msg.dateOfBirth,
                         bottomSheetMustBeClosed = true
                     )
                 )

@@ -25,6 +25,7 @@ import androidx.compose.material.icons.rounded.QrCode
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -69,6 +71,9 @@ import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.STRONG_ELEVATION
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -171,7 +176,8 @@ fun DetailsContent(
         closeBottomSheet = { component.onCloseAgeBottomSheetClick() },
         setAge = { component.setAge(it) },
         mustBeClosed = state.age.bottomSheetMustBeClosed,
-        progress = state.progress
+        progress = state.progress,
+        selectedDate = state.age.value
     )
 
     WeightBottomSheet(
@@ -392,15 +398,36 @@ private fun AgeBottomSheet(
     closeBottomSheet: () -> Unit,
     setAge: (Long) -> Unit,
     mustBeClosed: Boolean,
-    progress: Boolean
+    progress: Boolean,
+    selectedDate: Long?
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    val datePickerState = rememberDatePickerState()
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = selectedDate,
+        yearRange = 1970..LocalDateTime.now().year,
+        initialDisplayMode = DisplayMode.Input,
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                val now = System.currentTimeMillis()
+                val date =
+                    Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneId.of("UTC")).toLocalDate()
+                val today = Instant.ofEpochMilli(now).atZone(ZoneId.of("UTC")).toLocalDate()
+                return !date.isAfter(today)
+
+            }
+
+            override fun isSelectableYear(year: Int): Boolean {
+                return true
+            }
+        }
+    )
+
     val confirmEnabled by derivedStateOf { datePickerState.selectedDateMillis != null }
 
-    LaunchedEffect(mustBeClosed) {
+    LaunchedEffect(mustBeClosed)
+    {
         launch { sheetState.hide() }.invokeOnCompletion {
             if (!sheetState.isVisible) {
                 closeBottomSheet()
@@ -540,7 +567,11 @@ private fun AgeCard(
                 val yearsString =
                     pluralStringResource(id = R.plurals.years_format, count = years, years)
                 val monthsString =
-                    pluralStringResource(id = R.plurals.months_format, count = months, months)
+                    pluralStringResource(
+                        id = R.plurals.months_format,
+                        count = months,
+                        months
+                    )
 
                 if (years <= 0) {
                     monthsString
