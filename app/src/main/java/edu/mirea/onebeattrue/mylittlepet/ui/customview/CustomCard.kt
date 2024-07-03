@@ -1,8 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.ui.customview
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +13,6 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -25,11 +23,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.matяerial.icons.rounded.Error
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -44,6 +44,7 @@ import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -100,74 +101,31 @@ fun ClickableCustomCard(
     content: @Composable () -> Unit,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
-
     val interactionSource = remember { MutableInteractionSource() }
-    val scale by remember { mutableStateOf(Animatable(1f)) }
+    var isPressed by remember { mutableStateOf(false) }
 
-    val isAnimationRunning = remember { mutableStateOf(false) }
-
-    suspend fun startPressAnimation() {
-        isAnimationRunning.value = true
-        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-        scale.animateTo(
-            targetValue = 0.95f,
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow
-            )
-        )
-        isAnimationRunning.value = false
-    }
-
-    suspend fun startReleaseAnimation() {
-        isAnimationRunning.value = true
-        scale.animateTo(
-            targetValue = 1f,
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow
-            )
-        )
-        isAnimationRunning.value = false
-    }
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.9f else 1f,
+        animationSpec = tween(
+            durationMillis = 150
+        ), label = ""
+    )
 
     LaunchedEffect(interactionSource) {
         interactionSource.interactions.collect { interaction ->
             when (interaction) {
                 is PressInteraction.Press -> {
-                    if (!isAnimationRunning.value) {
-                        startPressAnimation()
-                    }
+                    isPressed = true
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    delay(100)
                 }
 
-                is PressInteraction.Release -> {
-                    if (!isAnimationRunning.value) {
-                        startReleaseAnimation()
-                    }
-                }
-
-                is PressInteraction.Cancel -> {
-                    if (!isAnimationRunning.value) {
-                        startReleaseAnimation()
-                    }
+                is PressInteraction.Release, is PressInteraction.Cancel -> {
+                    isPressed = false
                 }
             }
         }
     }
-
-
-//    LaunchedEffect(pressed) {
-//        if (pressed) {
-//            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-//        }
-//        scale.animateTo(
-//            targetValue = if (pressed) 0.95f else 1f,
-//            animationSpec = spring(
-//                dampingRatio = Spring.DampingRatioHighBouncy,
-//                stiffness = Spring.StiffnessLow
-//            )
-//        )
-//    }
 
     MaterialTheme(
         colorScheme = MaterialTheme.colorScheme.copy(surfaceTint = Color(0x00FFFFFF))
@@ -177,7 +135,7 @@ fun ClickableCustomCard(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(paddingValues)
-                .scale(scale.value),
+                .scale(scale),
             colors = cardColors,
             shape = RoundedCornerShape(CORNER_RADIUS_SURFACE),
             elevation = CardDefaults.elevatedCardElevation(
@@ -185,9 +143,7 @@ fun ClickableCustomCard(
                 pressedElevation = elevation / 4,
                 disabledElevation = 0.dp
             ),
-            onClick = {
-                onClick()
-            },
+            onClick = onClick,
             interactionSource = interactionSource
         ) {
             Column(
@@ -202,6 +158,7 @@ fun ClickableCustomCard(
         }
     }
 }
+
 
 @Composable
 fun CustomCardExtremeElevation(
