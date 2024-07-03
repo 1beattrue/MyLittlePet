@@ -32,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -84,8 +85,6 @@ fun CustomCard(
     }
 }
 
-private fun Float.formattedPadding(): Float = if (this < 0) 0f else this
-
 @Composable
 fun ClickableCustomCard(
     modifier: Modifier = Modifier,
@@ -104,16 +103,14 @@ fun ClickableCustomCard(
 
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
-    val pressedPadding by remember {
-        mutableStateOf(Animatable(if (pressed) 4f else 0f))
-    }
+    val scale by remember { mutableStateOf(Animatable(1f)) }
 
     LaunchedEffect(pressed) {
         if (pressed) {
             hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
         }
-        pressedPadding.animateTo(
-            targetValue = if (pressed) 4f else 0f,
+        scale.animateTo(
+            targetValue = if (pressed) 0.95f else 1f,
             animationSpec = spring(
                 dampingRatio = Spring.DampingRatioHighBouncy,
                 stiffness = Spring.StiffnessLow
@@ -129,7 +126,7 @@ fun ClickableCustomCard(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(paddingValues)
-                .padding(pressedPadding.value.formattedPadding().dp),
+                .scale(scale.value),
             colors = cardColors,
             shape = RoundedCornerShape(CORNER_RADIUS_SURFACE),
             elevation = CardDefaults.elevatedCardElevation(
@@ -265,7 +262,7 @@ fun ErrorCustomCard(
             contentColor = MaterialTheme.colorScheme.onErrorContainer
         ),
         innerPadding = PaddingValues(16.dp),
-        paddingValues =  PaddingValues(0.dp),
+        paddingValues = PaddingValues(0.dp),
         shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER)
     ) {
         Text(
