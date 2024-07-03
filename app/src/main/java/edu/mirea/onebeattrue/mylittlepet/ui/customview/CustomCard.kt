@@ -4,7 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -102,21 +102,72 @@ fun ClickableCustomCard(
     val hapticFeedback = LocalHapticFeedback.current
 
     val interactionSource = remember { MutableInteractionSource() }
-    val pressed by interactionSource.collectIsPressedAsState()
     val scale by remember { mutableStateOf(Animatable(1f)) }
 
-    LaunchedEffect(pressed) {
-        if (pressed) {
-            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-        }
+    val isAnimationRunning = remember { mutableStateOf(false) }
+
+    suspend fun startPressAnimation() {
+        isAnimationRunning.value = true
+        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
         scale.animateTo(
-            targetValue = if (pressed) 0.95f else 1f,
+            targetValue = 0.95f,
             animationSpec = spring(
-                dampingRatio = Spring.DampingRatioHighBouncy,
+                dampingRatio = Spring.DampingRatioMediumBouncy,
                 stiffness = Spring.StiffnessLow
             )
         )
+        isAnimationRunning.value = false
     }
+
+    suspend fun startReleaseAnimation() {
+        isAnimationRunning.value = true
+        scale.animateTo(
+            targetValue = 1f,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessLow
+            )
+        )
+        isAnimationRunning.value = false
+    }
+
+    LaunchedEffect(interactionSource) {
+        interactionSource.interactions.collect { interaction ->
+            when (interaction) {
+                is PressInteraction.Press -> {
+                    if (!isAnimationRunning.value) {
+                        startPressAnimation()
+                    }
+                }
+
+                is PressInteraction.Release -> {
+                    if (!isAnimationRunning.value) {
+                        startReleaseAnimation()
+                    }
+                }
+
+                is PressInteraction.Cancel -> {
+                    if (!isAnimationRunning.value) {
+                        startReleaseAnimation()
+                    }
+                }
+            }
+        }
+    }
+
+
+//    LaunchedEffect(pressed) {
+//        if (pressed) {
+//            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+//        }
+//        scale.animateTo(
+//            targetValue = if (pressed) 0.95f else 1f,
+//            animationSpec = spring(
+//                dampingRatio = Spring.DampingRatioHighBouncy,
+//                stiffness = Spring.StiffnessLow
+//            )
+//        )
+//    }
 
     MaterialTheme(
         colorScheme = MaterialTheme.colorScheme.copy(surfaceTint = Color(0x00FFFFFF))
