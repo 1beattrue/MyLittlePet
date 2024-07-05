@@ -14,7 +14,9 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddEventUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.time.EventTimeStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.time.EventTimeStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.time.EventTimeStore.State
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -25,7 +27,11 @@ interface EventTimeStore : Store<Intent, State, Label> {
         data class GoNext(val hours: Int, val minutes: Int) : Intent
     }
 
-    data class State(val isDaily: Boolean)
+    data class State(
+        val isDaily: Boolean,
+        val failure: Boolean,
+        val progress: Boolean
+    )
 
     sealed interface Label {
         data class GoNext(val hours: Int, val minutes: Int) : Label
@@ -46,7 +52,9 @@ class EventTimeStoreFactory @Inject constructor(
         object : EventTimeStore, Store<Intent, State, Label> by storeFactory.create(
             name = STORE_NAME,
             initialState = State(
-                isDaily = true
+                isDaily = true,
+                failure = false,
+                progress = false
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = { ExecutorImpl(eventText, pet) },
@@ -57,6 +65,8 @@ class EventTimeStoreFactory @Inject constructor(
 
     private sealed interface Msg {
         data class OnPeriodChanged(val isDaily: Boolean) : Msg
+        data object FailureAddingEvent : Msg
+        data object Loading : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -84,24 +94,32 @@ class EventTimeStoreFactory @Inject constructor(
                         }
 
                         if (isDaily) {
+                            dispatch(Msg.Loading)
+
                             val newEvent = Event(
                                 time = triggerTime,
                                 label = eventText,
                                 repeatable = true,
                                 petId = pet.id
                             )
+                            try {
+                                withContext(Dispatchers.IO) {
+                                    addEventUseCase(newEvent)
+                                }
 
-                            alarmScheduler.schedule(
-                                AlarmItem(
-                                    title = pet.name,
-                                    text = newEvent.label,
-                                    time = newEvent.time,
-                                    repeatable = newEvent.repeatable
+                                alarmScheduler.schedule(
+                                    AlarmItem(
+                                        title = pet.name,
+                                        text = newEvent.label,
+                                        time = newEvent.time,
+                                        repeatable = newEvent.repeatable
+                                    )
                                 )
-                            )
 
-                            addEventUseCase(newEvent)
-                            publish(Label.Finish)
+                                publish(Label.Finish)
+                            } catch (_: Exception) {
+                                dispatch(Msg.FailureAddingEvent)
+                            }
                         } else {
                             publish(Label.GoNext(hours, minutes))
                         }
@@ -119,6 +137,8 @@ class EventTimeStoreFactory @Inject constructor(
         override fun State.reduce(msg: Msg): State =
             when (msg) {
                 is Msg.OnPeriodChanged -> copy(isDaily = msg.isDaily)
+                Msg.FailureAddingEvent -> copy(progress = false, failure = true)
+                Msg.Loading -> copy(progress = true, failure = false)
             }
     }
 

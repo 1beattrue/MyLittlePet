@@ -77,7 +77,7 @@ fun EventDateContent(
                 }
 
                 Box(
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 32.dp),
                     contentAlignment = Alignment.CenterEnd
