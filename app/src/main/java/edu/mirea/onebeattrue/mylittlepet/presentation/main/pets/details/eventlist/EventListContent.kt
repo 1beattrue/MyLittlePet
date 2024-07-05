@@ -24,6 +24,7 @@ import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.NotificationsOff
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -61,6 +62,7 @@ import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomTextButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCardWithRetryButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
@@ -127,11 +129,27 @@ fun EventListContent(
                 contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+
+                if (state.isLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .animateItemPlacement(),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            CircularProgressIndicator()
+                        }
+
+                    }
+                }
+
                 item {
                     NotificationPermissionCard(
                         permissionState = permissionState
                     )
                 }
+
                 item {
                     DeletePastEventsCard(
                         modifier = Modifier.animateItemPlacement(),
@@ -139,6 +157,18 @@ fun EventListContent(
                         component.onDeletePastEvents()
                     }
                 }
+
+                if (state.syncError) {
+                    item {
+                        ErrorCustomCardWithRetryButton(
+                            modifier = Modifier.animateItemPlacement(),
+                            message = stringResource(R.string.synchronization_error)
+                        ) {
+                            component.syncronize()
+                        }
+                    }
+                }
+
                 items(
                     items = state.eventList,
                     key = { it.id },

@@ -58,6 +58,10 @@ class DefaultEventListComponent @AssistedInject constructor(
         store.accept(EventListStore.Intent.DeletePastEvents)
     }
 
+    override fun syncronize() {
+        store.accept(EventListStore.Intent.Synchronize)
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(

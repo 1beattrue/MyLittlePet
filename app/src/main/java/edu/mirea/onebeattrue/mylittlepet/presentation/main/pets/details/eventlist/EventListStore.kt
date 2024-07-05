@@ -5,15 +5,17 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.DeleteEventUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GetEventListUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.SynchronizeEventsWithServerUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListStore.State
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -24,9 +26,12 @@ interface EventListStore : Store<Intent, State, Label> {
         data class DeleteEvent(val event: Event) : Intent
         data object DeletePastEvents : Intent
         data object OnClickBack : Intent
+        data object Synchronize : Intent
     }
 
     data class State(
+        val isLoading: Boolean,
+        val syncError: Boolean,
         val eventList: List<Event>
     )
 
@@ -39,7 +44,8 @@ interface EventListStore : Store<Intent, State, Label> {
 class EventListStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val getEventListUseCase: GetEventListUseCase,
-    private val deleteEventUseCase: DeleteEventUseCase
+    private val deleteEventUseCase: DeleteEventUseCase,
+    private val synchronizeEventsWithServerUseCase: SynchronizeEventsWithServerUseCase
 ) {
 
     fun create(
@@ -48,6 +54,8 @@ class EventListStoreFactory @Inject constructor(
         object : EventListStore, Store<Intent, State, Label> by storeFactory.create(
             name = STORE_NAME,
             initialState = State(
+                isLoading = false,
+                syncError = false,
                 eventList = pet.eventList
             ),
             bootstrapper = BootstrapperImpl(pet),
@@ -58,11 +66,15 @@ class EventListStoreFactory @Inject constructor(
         ) {}
 
     private sealed interface Action {
+        data object Loading : Action
         data class UpdateList(val events: List<Event>) : Action
+        data class SyncResult(val isError: Boolean) : Action
     }
 
     private sealed interface Msg {
+        data object Loading : Msg
         data class UpdateList(val events: List<Event>) : Msg
+        data class SyncResult(val isError: Boolean) : Msg
     }
 
     private inner class BootstrapperImpl(
@@ -70,8 +82,16 @@ class EventListStoreFactory @Inject constructor(
     ) : CoroutineBootstrapper<Action>() {
         override fun invoke() {
             scope.launch {
-                getEventListUseCase(pet.id).collect { updatedList ->
-                    dispatch(Action.UpdateList(updatedList))
+                dispatch(Action.Loading)
+                try {
+                    synchronize(pet.id)
+                    dispatch(Action.SyncResult(isError = false))
+                } catch (_: Exception) {
+                    dispatch(Action.SyncResult(isError = true))
+                } finally {
+                    getEventListUseCase(pet.id).collect { updatedList ->
+                        dispatch(Action.UpdateList(updatedList))
+                    }
                 }
             }
         }
@@ -87,6 +107,14 @@ class EventListStoreFactory @Inject constructor(
                     val sortedEvents = sortedEventList(action.events)
                     dispatch(Msg.UpdateList(sortedEvents))
                 }
+
+                Action.Loading -> {
+                    dispatch(Msg.Loading)
+                }
+
+                is Action.SyncResult -> {
+                    dispatch(Msg.SyncResult(action.isError))
+                }
             }
         }
 
@@ -98,23 +126,46 @@ class EventListStoreFactory @Inject constructor(
 
                 is Intent.DeleteEvent -> {
                     scope.launch {
-                        deleteEventUseCase(petName = pet.name, event = intent.event)
+                        try {
+                            val currentList = getState().eventList
+                            withContext(Dispatchers.IO) {
+                                deleteEventUseCase(petName = pet.name, event = intent.event)
+                            }
+                            dispatch(Msg.UpdateList(currentList.filter { it != intent.event }))
+                        } catch (_: Exception) {
+                            // TODO: добавить обработку удаления
+                        }
                     }
                 }
 
                 Intent.DeletePastEvents -> {
                     scope.launch {
-                        val currentTime = Calendar.getInstance().timeInMillis
+                        try {
+                            val currentTime = Calendar.getInstance().timeInMillis
 
-                        val oldEventList = getState().eventList
-                        oldEventList.filter { it.time <= currentTime && !it.repeatable }
-                            .forEach { event ->
-                                deleteEventUseCase(petName = pet.name, event = event)
-                            }
+                            val oldEventList = getState().eventList
+                            oldEventList.filter { it.time <= currentTime && !it.repeatable }
+                                .forEach { event ->
+                                    deleteEventUseCase(petName = pet.name, event = event)
+                                }
+                        } catch (_: Exception) {
+                            // TODO: добавить обработку удаления
+                        }
                     }
                 }
 
                 Intent.OnClickBack -> publish(Label.OnClickBack)
+                Intent.Synchronize -> {
+                    scope.launch {
+                        dispatch(Msg.Loading)
+                        try {
+                            synchronize(pet.id)
+                            dispatch(Msg.SyncResult(isError = false))
+                        } catch (_: Exception) {
+                            dispatch(Msg.SyncResult(isError = true))
+                        }
+                    }
+                }
             }
         }
     }
@@ -125,6 +176,15 @@ class EventListStoreFactory @Inject constructor(
                 is Msg.UpdateList -> {
                     copy(eventList = msg.events)
                 }
+
+                Msg.Loading -> copy(
+                    isLoading = true
+                )
+
+                is Msg.SyncResult -> copy(
+                    syncError = msg.isError,
+                    isLoading = false,
+                )
             }
     }
 
@@ -142,6 +202,12 @@ class EventListStoreFactory @Inject constructor(
     private fun getTimeInHoursAndMinutes(time: Long): Int {
         val calendar = Calendar.getInstance().apply { timeInMillis = time }
         return calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE)
+    }
+
+    private suspend fun synchronize(petId: Int) {
+        withContext(Dispatchers.IO) {
+            synchronizeEventsWithServerUseCase(petId)
+        }
     }
 
     companion object {

@@ -13,4 +13,6 @@ interface EventListComponent {
     fun onBackClicked()
 
     fun onDeletePastEvents()
+
+    fun syncronize()
 }
