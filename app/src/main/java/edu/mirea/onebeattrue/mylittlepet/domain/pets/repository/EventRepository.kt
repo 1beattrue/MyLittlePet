@@ -4,8 +4,9 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import kotlinx.coroutines.flow.Flow
 
 interface EventRepository {
-    suspend fun addEvent(event: Event)
+    suspend fun addEvent(petName: String, event: Event)
     suspend fun deleteEvent(petName: String, event: Event)
 
     fun getEventList(petId: Int): Flow<List<Event>>
+    suspend fun synchronizeWithServer(petId: Int)
 }

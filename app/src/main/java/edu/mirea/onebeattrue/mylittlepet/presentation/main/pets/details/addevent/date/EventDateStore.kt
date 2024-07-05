@@ -5,8 +5,6 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddEventUseCase
@@ -37,7 +35,6 @@ interface EventDateStore : Store<Intent, State, Label> {
 class EventDateStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val addEventUseCase: AddEventUseCase,
-    private val alarmScheduler: AlarmScheduler
 ) {
 
     fun create(
@@ -87,7 +84,6 @@ class EventDateStoreFactory @Inject constructor(
                         val minutes = eventTimeMinutes
 
                         val triggerTime = getTimeMillis(intent.date, hours, minutes)
-                        val currentTime = System.currentTimeMillis()
 
                         val newEvent = Event(
                             time = triggerTime,
@@ -98,18 +94,7 @@ class EventDateStoreFactory @Inject constructor(
 
                         try {
                             withContext(Dispatchers.IO) {
-                                addEventUseCase(newEvent)
-                            }
-
-                            if (triggerTime > currentTime) {
-                                alarmScheduler.schedule(
-                                    AlarmItem(
-                                        title = pet.name,
-                                        text = newEvent.label,
-                                        time = newEvent.time,
-                                        repeatable = newEvent.repeatable
-                                    )
-                                )
+                                addEventUseCase(pet.name, newEvent)
                             }
 
                             publish(Label.Finish)

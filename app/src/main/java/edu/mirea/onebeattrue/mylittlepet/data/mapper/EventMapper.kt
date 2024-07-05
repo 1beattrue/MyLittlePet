@@ -36,6 +36,14 @@ fun EventDto.mapDtoToEntity(): Event = Event(
     repeatable = repeatable
 )
 
+fun EventDto.mapDtoToDbModel(): EventDbModel = EventDbModel(
+    id = id,
+    petId = petId,
+    time = time,
+    label = label,
+    repeatable = repeatable
+)
+
 fun List<EventDbModel>.mapDbModelListToEntities(): List<Event> = map { it.mapDbModelToEntity() }
 
 fun List<EventDto>.mapDtoListToEntities(): List<Event> = map { it.mapDtoToEntity() }

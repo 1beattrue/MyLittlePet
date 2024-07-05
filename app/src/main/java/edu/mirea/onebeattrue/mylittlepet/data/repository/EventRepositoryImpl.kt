@@ -2,6 +2,7 @@ package edu.mirea.onebeattrue.mylittlepet.data.repository
 
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.EventDao
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelListToEntities
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDtoToDbModel
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDbModel
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDto
 import edu.mirea.onebeattrue.mylittlepet.data.network.api.EventApiService
@@ -19,8 +20,22 @@ class EventRepositoryImpl @Inject constructor(
     private val eventApiService: EventApiService
 ) : EventRepository {
 
-    override suspend fun addEvent(event: Event) {
+    override suspend fun addEvent(petName: String, event: Event) {
         val eventId = eventApiService.createEvent(event.mapEntityToDto())
+
+        val triggerTime = event.time
+        val currentTime = System.currentTimeMillis()
+
+        if (event.repeatable || triggerTime > currentTime) {
+            alarmScheduler.schedule(
+                AlarmItem(
+                    title = petName,
+                    text = event.label,
+                    time = event.time,
+                    repeatable = event.repeatable
+                )
+            )
+        }
 
         eventDao.addEvent(event.mapEntityToDbModel().copy(id = eventId))
     }
@@ -49,4 +64,12 @@ class EventRepositoryImpl @Inject constructor(
             listDbModel.mapDbModelListToEntities()
         }
 
+    override suspend fun synchronizeWithServer(petId: Int) {
+
+        val eventDtoList = eventApiService.getEventsByPetId(petId)
+
+        eventDtoList.forEach { eventDto ->
+            eventDao.addEvent(eventDto.mapDtoToDbModel())
+        }
+    }
 }

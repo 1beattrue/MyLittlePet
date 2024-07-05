@@ -6,8 +6,6 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmItem
-import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddEventUseCase
@@ -41,7 +39,6 @@ interface EventTimeStore : Store<Intent, State, Label> {
 
 class EventTimeStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
-    private val alarmScheduler: AlarmScheduler,
     private val addEventUseCase: AddEventUseCase
 ) {
 
@@ -104,17 +101,8 @@ class EventTimeStoreFactory @Inject constructor(
                             )
                             try {
                                 withContext(Dispatchers.IO) {
-                                    addEventUseCase(newEvent)
+                                    addEventUseCase(pet.name, newEvent)
                                 }
-
-                                alarmScheduler.schedule(
-                                    AlarmItem(
-                                        title = pet.name,
-                                        text = newEvent.label,
-                                        time = newEvent.time,
-                                        repeatable = newEvent.repeatable
-                                    )
-                                )
 
                                 publish(Label.Finish)
                             } catch (_: Exception) {
@@ -153,15 +141,6 @@ class EventTimeStoreFactory @Inject constructor(
         }
 
         return calendar.timeInMillis
-    }
-
-    private fun generateEventId(list: List<Event>): Int {
-        if (list.isEmpty()) return 0
-        var maxId = list[0].id
-        list.forEach {
-            if (it.id > maxId) maxId = it.id
-        }
-        return maxId + 1
     }
 
     companion object {
