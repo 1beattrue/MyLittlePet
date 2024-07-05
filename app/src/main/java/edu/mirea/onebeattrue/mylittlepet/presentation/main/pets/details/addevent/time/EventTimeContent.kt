@@ -2,6 +2,9 @@ package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addeven
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -99,7 +102,8 @@ fun EventTimeContent(
 
                 AnimatedContent(
                     modifier = Modifier.padding(horizontal = 32.dp),
-                    targetState = state.isDaily, label = ""
+                    targetState = state.isDaily, label = "",
+                    transitionSpec = { fadeIn().togetherWith(fadeOut()) }
                 ) { isDaily ->
                     Box(
                         modifier = Modifier
