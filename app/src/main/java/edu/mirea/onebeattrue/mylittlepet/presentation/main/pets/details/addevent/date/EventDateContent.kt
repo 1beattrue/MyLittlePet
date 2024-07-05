@@ -1,7 +1,9 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.date
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -21,7 +24,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomNextButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomProgressButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 
 @SuppressLint("UnrememberedMutableState")
@@ -31,6 +35,7 @@ fun EventDateContent(
     modifier: Modifier = Modifier,
     component: EventDateComponent
 ) {
+    val state by component.model.collectAsState()
     val datePickerState = rememberDatePickerState()
 
     LazyColumn(
@@ -53,6 +58,7 @@ fun EventDateContent(
                     text = stringResource(id = R.string.set_event_date_title),
                     style = MaterialTheme.typography.titleLarge
                 )
+
                 DatePicker(
                     modifier = Modifier.fillMaxWidth(),
                     state = datePickerState
@@ -60,11 +66,29 @@ fun EventDateContent(
                 val confirmEnabled by derivedStateOf {
                     datePickerState.selectedDateMillis != null
                 }
-                CustomNextButton(
+
+                AnimatedVisibility(
                     modifier = Modifier.padding(horizontal = 32.dp),
-                    enabled = confirmEnabled,
-                    onClick = { component.finish(datePickerState.selectedDateMillis!!) }
-                )
+                    visible = state.failure
+                ) {
+                    ErrorCustomCard(
+                        message = stringResource(R.string.error_adding_event)
+                    )
+                }
+
+                Box(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    CustomProgressButton(
+                        text = stringResource(R.string.ready),
+                        inProgress = state.progress,
+                        onClick = { component.finish(datePickerState.selectedDateMillis!!) },
+                        enabled = confirmEnabled
+                    )
+                }
             }
         }
     }

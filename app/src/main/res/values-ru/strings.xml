@@ -205,4 +205,6 @@
     <string name="error_deleting_pet">Ошибка удаления питомца</string>
     <string name="error_adding_pet">Ошибка добавления питомца</string>
     <string name="error_editing_pet">Ошибка изменения питомца</string>
+
+    <string name="error_adding_event">Ошибка добавления события</string>
 </resources>

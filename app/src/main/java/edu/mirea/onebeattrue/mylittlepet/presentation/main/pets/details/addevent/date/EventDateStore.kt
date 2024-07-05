@@ -13,7 +13,9 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddEventUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.date.EventDateStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.date.EventDateStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addevent.date.EventDateStore.State
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface EventDateStore : Store<Intent, State, Label> {
@@ -22,7 +24,10 @@ interface EventDateStore : Store<Intent, State, Label> {
         data class Finish(val date: Long) : Intent
     }
 
-    data class State(val nothing: Any)
+    data class State(
+        val failure: Boolean,
+        val progress: Boolean
+    )
 
     sealed interface Label {
         data object Finish : Label
@@ -43,7 +48,10 @@ class EventDateStoreFactory @Inject constructor(
     ): EventDateStore =
         object : EventDateStore, Store<Intent, State, Label> by storeFactory.create(
             name = STORE_NAME,
-            initialState = State(Any()),
+            initialState = State(
+                failure = false,
+                progress = false
+            ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = {
                 ExecutorImpl(eventText, eventTimeHours, eventTimeMinutes, pet)
@@ -53,7 +61,10 @@ class EventDateStoreFactory @Inject constructor(
 
     private sealed interface Action
 
-    private sealed interface Msg
+    private sealed interface Msg {
+        data object FailureAddingEvent : Msg
+        data object Loading : Msg
+    }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
         override fun invoke() {
@@ -70,6 +81,8 @@ class EventDateStoreFactory @Inject constructor(
             when (intent) {
                 is Intent.Finish -> {
                     scope.launch {
+                        dispatch(Msg.Loading)
+
                         val hours = eventTimeHours
                         val minutes = eventTimeMinutes
 
@@ -83,19 +96,26 @@ class EventDateStoreFactory @Inject constructor(
                             petId = pet.id
                         )
 
-                        if (triggerTime > currentTime) {
-                            alarmScheduler.schedule(
-                                AlarmItem(
-                                    title = pet.name,
-                                    text = newEvent.label,
-                                    time = newEvent.time,
-                                    repeatable = newEvent.repeatable
-                                )
-                            )
-                        }
+                        try {
+                            withContext(Dispatchers.IO) {
+                                addEventUseCase(newEvent)
+                            }
 
-                        addEventUseCase(newEvent)
-                        publish(Label.Finish)
+                            if (triggerTime > currentTime) {
+                                alarmScheduler.schedule(
+                                    AlarmItem(
+                                        title = pet.name,
+                                        text = newEvent.label,
+                                        time = newEvent.time,
+                                        repeatable = newEvent.repeatable
+                                    )
+                                )
+                            }
+
+                            publish(Label.Finish)
+                        } catch (_: Exception) {
+                            dispatch(Msg.FailureAddingEvent)
+                        }
                     }
                 }
             }
@@ -103,7 +123,11 @@ class EventDateStoreFactory @Inject constructor(
     }
 
     private object ReducerImpl : Reducer<State, Msg> {
-        override fun State.reduce(msg: Msg): State = copy()
+        override fun State.reduce(msg: Msg): State =
+            when (msg) {
+                Msg.FailureAddingEvent -> copy(progress = false, failure = true)
+                Msg.Loading -> copy(progress = true, failure = false)
+            }
     }
 
     private fun getTimeMillis(
@@ -119,15 +143,6 @@ class EventDateStoreFactory @Inject constructor(
         }
 
         return calendar.timeInMillis
-    }
-
-    private fun generateEventId(list: List<Event>): Int {
-        if (list.isEmpty()) return 0
-        var maxId = list[0].id
-        list.forEach {
-            if (it.id > maxId) maxId = it.id
-        }
-        return maxId + 1
     }
 
     companion object {

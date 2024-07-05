@@ -39,9 +39,7 @@ class PetRepositoryImpl @Inject constructor(
             ?: throw RuntimeException("User == null")
 
     override suspend fun addPet(pet: Pet) {
-
         val petId = petApiService.createPet(pet.mapEntityToDto(userToken, imageMapper))
-
         petListDao.addPet(pet.mapEntityToDbModel(imageMapper).copy(id = petId))
     }
 

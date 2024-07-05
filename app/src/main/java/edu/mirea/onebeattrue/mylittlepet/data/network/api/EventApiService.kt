@@ -10,7 +10,7 @@ import retrofit2.http.Path
 
 interface EventApiService {
     @POST("events/create")
-    suspend fun createEvent(@Body event: EventDto): EventDto
+    suspend fun createEvent(@Body event: EventDto): Int
 
     @GET("events/{id}")
     suspend fun getEventById(@Path("id") id: Int): EventDto
