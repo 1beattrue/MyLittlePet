@@ -32,7 +32,9 @@ interface EventListStore : Store<Intent, State, Label> {
     data class State(
         val isLoading: Boolean,
         val syncError: Boolean,
-        val eventList: List<Event>
+        val eventList: List<Event>,
+        val deletePetErrorId: Int?,
+        val nowDeletingId: Int?
     )
 
     sealed interface Label {
@@ -56,7 +58,9 @@ class EventListStoreFactory @Inject constructor(
             initialState = State(
                 isLoading = false,
                 syncError = false,
-                eventList = pet.eventList
+                eventList = pet.eventList,
+                deletePetErrorId = null,
+                nowDeletingId = null
             ),
             bootstrapper = BootstrapperImpl(pet),
             executorFactory = {
@@ -75,6 +79,8 @@ class EventListStoreFactory @Inject constructor(
         data object Loading : Msg
         data class UpdateList(val events: List<Event>) : Msg
         data class SyncResult(val isError: Boolean) : Msg
+        data class DeleteEventError(val eventId: Int) : Msg
+        data class DeletingEvent(val id: Int) : Msg
     }
 
     private inner class BootstrapperImpl(
@@ -126,14 +132,13 @@ class EventListStoreFactory @Inject constructor(
 
                 is Intent.DeleteEvent -> {
                     scope.launch {
+                        dispatch(Msg.DeletingEvent(intent.event.id))
                         try {
-                            val currentList = getState().eventList
                             withContext(Dispatchers.IO) {
                                 deleteEventUseCase(petName = pet.name, event = intent.event)
                             }
-                            dispatch(Msg.UpdateList(currentList.filter { it != intent.event }))
                         } catch (_: Exception) {
-                            // TODO: добавить обработку удаления
+                            dispatch(Msg.DeleteEventError(intent.event.id))
                         }
                     }
                 }
@@ -149,7 +154,6 @@ class EventListStoreFactory @Inject constructor(
                                     deleteEventUseCase(petName = pet.name, event = event)
                                 }
                         } catch (_: Exception) {
-                            // TODO: добавить обработку удаления
                         }
                     }
                 }
@@ -173,17 +177,31 @@ class EventListStoreFactory @Inject constructor(
     private object ReducerImpl : Reducer<State, Msg> {
         override fun State.reduce(msg: Msg): State =
             when (msg) {
-                is Msg.UpdateList -> {
-                    copy(eventList = msg.events)
-                }
+                is Msg.UpdateList -> copy(
+                    isLoading = false,
+                    eventList = msg.events,
+                    deletePetErrorId = null
+                )
 
                 Msg.Loading -> copy(
-                    isLoading = true
+                    isLoading = true,
+                    deletePetErrorId = null
                 )
 
                 is Msg.SyncResult -> copy(
                     syncError = msg.isError,
                     isLoading = false,
+                    deletePetErrorId = null
+                )
+
+                is Msg.DeleteEventError -> copy(
+                    deletePetErrorId = msg.eventId,
+                    nowDeletingId = null
+                )
+
+                is Msg.DeletingEvent -> copy(
+                    nowDeletingId = msg.id,
+                    deletePetErrorId = null
                 )
             }
     }

@@ -209,4 +209,5 @@
     <string name="error_editing_pet">Error editing pet</string>
 
     <string name="error_adding_event">Error adding event</string>
+    <string name="error_deleting_event">Error deleting event</string>
 </resources>

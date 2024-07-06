@@ -14,6 +14,7 @@ const val SUPPORT_EMAIL = "firstbadger@inbox.ru"
 val CORNER_RADIUS_SURFACE = 32.dp
 val CORNER_RADIUS_CONTAINER = 16.dp
 
+val NO_ELEVATION = 0.dp
 val DEFAULT_ELEVATION = 1.dp
 val STRONG_ELEVATION = 4.dp
 val EXTREME_ELEVATION = 8.dp

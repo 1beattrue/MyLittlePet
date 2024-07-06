@@ -187,8 +187,8 @@ fun PetListContent(
                         PetCard(
                             modifier = Modifier
                                 .animateItemPlacement(),
-                            isDeleting = state.nowDeletingId == pet.id,
                             pet = pet,
+                            isDeleting = state.nowDeletingId == pet.id,
                             deleteError = pet.id == state.deletePetErrorId,
                             deletePet = { component.deletePet(pet) },
                             editPet = {
@@ -233,8 +233,8 @@ private fun AddFirstPetCard(
 private fun PetCard(
     modifier: Modifier = Modifier,
     deleteError: Boolean,
-    pet: Pet,
     isDeleting: Boolean,
+    pet: Pet,
     deletePet: () -> Unit,
     editPet: () -> Unit,
     openDetails: () -> Unit

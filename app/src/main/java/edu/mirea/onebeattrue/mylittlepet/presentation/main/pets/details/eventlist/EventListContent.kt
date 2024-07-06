@@ -1,6 +1,7 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist
 
 import android.Manifest
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +49,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
@@ -62,10 +64,12 @@ import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomTextButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCardWithRetryButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
+import edu.mirea.onebeattrue.mylittlepet.ui.theme.NO_ELEVATION
 import java.util.Calendar
 
 @OptIn(
@@ -144,6 +148,17 @@ fun EventListContent(
                     }
                 }
 
+                if (state.syncError) {
+                    item {
+                        ErrorCustomCardWithRetryButton(
+                            modifier = Modifier.animateItemPlacement(),
+                            message = stringResource(R.string.synchronization_error)
+                        ) {
+                            component.syncronize()
+                        }
+                    }
+                }
+
                 item {
                     NotificationPermissionCard(
                         permissionState = permissionState
@@ -155,17 +170,6 @@ fun EventListContent(
                         modifier = Modifier.animateItemPlacement(),
                     ) {
                         component.onDeletePastEvents()
-                    }
-                }
-
-                if (state.syncError) {
-                    item {
-                        ErrorCustomCardWithRetryButton(
-                            modifier = Modifier.animateItemPlacement(),
-                            message = stringResource(R.string.synchronization_error)
-                        ) {
-                            component.syncronize()
-                        }
                     }
                 }
 
@@ -242,7 +246,9 @@ fun EventListContent(
                         }
                     ) {
                         EventCard(
-                            event = event
+                            event = event,
+                            isDeleting = event.id == state.nowDeletingId,
+                            deleteError = event.id == state.deletePetErrorId,
                         )
                     }
                 }
@@ -314,16 +320,22 @@ private fun NotificationPermissionCard(
 @Composable
 private fun EventCard(
     modifier: Modifier = Modifier,
-    event: Event
+    event: Event,
+    deleteError: Boolean,
+    isDeleting: Boolean,
 ) {
     val isRelevant = event.repeatable || isEventRelevant(event)
-    val cardColors = getEventCardColors(isRelevant = isRelevant)
+
+    val cardColors = getEventCardColors(
+        isRelevant = isRelevant,
+        isDeleting = isDeleting
+    )
 
     CustomCard(
-        elevation = if (isRelevant) EXTREME_ELEVATION else DEFAULT_ELEVATION,
         modifier = modifier.padding(
             if (isRelevant) 0.dp else 4.dp
         ),
+        elevation = if (isRelevant) EXTREME_ELEVATION else DEFAULT_ELEVATION,
         cardColors = cardColors
     ) {
         Text(
@@ -356,6 +368,14 @@ private fun EventCard(
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.End
         )
+
+        AnimatedVisibility(
+            visible = deleteError
+        ) {
+            ErrorCustomCard(
+                message = stringResource(R.string.error_deleting_event)
+            )
+        }
     }
 }
 
@@ -365,8 +385,16 @@ private fun isEventRelevant(event: Event): Boolean {
 }
 
 @Composable
-private fun getEventCardColors(isRelevant: Boolean): CardColors {
-    if (isRelevant) {
+private fun getEventCardColors(
+    isRelevant: Boolean,
+    isDeleting: Boolean
+): CardColors {
+    if (isDeleting) {
+        return CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer
+        )
+    } else if (isRelevant) {
         return CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface

@@ -31,8 +31,8 @@ interface PetListStore : Store<Intent, State, Label> {
     data class State(
         val isLoading: Boolean,
         val syncError: Boolean,
-        val deletePetErrorId: Int?,
         val petList: PetListState,
+        val deletePetErrorId: Int?,
         val nowDeletingId: Int?
     ) {
         sealed interface PetListState {
