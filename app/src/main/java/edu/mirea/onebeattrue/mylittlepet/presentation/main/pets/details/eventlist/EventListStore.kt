@@ -156,6 +156,7 @@ class EventListStoreFactory @Inject constructor(
 
                 Intent.DeletePastEvents -> {
                     scope.launch {
+                        dispatch(Msg.Loading)
                         try {
                             withContext(Dispatchers.IO) {
                                 deleteIrrelevantEventsUseCase(
@@ -163,6 +164,7 @@ class EventListStoreFactory @Inject constructor(
                                     petId = pet.id
                                 )
                             }
+                            dispatch(Msg.SyncResult(isError = false))
                         } catch (_: Exception) {
                             dispatch(Msg.DeleteIrrelevantEventsError)
                         }
@@ -224,6 +226,7 @@ class EventListStoreFactory @Inject constructor(
                 )
 
                 Msg.DeleteIrrelevantEventsError -> copy(
+                    isLoading = false,
                     deleteIrrelevantEventsError = true
                 )
             }

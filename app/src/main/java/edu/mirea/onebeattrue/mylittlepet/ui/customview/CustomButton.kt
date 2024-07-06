@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -156,13 +158,15 @@ fun CustomReadyButton(
 fun CustomTextButton(
     modifier: Modifier = Modifier,
     text: String,
+    colors: ButtonColors = ButtonDefaults.textButtonColors(),
     icon: @Composable () -> Unit = {},
     onClick: () -> Unit,
 ) {
     TextButton(
         modifier = modifier,
         onClick = { onClick() },
-        shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER)
+        shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
+        colors = colors
     ) {
         Text(
             text = text,

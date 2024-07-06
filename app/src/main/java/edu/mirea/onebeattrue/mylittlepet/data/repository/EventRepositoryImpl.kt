@@ -2,6 +2,7 @@ package edu.mirea.onebeattrue.mylittlepet.data.repository
 
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.EventDao
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelListToEntities
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelToEntity
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDtoListToEntities
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDtoToEntity
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDbModel
@@ -12,6 +13,7 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.AlarmScheduler
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.repository.EventRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -51,6 +53,12 @@ class EventRepositoryImpl @Inject constructor(
         petId: Int
     ) {
         val eventDtoList = eventApiService.getEventsByPetId(petId)
+
+        val oldEvents = eventDao.getEventList(petId).first()
+        oldEvents.forEach { oldEvent ->
+            cancelAndDeleteEvent(petName, oldEvent.mapDbModelToEntity())
+        }
+
         eventDtoList.forEach { eventDto ->
             setAndCreateEvent(petName, eventDto.mapDtoToEntity())
         }

@@ -1,7 +1,11 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist
 
 import android.Manifest
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +27,8 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.NotificationImportant
 import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.NotificationsOff
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -166,19 +172,20 @@ fun EventListContent(
                 item {
                     DeletePastEventsCard(
                         modifier = Modifier.animateItemPlacement(),
+                        deleteIrrelevantEventsError = state.deleteIrrelevantEventsError
                     ) {
                         component.onDeletePastEvents()
                     }
                 }
 
-                if (state.deleteIrrelevantEventsError) {
-                    item {
-                        ErrorCustomCard(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            message = stringResource(R.string.error_deleting_irrelevant_events)
-                        )
-                    }
-                }
+//                if (state.deleteIrrelevantEventsError) {
+//                    item {
+//                        ErrorCustomCard(
+//                            modifier = Modifier.padding(horizontal = 16.dp),
+//                            message = stringResource(R.string.error_deleting_irrelevant_events)
+//                        )
+//                    }
+//                }
 
                 items(
                     items = state.eventList,
@@ -277,6 +284,7 @@ fun EventListContent(
 @Composable
 private fun DeletePastEventsCard(
     modifier: Modifier = Modifier,
+    deleteIrrelevantEventsError: Boolean,
     onClick: () -> Unit
 ) {
     Row(
@@ -286,13 +294,37 @@ private fun DeletePastEventsCard(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End
     ) {
-        CustomTextButton(
-            onClick = { onClick() },
-            text = stringResource(R.string.clear_old_events),
-            icon = {
-                Icon(imageVector = Icons.Rounded.Delete, contentDescription = null)
-            }
-        )
+        AnimatedContent(
+            targetState = deleteIrrelevantEventsError,
+            label = "",
+            transitionSpec = { fadeIn() togetherWith fadeOut() }
+        ) { isError ->
+            CustomTextButton(
+                onClick = { onClick() },
+                text = if (isError) {
+                    stringResource(R.string.error_deleting_irrelevant_events)
+                } else {
+                    stringResource(R.string.clear_old_events)
+                },
+                icon = {
+                    Icon(
+                        imageVector = if (isError) {
+                            Icons.Rounded.Refresh
+                        } else {
+                            Icons.Rounded.Delete
+                        },
+                        contentDescription = null
+                    )
+                },
+                colors = if (isError) {
+                    ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                } else {
+                    ButtonDefaults.textButtonColors()
+                }
+            )
+        }
     }
 }
 
