@@ -171,6 +171,15 @@ fun EventListContent(
                     }
                 }
 
+                if (state.deleteIrrelevantEventsError) {
+                    item {
+                        ErrorCustomCard(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            message = stringResource(R.string.error_deleting_irrelevant_events)
+                        )
+                    }
+                }
+
                 items(
                     items = state.eventList,
                     key = { it.id },
@@ -246,7 +255,7 @@ fun EventListContent(
                         EventCard(
                             event = event,
                             isDeleting = event.id == state.nowDeletingId,
-                            deleteError = event.id == state.deletePetErrorId,
+                            deleteError = event.id == state.deleteEventErrorId,
                         )
                     }
                 }

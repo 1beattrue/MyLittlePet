@@ -8,6 +8,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Event
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Pet
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.DeleteEventUseCase
+import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.DeleteIrrelevantEventsUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.GetEventListUseCase
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.SynchronizeEventsWithServerUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListStore.Intent
@@ -33,8 +34,9 @@ interface EventListStore : Store<Intent, State, Label> {
         val isLoading: Boolean,
         val syncError: Boolean,
         val eventList: List<Event>,
-        val deletePetErrorId: Int?,
-        val nowDeletingId: Int?
+        val deleteEventErrorId: Int?,
+        val nowDeletingId: Int?,
+        val deleteIrrelevantEventsError: Boolean
     )
 
     sealed interface Label {
@@ -47,6 +49,7 @@ class EventListStoreFactory @Inject constructor(
     private val storeFactory: StoreFactory,
     private val getEventListUseCase: GetEventListUseCase,
     private val deleteEventUseCase: DeleteEventUseCase,
+    private val deleteIrrelevantEventsUseCase: DeleteIrrelevantEventsUseCase,
     private val synchronizeEventsWithServerUseCase: SynchronizeEventsWithServerUseCase
 ) {
 
@@ -59,8 +62,9 @@ class EventListStoreFactory @Inject constructor(
                 isLoading = false,
                 syncError = false,
                 eventList = pet.eventList,
-                deletePetErrorId = null,
-                nowDeletingId = null
+                deleteEventErrorId = null,
+                nowDeletingId = null,
+                deleteIrrelevantEventsError = false
             ),
             bootstrapper = BootstrapperImpl(pet),
             executorFactory = {
@@ -80,6 +84,7 @@ class EventListStoreFactory @Inject constructor(
         data class UpdateList(val events: List<Event>) : Msg
         data class SyncResult(val isError: Boolean) : Msg
         data class DeleteEventError(val eventId: Int) : Msg
+        data object DeleteIrrelevantEventsError : Msg
         data class DeletingEvent(val id: Int) : Msg
     }
 
@@ -90,7 +95,10 @@ class EventListStoreFactory @Inject constructor(
             scope.launch {
                 dispatch(Action.Loading)
                 try {
-                    synchronize(pet.id)
+                    synchronize(
+                        petName = pet.name,
+                        petId = pet.id
+                    )
                     dispatch(Action.SyncResult(isError = false))
                 } catch (_: Exception) {
                     dispatch(Action.SyncResult(isError = true))
@@ -135,7 +143,10 @@ class EventListStoreFactory @Inject constructor(
                         dispatch(Msg.DeletingEvent(intent.event.id))
                         try {
                             withContext(Dispatchers.IO) {
-                                deleteEventUseCase(petName = pet.name, event = intent.event)
+                                deleteEventUseCase(
+                                    petName = pet.name,
+                                    event = intent.event
+                                )
                             }
                         } catch (_: Exception) {
                             dispatch(Msg.DeleteEventError(intent.event.id))
@@ -146,14 +157,14 @@ class EventListStoreFactory @Inject constructor(
                 Intent.DeletePastEvents -> {
                     scope.launch {
                         try {
-                            val currentTime = Calendar.getInstance().timeInMillis
-
-                            val oldEventList = getState().eventList
-                            oldEventList.filter { it.time <= currentTime && !it.repeatable }
-                                .forEach { event ->
-                                    deleteEventUseCase(petName = pet.name, event = event)
-                                }
+                            withContext(Dispatchers.IO) {
+                                deleteIrrelevantEventsUseCase(
+                                    petName = pet.name,
+                                    petId = pet.id
+                                )
+                            }
                         } catch (_: Exception) {
+                            dispatch(Msg.DeleteIrrelevantEventsError)
                         }
                     }
                 }
@@ -163,7 +174,10 @@ class EventListStoreFactory @Inject constructor(
                     scope.launch {
                         dispatch(Msg.Loading)
                         try {
-                            synchronize(pet.id)
+                            synchronize(
+                                petName = pet.name,
+                                petId = pet.id
+                            )
                             dispatch(Msg.SyncResult(isError = false))
                         } catch (_: Exception) {
                             dispatch(Msg.SyncResult(isError = true))
@@ -180,28 +194,37 @@ class EventListStoreFactory @Inject constructor(
                 is Msg.UpdateList -> copy(
                     isLoading = false,
                     eventList = msg.events,
-                    deletePetErrorId = null
+                    deleteEventErrorId = null,
+                    deleteIrrelevantEventsError = false
                 )
 
                 Msg.Loading -> copy(
                     isLoading = true,
-                    deletePetErrorId = null
+                    deleteEventErrorId = null,
+                    deleteIrrelevantEventsError = false
                 )
 
                 is Msg.SyncResult -> copy(
                     syncError = msg.isError,
                     isLoading = false,
-                    deletePetErrorId = null
+                    deleteEventErrorId = null,
+                    deleteIrrelevantEventsError = false
                 )
 
                 is Msg.DeleteEventError -> copy(
-                    deletePetErrorId = msg.eventId,
-                    nowDeletingId = null
+                    deleteEventErrorId = msg.eventId,
+                    nowDeletingId = null,
+                    deleteIrrelevantEventsError = false
                 )
 
                 is Msg.DeletingEvent -> copy(
                     nowDeletingId = msg.id,
-                    deletePetErrorId = null
+                    deleteEventErrorId = null,
+                    deleteIrrelevantEventsError = false
+                )
+
+                Msg.DeleteIrrelevantEventsError -> copy(
+                    deleteIrrelevantEventsError = true
                 )
             }
     }
@@ -222,9 +245,9 @@ class EventListStoreFactory @Inject constructor(
         return calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE)
     }
 
-    private suspend fun synchronize(petId: Int) {
+    private suspend fun synchronize(petName: String, petId: Int) {
         withContext(Dispatchers.IO) {
-            synchronizeEventsWithServerUseCase(petId)
+            synchronizeEventsWithServerUseCase(petName, petId)
         }
     }
 

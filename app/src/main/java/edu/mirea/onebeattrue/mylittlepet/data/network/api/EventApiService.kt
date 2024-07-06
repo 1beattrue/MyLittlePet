@@ -23,4 +23,7 @@ interface EventApiService {
 
     @GET("events/byPetId/{petId}")
     suspend fun getEventsByPetId(@Path("petId") petId: Int): List<EventDto>
+
+    @DELETE("events/irrelevant/{petId}")
+    suspend fun deleteIrrelevantEventsByPetId(@Path("petId") petId: Int): List<EventDto>
 }

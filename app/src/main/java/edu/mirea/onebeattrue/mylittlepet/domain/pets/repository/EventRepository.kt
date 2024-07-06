@@ -8,5 +8,6 @@ interface EventRepository {
     suspend fun deleteEvent(petName: String, event: Event)
 
     fun getEventList(petId: Int): Flow<List<Event>>
-    suspend fun synchronizeWithServer(petId: Int)
+    suspend fun deleteIrrelevantEvents(petName: String, petId: Int)
+    suspend fun synchronizeWithServer(petName: String, petId: Int)
 }

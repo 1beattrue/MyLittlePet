@@ -2,7 +2,8 @@ package edu.mirea.onebeattrue.mylittlepet.data.repository
 
 import edu.mirea.onebeattrue.mylittlepet.data.local.db.EventDao
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDbModelListToEntities
-import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDtoToDbModel
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDtoListToEntities
+import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapDtoToEntity
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDbModel
 import edu.mirea.onebeattrue.mylittlepet.data.mapper.mapEntityToDto
 import edu.mirea.onebeattrue.mylittlepet.data.network.api.EventApiService
@@ -22,7 +23,43 @@ class EventRepositoryImpl @Inject constructor(
 
     override suspend fun addEvent(petName: String, event: Event) {
         val eventId = eventApiService.createEvent(event.mapEntityToDto())
+        setAndCreateEvent(petName, event.copy(id = eventId))
+    }
 
+    override suspend fun deleteEvent(petName: String, event: Event) {
+        eventApiService.deleteEvent(event.id)
+        cancelAndDeleteEvent(petName, event)
+    }
+
+    override fun getEventList(petId: Int): Flow<List<Event>> =
+        eventDao.getEventList(petId).map { listDbModel ->
+            listDbModel.mapDbModelListToEntities()
+        }
+
+    override suspend fun deleteIrrelevantEvents(
+        petName: String,
+        petId: Int
+    ) {
+        val deletedEvents = eventApiService.deleteIrrelevantEventsByPetId(petId)
+        deletedEvents.mapDtoListToEntities().forEach { deletedEvent ->
+            cancelAndDeleteEvent(petName, deletedEvent)
+        }
+    }
+
+    override suspend fun synchronizeWithServer(
+        petName: String,
+        petId: Int
+    ) {
+        val eventDtoList = eventApiService.getEventsByPetId(petId)
+        eventDtoList.forEach { eventDto ->
+            setAndCreateEvent(petName, eventDto.mapDtoToEntity())
+        }
+    }
+
+    private suspend fun setAndCreateEvent(
+        petName: String,
+        event: Event
+    ) {
         val triggerTime = event.time
         val currentTime = System.currentTimeMillis()
 
@@ -37,13 +74,13 @@ class EventRepositoryImpl @Inject constructor(
             )
         }
 
-        eventDao.addEvent(event.mapEntityToDbModel().copy(id = eventId))
+        eventDao.addEvent(event.mapEntityToDbModel())
     }
 
-    override suspend fun deleteEvent(petName: String, event: Event) {
-
-        eventApiService.deleteEvent(event.id)
-
+    private suspend fun cancelAndDeleteEvent(
+        petName: String,
+        event: Event
+    ) {
         alarmScheduler.cancel(
             AlarmItem(
                 time = event.time,
@@ -57,19 +94,5 @@ class EventRepositoryImpl @Inject constructor(
             petId = event.petId,
             eventId = event.id
         )
-    }
-
-    override fun getEventList(petId: Int): Flow<List<Event>> =
-        eventDao.getEventList(petId).map { listDbModel ->
-            listDbModel.mapDbModelListToEntities()
-        }
-
-    override suspend fun synchronizeWithServer(petId: Int) {
-
-        val eventDtoList = eventApiService.getEventsByPetId(petId)
-
-        eventDtoList.forEach { eventDto ->
-            eventDao.addEvent(eventDto.mapDtoToDbModel())
-        }
     }
 }
