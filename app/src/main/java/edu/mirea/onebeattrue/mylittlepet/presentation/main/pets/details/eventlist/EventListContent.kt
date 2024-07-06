@@ -49,7 +49,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
@@ -69,7 +68,6 @@ import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCardWithRetryB
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.DEFAULT_ELEVATION
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
-import edu.mirea.onebeattrue.mylittlepet.ui.theme.NO_ELEVATION
 import java.util.Calendar
 
 @OptIn(
@@ -383,6 +381,7 @@ private fun isEventRelevant(event: Event): Boolean {
     val currentTimeMillis = Calendar.getInstance().timeInMillis
     return event.time > currentTimeMillis
 }
+
 
 @Composable
 private fun getEventCardColors(
