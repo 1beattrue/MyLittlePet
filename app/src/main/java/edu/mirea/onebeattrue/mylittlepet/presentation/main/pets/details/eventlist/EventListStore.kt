@@ -36,6 +36,7 @@ interface EventListStore : Store<Intent, State, Label> {
         val eventList: List<Event>,
         val deleteEventErrorId: Int?,
         val nowDeletingId: Int?,
+        val isDeletingIrrelevantEvents: Boolean,
         val deleteIrrelevantEventsError: Boolean
     )
 
@@ -64,7 +65,8 @@ class EventListStoreFactory @Inject constructor(
                 eventList = pet.eventList,
                 deleteEventErrorId = null,
                 nowDeletingId = null,
-                deleteIrrelevantEventsError = false
+                deleteIrrelevantEventsError = false,
+                isDeletingIrrelevantEvents = false
             ),
             bootstrapper = BootstrapperImpl(pet),
             executorFactory = {
@@ -81,6 +83,7 @@ class EventListStoreFactory @Inject constructor(
 
     private sealed interface Msg {
         data object Loading : Msg
+        data object DeletingIrrelevantEvents : Msg
         data class UpdateList(val events: List<Event>) : Msg
         data class SyncResult(val isError: Boolean) : Msg
         data class DeleteEventError(val eventId: Int) : Msg
@@ -156,7 +159,7 @@ class EventListStoreFactory @Inject constructor(
 
                 Intent.DeletePastEvents -> {
                     scope.launch {
-                        dispatch(Msg.Loading)
+                        dispatch(Msg.DeletingIrrelevantEvents)
                         try {
                             withContext(Dispatchers.IO) {
                                 deleteIrrelevantEventsUseCase(
@@ -226,8 +229,13 @@ class EventListStoreFactory @Inject constructor(
                 )
 
                 Msg.DeleteIrrelevantEventsError -> copy(
-                    isLoading = false,
-                    deleteIrrelevantEventsError = true
+                    isDeletingIrrelevantEvents = false,
+                    deleteIrrelevantEventsError = true,
+                )
+
+                Msg.DeletingIrrelevantEvents -> copy(
+                    isDeletingIrrelevantEvents = true,
+                    deleteIrrelevantEventsError = false
                 )
             }
     }
