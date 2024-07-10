@@ -318,7 +318,8 @@ private fun DeletePastEventsCard(
                     )
                 } else {
                     ButtonDefaults.textButtonColors()
-                }
+                },
+                enabled = !inProgress
             )
         }
         Spacer(modifier = Modifier.width(8.dp))

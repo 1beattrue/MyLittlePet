@@ -15,6 +15,7 @@ import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlis
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.eventlist.EventListStore.State
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
@@ -118,6 +119,8 @@ class EventListStoreFactory @Inject constructor(
         private val pet: Pet
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
 
+        private var deletingJob: Job? = null
+
         override fun executeAction(action: Action, getState: () -> State) {
             when (action) {
                 is Action.UpdateList -> {
@@ -142,7 +145,8 @@ class EventListStoreFactory @Inject constructor(
                 }
 
                 is Intent.DeleteEvent -> {
-                    scope.launch {
+                    deletingJob?.cancel()
+                    deletingJob = scope.launch {
                         dispatch(Msg.DeletingEvent(intent.event.id))
                         try {
                             withContext(Dispatchers.IO) {
@@ -158,7 +162,8 @@ class EventListStoreFactory @Inject constructor(
                 }
 
                 Intent.DeletePastEvents -> {
-                    scope.launch {
+                    deletingJob?.cancel()
+                    deletingJob = scope.launch {
                         dispatch(Msg.DeletingIrrelevantEvents)
                         try {
                             withContext(Dispatchers.IO) {
@@ -213,7 +218,8 @@ class EventListStoreFactory @Inject constructor(
                     syncError = msg.isError,
                     isLoading = false,
                     deleteEventErrorId = null,
-                    deleteIrrelevantEventsError = false
+                    deleteIrrelevantEventsError = false,
+                    isDeletingIrrelevantEvents = false
                 )
 
                 is Msg.DeleteEventError -> copy(

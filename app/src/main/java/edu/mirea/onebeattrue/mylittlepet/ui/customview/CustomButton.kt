@@ -158,6 +158,7 @@ fun CustomReadyButton(
 fun CustomTextButton(
     modifier: Modifier = Modifier,
     text: String,
+    enabled: Boolean = true,
     colors: ButtonColors = ButtonDefaults.textButtonColors(),
     icon: @Composable () -> Unit = {},
     onClick: () -> Unit,
@@ -166,7 +167,8 @@ fun CustomTextButton(
         modifier = modifier,
         onClick = { onClick() },
         shape = RoundedCornerShape(CORNER_RADIUS_CONTAINER),
-        colors = colors
+        colors = colors,
+        enabled = enabled
     ) {
         Text(
             text = text,
