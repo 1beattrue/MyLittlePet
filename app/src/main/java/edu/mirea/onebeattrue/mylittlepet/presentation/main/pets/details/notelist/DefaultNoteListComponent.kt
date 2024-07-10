@@ -57,6 +57,10 @@ class DefaultNoteListComponent @AssistedInject constructor(
         store.accept(NoteListStore.Intent.OnClickBack)
     }
 
+    override fun syncronize() {
+        store.accept(NoteListStore.Intent.Synchronize)
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(

@@ -11,4 +11,6 @@ interface NoteListComponent {
     fun onDeleteNote(note: Note)
 
     fun onBackClicked()
+
+    fun syncronize()
 }

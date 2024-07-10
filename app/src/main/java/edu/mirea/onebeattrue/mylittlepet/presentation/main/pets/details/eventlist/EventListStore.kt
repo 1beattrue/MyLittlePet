@@ -32,9 +32,9 @@ interface EventListStore : Store<Intent, State, Label> {
     }
 
     data class State(
+        val eventList: List<Event>,
         val isLoading: Boolean,
         val syncError: Boolean,
-        val eventList: List<Event>,
         val deleteEventErrorId: Int?,
         val nowDeletingId: Int?,
         val isDeletingIrrelevantEvents: Boolean,
@@ -61,9 +61,9 @@ class EventListStoreFactory @Inject constructor(
         object : EventListStore, Store<Intent, State, Label> by storeFactory.create(
             name = STORE_NAME,
             initialState = State(
+                eventList = pet.eventList,
                 isLoading = false,
                 syncError = false,
-                eventList = pet.eventList,
                 deleteEventErrorId = null,
                 nowDeletingId = null,
                 deleteIrrelevantEventsError = false,
@@ -84,12 +84,12 @@ class EventListStoreFactory @Inject constructor(
 
     private sealed interface Msg {
         data object Loading : Msg
-        data object DeletingIrrelevantEvents : Msg
         data class UpdateList(val events: List<Event>) : Msg
         data class SyncResult(val isError: Boolean) : Msg
         data class DeleteEventError(val eventId: Int) : Msg
-        data object DeleteIrrelevantEventsError : Msg
         data class DeletingEvent(val id: Int) : Msg
+        data object DeleteIrrelevantEventsError : Msg
+        data object DeletingIrrelevantEvents : Msg
     }
 
     private inner class BootstrapperImpl(

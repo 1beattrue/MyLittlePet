@@ -211,4 +211,5 @@
     <string name="error_deleting_irrelevant_events">Ошибка удаления старых событий</string>
 
     <string name="error_adding_note">Ошибка добавления заметки</string>
+    <string name="error_deleting_note">Ошибка удаления заметки</string>
 </resources>

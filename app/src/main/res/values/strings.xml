@@ -213,4 +213,5 @@
     <string name="error_deleting_irrelevant_events">Error deleting irrelevant events</string>
 
     <string name="error_adding_note">Error adding note</string>
+    <string name="error_deleting_note">Error deleting note</string>
 </resources>

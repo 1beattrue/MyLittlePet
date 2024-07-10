@@ -1,5 +1,6 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.notelist
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,6 +50,8 @@ import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.domain.pets.entity.Note
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardWithAddButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCard
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCardWithRetryButton
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_SURFACE
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.EXTREME_ELEVATION
 
@@ -100,6 +106,31 @@ fun NoteListContent(
                 contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                if (state.isLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .animateItemPlacement(),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            CircularProgressIndicator()
+                        }
+
+                    }
+                }
+
+                if (state.syncError) {
+                    item {
+                        ErrorCustomCardWithRetryButton(
+                            modifier = Modifier.animateItemPlacement(),
+                            message = stringResource(R.string.synchronization_error)
+                        ) {
+                            component.syncronize()
+                        }
+                    }
+                }
+
                 items(
                     items = state.notes,
                     key = { it.id },
@@ -170,7 +201,9 @@ fun NoteListContent(
                         }
                     ) {
                         NoteCard(
-                            note = note
+                            note = note,
+                            deleteError = state.deleteNoteErrorId == note.id,
+                            isDeleting = state.nowDeletingId == note.id
                         )
                     }
                 }
@@ -192,11 +225,18 @@ fun NoteListContent(
 @Composable
 private fun NoteCard(
     modifier: Modifier = Modifier,
-    note: Note
+    note: Note,
+    deleteError: Boolean,
+    isDeleting: Boolean,
 ) {
+    val cardColors = getNoteCardColors(
+        isDeleting = isDeleting
+    )
+
     CustomCard(
         elevation = EXTREME_ELEVATION,
         modifier = modifier,
+        cardColors = cardColors
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Icon(
@@ -211,5 +251,29 @@ private fun NoteCard(
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Justify
         )
+
+        AnimatedVisibility(
+            visible = deleteError
+        ) {
+            ErrorCustomCard(
+                message = stringResource(R.string.error_deleting_event)
+            )
+        }
     }
+}
+
+@Composable
+private fun getNoteCardColors(
+    isDeleting: Boolean
+): CardColors {
+    if (isDeleting) {
+        return CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer
+        )
+    }
+    return CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface
+    )
 }
