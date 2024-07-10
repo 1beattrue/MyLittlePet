@@ -209,4 +209,6 @@
     <string name="error_adding_event">Ошибка добавления события</string>
     <string name="error_deleting_event">Ошибка удаления события</string>
     <string name="error_deleting_irrelevant_events">Ошибка удаления старых событий</string>
+
+    <string name="error_adding_note">Ошибка добавления заметки</string>
 </resources>

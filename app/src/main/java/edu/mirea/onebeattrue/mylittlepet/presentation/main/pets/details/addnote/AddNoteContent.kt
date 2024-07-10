@@ -1,6 +1,8 @@
 package edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,7 +35,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import edu.mirea.onebeattrue.mylittlepet.R
 import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomCardExtremeElevation
-import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomReadyButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.CustomProgressButton
+import edu.mirea.onebeattrue.mylittlepet.ui.customview.ErrorCustomCard
 import edu.mirea.onebeattrue.mylittlepet.ui.theme.CORNER_RADIUS_CONTAINER
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,7 +95,26 @@ fun AddNoteContent(
                         onValueChange = { component.noteTextChanged(it) },
                         isIncorrect = state.isIncorrect
                     )
-                    CustomReadyButton(onClick = { component.addNote() })
+
+                    AnimatedVisibility(
+                        visible = state.failure
+                    ) {
+                        ErrorCustomCard(
+                            message = stringResource(R.string.error_adding_note)
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        CustomProgressButton(
+                            text = stringResource(R.string.ready),
+                            inProgress = state.progress,
+                            onClick = { component.addNote() }
+                        )
+                    }
                 }
             }
         }

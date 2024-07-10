@@ -11,7 +11,9 @@ import edu.mirea.onebeattrue.mylittlepet.domain.pets.usecase.AddNoteUseCase
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.AddNoteStore.Intent
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.AddNoteStore.Label
 import edu.mirea.onebeattrue.mylittlepet.presentation.main.pets.details.addnote.AddNoteStore.State
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface AddNoteStore : Store<Intent, State, Label> {
@@ -26,7 +28,9 @@ interface AddNoteStore : Store<Intent, State, Label> {
     data class State(
         val text: String,
         val selectedIcon: NoteIcon,
-        val isIncorrect: Boolean
+        val isIncorrect: Boolean,
+        val failure: Boolean,
+        val progress: Boolean
     )
 
     sealed interface Label {
@@ -47,7 +51,9 @@ class AddNoteStoreFactory @Inject constructor(
             initialState = State(
                 text = "",
                 selectedIcon = NoteIcon.FoodItem,
-                isIncorrect = false
+                isIncorrect = false,
+                failure = false,
+                progress = false
             ),
             bootstrapper = BootstrapperImpl(),
             executorFactory = { ExecutorImpl(pet) },
@@ -60,6 +66,9 @@ class AddNoteStoreFactory @Inject constructor(
         data class OnTextChanged(val text: String) : Msg
         data class OnIconChanged(val icon: NoteIcon) : Msg
         data object EmptyNote : Msg
+
+        data object FailureAddingNote : Msg
+        data object Loading : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -78,6 +87,7 @@ class AddNoteStoreFactory @Inject constructor(
                         if (noteText.isBlank()) {
                             dispatch(Msg.EmptyNote)
                         } else {
+                            dispatch(Msg.Loading)
                             val iconResId = getState().selectedIcon.iconResId
                             val newNote = Note(
                                 text = noteText,
@@ -85,8 +95,14 @@ class AddNoteStoreFactory @Inject constructor(
                                 petId = pet.id
                             )
 
-                            addNoteUseCase(newNote)
-                            publish(Label.CloseAddNote)
+                            try {
+                                withContext(Dispatchers.IO) {
+                                    addNoteUseCase(newNote)
+                                }
+                                publish(Label.CloseAddNote)
+                            } catch (_: Exception) {
+                                dispatch(Msg.FailureAddingNote)
+                            }
                         }
                     }
                 }
@@ -113,21 +129,14 @@ class AddNoteStoreFactory @Inject constructor(
                 Msg.EmptyNote -> copy(isIncorrect = true)
                 is Msg.OnIconChanged -> copy(selectedIcon = msg.icon)
                 is Msg.OnTextChanged -> copy(isIncorrect = false, text = msg.text)
+                Msg.FailureAddingNote -> copy(progress = false, failure = true)
+                Msg.Loading -> copy(progress = true, failure = false)
             }
     }
 
     private fun formattedText(text: String): String {
         if (text.length > 500) return text.substring(0..<500)
         return text
-    }
-
-    private fun generateNoteId(list: List<Note>): Int {
-        if (list.isEmpty()) return 0
-        var maxId = list[0].id
-        list.forEach {
-            if (it.id > maxId) maxId = it.id
-        }
-        return maxId + 1
     }
 
     companion object {
