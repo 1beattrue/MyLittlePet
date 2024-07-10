@@ -5,7 +5,7 @@ import retrofit2.http.*
 
 interface NoteApiService {
     @POST("notes/create")
-    suspend fun createNote(@Body note: NoteDto): NoteDto
+    suspend fun createNote(@Body note: NoteDto): Int
 
     @GET("notes/{id}")
     suspend fun getNoteById(@Path("id") id: Int): NoteDto

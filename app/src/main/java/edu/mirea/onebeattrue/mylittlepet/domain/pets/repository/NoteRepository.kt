@@ -8,4 +8,5 @@ interface NoteRepository {
     suspend fun deleteNote(note: Note)
 
     fun getNoteList(petId: Int): Flow<List<Note>>
+    suspend fun synchronizeWithServer(petId: Int)
 }

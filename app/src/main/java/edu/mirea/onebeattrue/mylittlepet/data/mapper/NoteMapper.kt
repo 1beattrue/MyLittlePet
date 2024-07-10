@@ -32,6 +32,13 @@ fun NoteDto.mapDtoToEntity(): Note = Note(
     iconResId = iconResId
 )
 
+fun NoteDto.mapDtoToDbModel(): NoteDbModel = NoteDbModel(
+    id = id,
+    petId = petId,
+    text = text,
+    iconResId = iconResId
+)
+
 fun List<NoteDbModel>.mapDbModelListToEntities(): List<Note> = map { it.mapDbModelToEntity() }
 
 fun List<NoteDto>.mapDtoListToEntities(): List<Note> = map { it.mapDtoToEntity() }
