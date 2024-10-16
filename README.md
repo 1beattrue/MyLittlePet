@@ -28,6 +28,3 @@ My Little Pet — это Android-приложение, созданное для
 - **Coroutine Flow**: Для работы с асинхронными потоками данных.
 - **Room**: Для локальной базы данных.
 - **Firebase**: Для авторизации.
-
-## Скриншоты
-<img src="4.png" alt="Screenshot" style="width: 22%;"> <img src="8.png" alt="Screenshot" style="width: 22%;"> <img src="6.png" alt="Screenshot" style="width: 22%;"> <img src="7.png" alt="Screenshot" style="width: 22%;">
